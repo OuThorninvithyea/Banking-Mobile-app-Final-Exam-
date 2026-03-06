@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "com.hustle.bankapp-merged_res-57:/xml_backup_rules.xml.flat",
+        "source": "com.hustle.bankapp-main-59:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.hustle.bankapp-merged_res-57:/font_roboto_mono.ttf.flat",
+        "source": "com.hustle.bankapp-main-59:/font/roboto_mono.ttf"
+    },
+    {
+        "merged": "com.hustle.bankapp-merged_res-57:/xml_data_extraction_rules.xml.flat",
+        "source": "com.hustle.bankapp-main-59:/xml/data_extraction_rules.xml"
+    }
+]
