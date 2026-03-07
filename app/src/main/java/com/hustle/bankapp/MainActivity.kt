@@ -58,9 +58,8 @@ class MainActivity : FragmentActivity() {
             .writeTimeout(15, TimeUnit.SECONDS)
             .build()
 
-        // 10.0.2.2 is the Android emulator alias for localhost on the host machine
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8080/")
+            .baseUrl(BuildConfig.API_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

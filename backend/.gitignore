@@ -1,5 +1,6 @@
-# Environment variables (contains DB credentials & secrets)
+# Environment variables (contain DB credentials & secrets)
 .env
+.env.local
 
 # Go build output
 /bin/
