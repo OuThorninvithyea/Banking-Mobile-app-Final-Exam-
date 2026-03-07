@@ -1,0 +1,2669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Banking App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Updated Lucide script to the latest reliable version -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f172a;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Theme hooks */
+        body.theme-dark {
+            background-color: #0f172a;
+            color: white;
+        }
+        body.theme-light {
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+
+        /* Mobile Container Simulation */
+        .mobile-container {
+            width: 100%;
+            max-width: 414px;
+            min-height: 100vh;
+            height: auto;
+            background: #020617;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            scrollbar-width: none;
+        }
+        #app-view.mobile-container {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            max-height: 100vh;
+            height: 100vh;
+        }
+        @supports (height: 100dvh) {
+            #app-view.mobile-container {
+                height: 100dvh;
+                max-height: 100dvh;
+            }
+        }
+        #app-view .app-scroll {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        #app-view .app-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        body.theme-light .mobile-container {
+            background: #ffffff;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.18);
+        }
+
+        .mobile-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        body.theme-light .glass {
+            background: rgba(241, 245, 249, 0.75);
+            border: 1px solid rgba(15, 23, 42, 0.10);
+        }
+
+        .card-gradient {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+        }
+
+        .nav-blur {
+            background: rgba(2, 6, 23, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        body.theme-light .nav-blur {
+            background: rgba(255, 255, 255, 0.98);
+        }
+        /* Fixed bottom nav - stays in place, does not scroll */
+        #app-view nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 414px;
+            min-height: 5rem;
+            height: 5rem;
+            background: #0f172a;
+            border-top: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+            border-radius: 0 0 40px 40px;
+            z-index: 50;
+        }
+        body.theme-light #app-view nav {
+            background: #ffffff;
+            border-top-color: rgba(15, 23, 42, 0.12);
+            box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.08);
+        }
+        /* Reserve space so content doesn't sit under the fixed nav */
+        #app-view .app-scroll {
+            padding-bottom: 5rem;
+        }
+        /* Scan button - pops out above nav */
+        #app-view nav .nav-scan-wrap {
+            position: relative;
+            flex: 0 0 auto;
+            width: 4rem;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 0.5rem;
+        }
+        #app-view nav .nav-btn-scan {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.5);
+            border: 3px solid #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        body.theme-light #app-view nav .nav-btn-scan { border-color: #ffffff; }
+        #app-view nav .nav-btn-scan:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(99, 102, 241, 0.55); }
+        #app-view nav .nav-btn-scan:active { transform: scale(0.98); }
+        .safe-area-pb {
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+
+        /* Ensure icons are centered and sized correctly */
+        .lucide {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* Multi-screen: only active screen visible */
+        .screen {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+        .screen.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Modal overlay - centered */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 50;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        body.theme-light .modal-overlay {
+            background: rgba(15, 23, 42, 0.35);
+        }
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.2s ease;
+        }
+        .modal-sheet {
+            background: #0f172a;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 380px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        body.theme-light .modal-sheet {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.10);
+        }
+
+        /* Light theme overrides for common Tailwind slate classes used in this file */
+        body.theme-light .text-slate-300 { color: #334155 !important; }
+        body.theme-light .text-slate-400 { color: #475569 !important; }
+        body.theme-light .text-slate-500 { color: #64748b !important; }
+        body.theme-light .text-white { color: #0f172a !important; }
+        body.theme-light .border-slate-700 { border-color: rgba(15, 23, 42, 0.18) !important; }
+        body.theme-light .border-slate-700\/50 { border-color: rgba(15, 23, 42, 0.12) !important; }
+        body.theme-light .border-slate-800\/50 { border-color: rgba(15, 23, 42, 0.10) !important; }
+        body.theme-light .bg-slate-700 { background-color: #e2e8f0 !important; }
+        body.theme-light .bg-slate-800 { background-color: #f8fafc !important; }
+        body.theme-light .bg-slate-800\/50 { background-color: rgba(241, 245, 249, 0.75) !important; }
+        body.theme-light .bg-slate-800\/60 { background-color: rgba(241, 245, 249, 0.85) !important; }
+        body.theme-light .bg-slate-800\/70 { background-color: rgba(241, 245, 249, 0.92) !important; }
+        body.theme-light .bg-slate-800\/80 { background-color: rgba(241, 245, 249, 0.96) !important; }
+        body.theme-light .bg-slate-900\/50 { background-color: rgba(241, 245, 249, 0.85) !important; }
+
+        /* Keep gradient card/button text readable in light mode */
+        body.theme-light .card-gradient,
+        body.theme-light .card-gradient * {
+            color: #ffffff !important;
+        }
+
+        .account-option {
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .account-option.selected {
+            border-color: rgba(99, 102, 241, 0.6);
+            background: rgba(99, 102, 241, 0.12);
+        }
+
+        /* Toggle switch */
+        .switch {
+            position: relative;
+            width: 46px;
+            height: 26px;
+            display: inline-block;
+            flex: 0 0 auto;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: rgba(148, 163, 184, 0.25);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            transition: 0.2s;
+            border-radius: 999px;
+        }
+        .slider:before {
+            content: "";
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #e2e8f0;
+            transition: 0.2s;
+            border-radius: 999px;
+        }
+        .switch input:checked + .slider {
+            background: rgba(99, 102, 241, 0.55);
+            border-color: rgba(99, 102, 241, 0.55);
+        }
+        .switch input:checked + .slider:before {
+            transform: translate(20px, -50%);
+            background: white;
+        }
+
+        /* Notification badge on bell */
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 18px;
+            text-align: center;
+            color: white;
+            background: #ef4444;
+            border-radius: 999px;
+            border: 2px solid #0f172a;
+        }
+        body.theme-light .notification-badge { border-color: #ffffff; }
+
+        /* Balance visibility - blur when hidden */
+        #home-balance-amount.balance-blurred {
+            filter: blur(6px);
+            user-select: none;
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            left: 50%;
+            bottom: 110px;
+            transform: translateX(-50%);
+            z-index: 60;
+            display: none;
+            max-width: 380px;
+            width: calc(100% - 40px);
+        }
+        #toast.show {
+            display: block;
+            animation: fadeIn 0.15s ease;
+        }
+
+        /* Auth view */
+        #auth-view { display: none; }
+        #auth-view.active { display: block; }
+        #app-view { display: none; }
+        #admin-view { display: none; }
+        #admin-view.active { display: block; }
+        .auth-panel { display: none; padding: 24px; overflow-y: auto; height: 100%; }
+        .auth-panel.active { display: block; }
+        .auth-panel h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; }
+        .auth-panel .sub { font-size: 0.8rem; color: inherit; opacity: 0.7; margin-bottom: 24px; }
+    </style>
+</head>
+<body class="theme-dark">
+
+    <!-- Auth: Login & Register -->
+    <div id="auth-view" class="mobile-container relative">
+        <div id="auth-login" class="auth-panel active">
+            <div class="pt-8 pb-4">
+                <h1>Welcome back</h1>
+                <p class="sub">Sign in to your account</p>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Username or email</label>
+                    <input type="text" id="login-email" required placeholder="Username or email" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Password</label>
+                    <input type="password" id="login-password" required placeholder="••••••••" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <p id="login-error" class="text-sm text-red-400 hidden"></p>
+                <button type="submit" class="w-full py-3 rounded-xl font-semibold text-white card-gradient">Log in</button>
+            </form>
+            <p class="text-center text-sm text-slate-400 mt-4"><button type="button" id="go-forgot" class="text-indigo-400 font-medium">Forgot password?</button></p>
+            <p class="text-center text-sm text-slate-400 mt-2">Don't have an account? <button type="button" id="go-register" class="text-indigo-400 font-semibold">Register</button></p>
+        </div>
+        <div id="auth-forgot" class="auth-panel">
+            <div class="pt-8 pb-4">
+                <h1>Forgot password</h1>
+                <p class="sub">Answer your security question to reset password</p>
+            </div>
+            <div id="forgot-step-1">
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Username or email</label>
+                        <input type="text" id="forgot-username" placeholder="Enter your username or email" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <p id="forgot-error" class="text-sm text-red-400 hidden"></p>
+                    <button type="button" id="forgot-continue" class="w-full py-3 rounded-xl font-semibold text-white card-gradient">Continue</button>
+                </div>
+            </div>
+            <div id="forgot-step-2" class="hidden space-y-4">
+                <p class="text-xs text-slate-500 mb-1">Security question: <strong class="text-slate-400">Who is your first love name?</strong></p>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Your answer</label>
+                    <input type="text" id="forgot-security-answer" placeholder="Your answer" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" autocomplete="off">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">New password</label>
+                    <input type="password" id="forgot-new-password" minlength="6" placeholder="At least 6 characters" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Confirm new password</label>
+                    <input type="password" id="forgot-confirm-password" placeholder="Repeat new password" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <p id="forgot-step2-error" class="text-sm text-red-400 hidden"></p>
+                <button type="button" id="forgot-reset-btn" class="w-full py-3 rounded-xl font-semibold text-white card-gradient">Reset password</button>
+            </div>
+            <p class="text-center text-sm text-slate-400 mt-6"><button type="button" id="forgot-back-login" class="text-indigo-400 font-semibold">Back to login</button></p>
+        </div>
+        <div id="auth-register" class="auth-panel">
+            <div class="pt-8 pb-4">
+                <h1>Create account</h1>
+                <p class="sub">Register to get started</p>
+            </div>
+            <form id="register-form" class="space-y-4">
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Username</label>
+                    <input type="text" id="register-username" required placeholder="Choose a username" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" autocomplete="username">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Full name</label>
+                    <input type="text" id="register-name" required placeholder="Alex Johnson" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Email <span class="text-slate-500">(optional)</span></label>
+                    <input type="email" id="register-email" placeholder="Optional" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Password</label>
+                    <input type="password" id="register-password" required minlength="6" placeholder="At least 6 characters" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Confirm password</label>
+                    <input type="password" id="register-confirm" required placeholder="Repeat password" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Security question</label>
+                    <p class="text-xs text-slate-500 mb-1">Who is your first love name?</p>
+                    <p class="text-[11px] text-slate-500 mb-2">You’ll need this answer to reset your password if you forget it.</p>
+                    <input type="text" id="register-security-answer" required placeholder="Your answer" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" autocomplete="off">
+                </div>
+                <p id="register-error" class="text-sm text-red-400 hidden"></p>
+                <button type="submit" class="w-full py-3 rounded-xl font-semibold text-white card-gradient">Create account</button>
+            </form>
+            <p class="text-center text-sm text-slate-400 mt-6">Already have an account? <button type="button" id="go-login" class="text-indigo-400 font-semibold">Log in</button></p>
+        </div>
+    </div>
+
+    <!-- Main App (after login) -->
+    <div id="app-view" class="mobile-container relative">
+        <!-- Top Header -->
+        <header class="flex-shrink-0 p-6 flex justify-between items-center sticky top-0 z-20 nav-blur">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden">
+                    <img id="header-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Avatar" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-400 font-medium">Welcome back,</p>
+                    <h2 id="header-user-name" class="text-sm font-bold">Alex Johnson</h2>
+                </div>
+            </div>
+            <button type="button" id="header-notification-btn" class="relative w-10 h-10 rounded-full glass flex items-center justify-center text-slate-300 hover:text-white transition-colors" aria-label="Notifications">
+                <i data-lucide="bell" class="w-5 h-5"></i>
+                <span id="notification-badge" class="notification-badge hidden">0</span>
+            </button>
+        </header>
+
+        <div class="app-scroll">
+        <!-- Main Content: Home Screen -->
+        <main id="screen-home" class="screen active px-6 pb-24">
+            
+            <!-- Balance Section -->
+            <section class="mt-4">
+                <p class="text-slate-400 text-sm">Total Balance</p>
+                <div class="flex items-end gap-3 mt-1">
+                    <h1 id="home-balance-amount" class="text-4xl font-bold transition-all duration-200" data-balance="$42,850.45">$42,850.45</h1>
+                    <button type="button" id="toggle-balance-visibility" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white mb-1 transition-colors" aria-label="Toggle balance visibility">
+                        <i data-lucide="eye-off" id="balance-visibility-icon" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Balance meta / quick glance -->
+            <section class="mt-3 flex items-center justify-between text-[11px] text-slate-500">
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-800/70 border border-slate-700/60">
+                        <i data-lucide="sparkles" class="w-3 h-3 text-indigo-400"></i>
+                        <span id="home-account-count">3 accounts</span>
+                    </span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    <span>Updated just now</span>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="mt-6 grid grid-cols-4 gap-4">
+                <div class="flex flex-col items-center gap-2 group cursor-pointer">
+                    <div class="w-full aspect-square rounded-2xl glass flex items-center justify-center text-indigo-400 group-active:scale-95 transition-transform">
+                        <i data-lucide="arrow-up-right" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-[11px] text-slate-400 font-medium">Transfer</span>
+                </div>
+                <div class="flex flex-col items-center gap-2 group cursor-pointer">
+                    <div class="w-full aspect-square rounded-2xl glass flex items-center justify-center text-purple-400 group-active:scale-95 transition-transform">
+                        <i data-lucide="arrow-down" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-[11px] text-slate-400 font-medium">Deposit</span>
+                </div>
+                <div class="flex flex-col items-center gap-2 group cursor-pointer">
+                    <div class="w-full aspect-square rounded-2xl glass flex items-center justify-center text-rose-400 group-active:scale-95 transition-transform">
+                        <i data-lucide="arrow-up-from-line" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-[11px] text-slate-400 font-medium">Withdrawal</span>
+                </div>
+                <div class="flex flex-col items-center gap-2 group cursor-pointer">
+                    <div class="w-full aspect-square rounded-2xl glass flex items-center justify-center text-amber-400 group-active:scale-95 transition-transform">
+                        <i data-lucide="receipt" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-[11px] text-slate-400 font-medium">Bills</span>
+                </div>
+            </section>
+
+            <!-- Overview cards -->
+            <section class="mt-8 space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="rounded-2xl glass p-4 border border-slate-800/60 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[11px] text-slate-400 font-medium">Spent this month</span>
+                            <span class="inline-flex items-center gap-1 text-[11px] text-rose-400">
+                                <i data-lucide="trending-up" class="w-3 h-3"></i>
+                                <span>+8.2%</span>
+                            </span>
+                        </div>
+                        <p class="text-lg font-semibold">$2,847.49</p>
+                        <div class="mt-3 h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                            <div class="h-full w-3/4 bg-gradient-to-r from-rose-400 via-amber-300 to-indigo-400"></div>
+                        </div>
+                    </div>
+                    <div class="rounded-2xl glass p-4 border border-slate-800/60 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[11px] text-slate-400 font-medium">Income this month</span>
+                            <span class="inline-flex items-center gap-1 text-[11px] text-emerald-400">
+                                <i data-lucide="wallet-2" class="w-3 h-3"></i>
+                                <span>Stable</span>
+                            </span>
+                        </div>
+                        <p class="text-lg font-semibold">$4,500.00</p>
+                        <p class="mt-2 text-[11px] text-slate-500">Last salary • Yesterday</p>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl glass p-4 border border-slate-800/60">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-semibold">Smart insights</h3>
+                        <span class="text-[11px] text-indigo-400 font-medium">This week</span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-full bg-emerald-500/15 flex items-center justify-center text-emerald-400">
+                                    <i data-lucide="target" class="w-3.5 h-3.5"></i>
+                                </div>
+                                <p class="text-[11px] text-slate-300">You are on track to hit your savings goal.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-full bg-amber-500/15 flex items-center justify-center text-amber-400">
+                                    <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+                                </div>
+                                <p class="text-[11px] text-slate-300">Shopping is slightly higher than usual.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-full bg-sky-500/15 flex items-center justify-center text-sky-400">
+                                    <i data-lucide="calendar-clock" class="w-3.5 h-3.5"></i>
+                                </div>
+                                <p class="text-[11px] text-slate-300">Next recurring bills due in 3 days.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Account Screen -->
+        <div id="screen-account" class="screen px-6 pb-24">
+            <div class="mt-4">
+                <h2 class="text-xl font-bold">My Accounts</h2>
+                <p class="text-slate-400 text-sm mt-0.5">Balances across all accounts</p>
+            </div>
+
+            <!-- Account balances list (filled by JS) -->
+            <div id="account-list" class="mt-5 space-y-3"></div>
+            <button type="button" id="account-add-new-btn" class="mt-4 w-full rounded-2xl glass p-4 border border-slate-700/50 flex items-center justify-center gap-2 text-slate-400 hover:text-slate-300 hover:bg-slate-800/40 transition-colors">
+                <i data-lucide="plus" class="w-5 h-5"></i>
+                <span class="font-medium text-sm">Create new account</span>
+            </button>
+
+            <!-- Total balance summary -->
+            <div class="mt-5 rounded-2xl glass p-4 flex justify-between items-center border border-slate-700/50">
+                <span class="text-slate-400 text-sm font-medium">Total balance</span>
+                <span id="account-total-balance" class="font-bold text-lg text-white">$0.00</span>
+            </div>
+
+            <!-- Spending stats -->
+            <div class="mt-8">
+                <h3 class="font-bold text-base">Spending overview</h3>
+                <p class="text-slate-400 text-xs mt-0.5">Last 30 days</p>
+            </div>
+            <div class="mt-4 rounded-2xl glass p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-slate-400 text-sm">Total spent</span>
+                    <span class="font-bold text-lg">$2,847.49</span>
+                </div>
+                <div class="h-28 flex items-end gap-2">
+                    <div class="flex-1 rounded-lg bg-indigo-500/40" style="height: 45%"></div>
+                    <div class="flex-1 rounded-lg bg-indigo-500/60" style="height: 65%"></div>
+                    <div class="flex-1 rounded-lg bg-indigo-500/80" style="height: 55%"></div>
+                    <div class="flex-1 rounded-lg bg-indigo-500" style="height: 85%"></div>
+                    <div class="flex-1 rounded-lg bg-indigo-500/70" style="height: 70%"></div>
+                    <div class="flex-1 rounded-lg bg-indigo-500/50" style="height: 50%"></div>
+                </div>
+                <div class="flex justify-between mt-2 text-[10px] text-slate-500">
+                    <span>Mon</span><span>Wed</span><span>Fri</span><span>Sun</span>
+                </div>
+            </div>
+            <div class="mt-4 space-y-2">
+                <div class="rounded-2xl glass p-3 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-400">
+                            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                        </div>
+                        <p class="font-semibold text-sm">Shopping</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] text-slate-500">$1,420.00</span>
+                        <span class="text-[10px] text-slate-400">48%</span>
+                    </div>
+                </div>
+                <div class="rounded-2xl glass p-3 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400">
+                            <i data-lucide="coffee" class="w-4 h-4"></i>
+                        </div>
+                        <p class="font-semibold text-sm">Food & Drink</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] text-slate-500">$386.20</span>
+                        <span class="text-[10px] text-slate-400">13%</span>
+                    </div>
+                </div>
+                <div class="rounded-2xl glass p-3 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <i data-lucide="tv" class="w-4 h-4"></i>
+                        </div>
+                        <p class="font-semibold text-sm">Entertainment</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] text-slate-500">$124.99</span>
+                        <span class="text-[10px] text-slate-400">4%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cards Screen -->
+        <div id="screen-cards" class="screen px-6 pb-24">
+            <div class="mt-4">
+                <h2 class="text-xl font-bold">My Cards</h2>
+                <p class="text-slate-400 text-sm mt-0.5">Manage your payment cards</p>
+            </div>
+            <div id="cards-list" class="mt-6 space-y-4">
+                <!-- Filled by JS -->
+            </div>
+            <button type="button" id="cards-add-new-btn" class="mt-4 w-full rounded-3xl p-6 border-2 border-dashed border-slate-600 bg-slate-800/30 hover:bg-slate-800/50 transition-colors flex items-center justify-center gap-2 text-slate-400 hover:text-slate-300">
+                <i data-lucide="plus-circle" class="w-10 h-10"></i>
+                <span class="text-sm font-medium">Add new card</span>
+            </button>
+        </div>
+
+        <!-- Settings Screen -->
+        <div id="screen-settings" class="screen px-6 pb-24">
+            <div class="mt-4">
+                <h2 class="text-xl font-bold">Settings</h2>
+                <p class="text-slate-400 text-sm mt-0.5">Account & preferences</p>
+            </div>
+            <div class="mt-6 space-y-2">
+                <div class="w-full flex items-center justify-between p-4 rounded-2xl glass border border-slate-800/50">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="moon-star" class="w-5 h-5 text-slate-400"></i>
+                        <div>
+                            <p class="font-medium text-sm">Dark mode</p>
+                            <p id="theme-label" class="text-[11px] text-slate-500">On</p>
+                        </div>
+                    </div>
+                    <label class="switch">
+                        <input id="theme-toggle" type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button type="button" data-setting="profile" class="setting-btn w-full flex items-center justify-between p-4 rounded-2xl glass hover:bg-slate-700/30 transition-colors text-left">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="user" class="w-5 h-5 text-slate-400"></i>
+                        <span class="font-medium text-sm">Profile</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-500"></i>
+                </button>
+                <button type="button" data-setting="security" class="setting-btn w-full flex items-center justify-between p-4 rounded-2xl glass hover:bg-slate-700/30 transition-colors text-left">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="shield" class="w-5 h-5 text-slate-400"></i>
+                        <span class="font-medium text-sm">Security</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-500"></i>
+                </button>
+                <button type="button" data-setting="notifications" class="setting-btn w-full flex items-center justify-between p-4 rounded-2xl glass hover:bg-slate-700/30 transition-colors text-left">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="bell" class="w-5 h-5 text-slate-400"></i>
+                        <span class="font-medium text-sm">Notifications</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-500"></i>
+                </button>
+                <button type="button" data-setting="help" class="setting-btn w-full flex items-center justify-between p-4 rounded-2xl glass hover:bg-slate-700/30 transition-colors text-left">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="help-circle" class="w-5 h-5 text-slate-400"></i>
+                        <span class="font-medium text-sm">Help & Support</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-500"></i>
+                </button>
+                <button type="button" id="logout-btn" class="w-full flex items-center justify-between p-4 rounded-2xl glass hover:bg-red-500/10 border border-red-500/20 transition-colors text-left mt-4">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="log-out" class="w-5 h-5 text-red-400"></i>
+                        <span class="font-medium text-sm text-red-400">Log out</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-500"></i>
+                </button>
+            </div>
+        </div>
+
+        </div>
+        <!-- Bottom Navigation (sticky to bottom) -->
+        <nav class="flex-shrink-0 h-20 min-h-[5rem] px-2 flex items-end justify-between z-40 rounded-b-[40px] safe-area-pb" role="navigation" aria-label="Main navigation">
+            <button type="button" data-nav="home" class="nav-btn flex-1 min-w-0 flex flex-col items-center justify-center gap-1 py-2 text-indigo-400 cursor-pointer transition-colors hover:opacity-90 active:scale-95">
+                <i data-lucide="layout-dashboard" class="w-6 h-6 flex-shrink-0"></i>
+                <span class="text-[10px] font-bold">Home</span>
+            </button>
+            <button type="button" data-nav="account" class="nav-btn flex-1 min-w-0 flex flex-col items-center justify-center gap-1 py-2 text-slate-500 cursor-pointer transition-colors hover:text-slate-300 hover:opacity-90 active:scale-95">
+                <i data-lucide="user-circle" class="w-6 h-6 flex-shrink-0"></i>
+                <span class="text-[10px]">Account</span>
+            </button>
+            <div class="nav-scan-wrap">
+                <button type="button" id="nav-scan-btn" class="nav-btn-scan" aria-label="Scan">
+                    <i data-lucide="scan" class="w-7 h-7"></i>
+                </button>
+            </div>
+            <button type="button" data-nav="cards" class="nav-btn flex-1 min-w-0 flex flex-col items-center justify-center gap-1 py-2 text-slate-500 cursor-pointer transition-colors hover:text-slate-300 hover:opacity-90 active:scale-95">
+                <i data-lucide="credit-card" class="w-6 h-6 flex-shrink-0"></i>
+                <span class="text-[10px]">Cards</span>
+            </button>
+            <button type="button" data-nav="settings" class="nav-btn flex-1 min-w-0 flex flex-col items-center justify-center gap-1 py-2 text-slate-500 cursor-pointer transition-colors hover:text-slate-300 hover:opacity-90 active:scale-95">
+                <i data-lucide="settings" class="w-6 h-6 flex-shrink-0"></i>
+                <span class="text-[10px]">Settings</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Admin Dashboard (when logged in as admin) -->
+    <div id="admin-view" class="mobile-container relative">
+        <header class="flex-shrink-0 p-6 flex justify-between items-center sticky top-0 z-20 nav-blur border-b border-slate-800/50">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-400 font-medium">Admin</p>
+                    <h2 class="text-sm font-bold">Dashboard</h2>
+                </div>
+            </div>
+            <button type="button" id="admin-logout-btn" class="px-4 py-2 rounded-xl glass text-sm font-semibold text-slate-300 hover:text-white hover:bg-slate-700/40 transition-colors flex items-center gap-2">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                Log out
+            </button>
+        </header>
+        <div class="p-6 overflow-y-auto flex-1 pb-8">
+            <h3 class="text-lg font-bold mb-1">Manage Users</h3>
+            <p class="text-slate-400 text-sm mb-4">View and control registered users.</p>
+            <div id="admin-user-list" class="space-y-3">
+                <!-- Filled by JS -->
+            </div>
+            <p id="admin-no-users" class="text-sm text-slate-500 text-center py-8 hidden">No users yet.</p>
+        </div>
+    </div>
+
+    <!-- Admin: Edit user modal -->
+    <div id="admin-edit-user-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold">Edit user</h3>
+                <button type="button" id="close-admin-edit-modal" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <input type="hidden" id="admin-edit-user-index" value="">
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Username</label>
+                    <input type="text" id="admin-edit-username" readonly class="w-full rounded-xl bg-slate-800/50 border border-slate-700 px-4 py-3 text-slate-400 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Full name</label>
+                    <input type="text" id="admin-edit-name" placeholder="Full name" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">New password <span class="text-slate-500">(leave blank to keep current)</span></label>
+                    <input type="password" id="admin-edit-password" placeholder="Optional" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="rounded-2xl glass p-4 flex items-center justify-between border border-slate-700/50">
+                    <div>
+                        <p class="font-semibold text-sm">Freeze account</p>
+                        <p class="text-[11px] text-slate-500">Frozen users cannot log in</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="admin-edit-frozen">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button type="button" id="admin-edit-save" class="w-full py-3 rounded-xl font-semibold text-white card-gradient">Save changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transfer Modal -->
+    <div id="transfer-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold">Transfer</h3>
+                <button type="button" id="close-transfer-modal" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-slate-400 block mb-2">From account</label>
+                    <div id="from-account-list" class="space-y-2">
+                        <!-- Filled by JS: Primary •••• 8824, Savings •••• 1234, etc. -->
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Amount</label>
+                    <input type="text" id="transfer-amount" placeholder="0.00" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">To account number</label>
+                    <input type="text" id="transfer-to" placeholder="e.g. 1234567890" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" inputmode="numeric" pattern="[0-9]*" maxlength="20">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Note <span class="text-slate-500">(optional)</span></label>
+                    <input type="text" id="transfer-note" placeholder="e.g. Rent for March" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-500">
+                </div>
+                <button type="button" id="transfer-send-btn" class="w-full py-3 rounded-xl font-semibold text-white card-gradient mt-4">Transfer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdrawal Modal -->
+    <div id="withdrawal-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold">Withdraw</h3>
+                <button type="button" id="close-withdrawal-modal" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-slate-400 block mb-2">From account</label>
+                    <div id="withdraw-from-account-list" class="space-y-2"></div>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Amount</label>
+                    <input type="text" id="withdraw-amount" placeholder="0.00" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Note <span class="text-slate-500">(optional)</span></label>
+                    <input type="text" id="withdraw-note" placeholder="e.g. Cash" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-500">
+                </div>
+                <button type="button" id="withdraw-submit-btn" class="w-full py-3 rounded-xl font-semibold text-white card-gradient mt-4">Withdraw</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deposit Modal -->
+    <div id="deposit-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold">Deposit</h3>
+                <button type="button" id="close-deposit-modal" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-slate-400 block mb-2">To account</label>
+                    <div id="deposit-to-account-list" class="space-y-2"></div>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Amount</label>
+                    <input type="text" id="deposit-amount" placeholder="0.00" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Note <span class="text-slate-500">(optional)</span></label>
+                    <input type="text" id="deposit-note" placeholder="e.g. Cash deposit" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-500">
+                </div>
+                <button type="button" id="deposit-submit-btn" class="w-full py-3 rounded-xl font-semibold text-white card-gradient mt-4">Deposit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bills modal -->
+    <div id="bills-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold">Pay Bills</h3>
+                <button type="button" id="close-bills-modal" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <p class="text-slate-400 text-sm mb-4">Select a bill type</p>
+            <div class="space-y-2">
+                <button type="button" class="bill-option w-full flex items-center gap-4 p-4 rounded-2xl glass border border-slate-700/50 hover:bg-slate-700/30 transition-colors text-left">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400">
+                        <i data-lucide="wifi" class="w-6 h-6"></i>
+                    </div>
+                    <span class="font-semibold text-sm">Internet</span>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-500 ml-auto"></i>
+                </button>
+                <button type="button" class="bill-option w-full flex items-center gap-4 p-4 rounded-2xl glass border border-slate-700/50 hover:bg-slate-700/30 transition-colors text-left">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                        <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                    </div>
+                    <span class="font-semibold text-sm">Education</span>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-500 ml-auto"></i>
+                </button>
+                <button type="button" class="bill-option w-full flex items-center gap-4 p-4 rounded-2xl glass border border-slate-700/50 hover:bg-slate-700/30 transition-colors text-left">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400">
+                        <i data-lucide="smartphone" class="w-6 h-6"></i>
+                    </div>
+                    <span class="font-semibold text-sm">Phone Bill</span>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-500 ml-auto"></i>
+                </button>
+                <button type="button" id="bill-option-electricity" class="bill-option w-full flex items-center gap-4 p-4 rounded-2xl glass border border-slate-700/50 hover:bg-slate-700/30 transition-colors text-left">
+                    <div class="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center text-yellow-400">
+                        <i data-lucide="zap" class="w-6 h-6"></i>
+                    </div>
+                    <span class="font-semibold text-sm">Electricity</span>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-500 ml-auto"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Electricity bill modal (address + home ID + amount + from account) -->
+    <div id="electricity-bill-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold">Pay Electricity</h3>
+                <button type="button" id="close-electricity-bill-modal" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Address</label>
+                    <input type="text" id="electricity-address" placeholder="Service address" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Home ID</label>
+                    <input type="text" id="electricity-home-id" placeholder="Meter / Home ID" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Amount</label>
+                    <input type="text" id="electricity-amount" placeholder="0.00" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500" inputmode="decimal">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-2">Pay from account</label>
+                    <div id="electricity-account-list" class="space-y-2">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+                <button type="button" id="electricity-pay-btn" class="w-full py-3 rounded-xl font-semibold text-white card-gradient mt-4">Pay (requires PIN)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scan modal (pop out) -->
+    <div id="scan-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold">Scan</h3>
+                <button type="button" id="close-scan-modal" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="flex flex-col items-center justify-center py-12 text-center">
+                <div class="w-48 h-48 rounded-2xl glass flex items-center justify-center mb-6">
+                    <i data-lucide="scan-line" class="w-20 h-20 text-slate-500"></i>
+                </div>
+                <p class="text-slate-400 text-sm">Position QR code or barcode within the frame</p>
+                <p class="text-slate-500 text-xs mt-2">Demo – no camera access</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PIN verification modal (4-digit) -->
+    <div id="pin-verify-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="pin-verify-title" class="text-lg font-bold">Enter PIN</h3>
+                <button type="button" id="close-pin-verify-modal" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <p id="pin-verify-message" class="text-slate-400 text-sm mb-4">Enter your 4-digit PIN to continue.</p>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">PIN</label>
+                    <input type="password" id="pin-verify-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <p id="pin-verify-error" class="text-sm text-red-400 hidden"></p>
+                <div class="flex gap-2">
+                    <button type="button" id="pin-verify-cancel" class="flex-1 py-3 rounded-xl font-semibold border border-slate-600 text-slate-300 hover:bg-slate-700/40">Cancel</button>
+                    <button type="button" id="pin-verify-confirm" class="flex-1 py-3 rounded-xl font-semibold text-white card-gradient">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add account modal -->
+    <div id="add-account-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold">Create new account</h3>
+                <button type="button" id="close-add-account-modal" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Account type</label>
+                    <select id="new-account-type" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="Savings">Savings</option>
+                        <option value="Checking">Checking</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Account name</label>
+                    <input type="text" id="new-account-name" placeholder="e.g. Emergency Fund" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Starting balance <span class="text-slate-500">(optional)</span></label>
+                    <input type="text" id="new-account-balance" placeholder="0.00" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" inputmode="decimal">
+                </div>
+                <p id="add-account-error" class="text-sm text-red-400 hidden"></p>
+                <button type="button" id="add-account-submit" class="w-full py-3 rounded-xl font-semibold text-white card-gradient mt-4">Create account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add new card modal (link to account) -->
+    <div id="add-card-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold">Add new card</h3>
+                <button type="button" id="close-add-card-modal" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Link to account</label>
+                    <div id="add-card-account-list" class="space-y-2"></div>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Card nickname <span class="text-slate-500">(optional)</span></label>
+                    <input type="text" id="new-card-nickname" placeholder="e.g. Daily use" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <button type="button" id="add-card-submit" class="w-full py-3 rounded-xl font-semibold text-white card-gradient mt-4">Add card</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card details modal (view details + change linked account) -->
+    <div id="card-details-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold">Card details</h3>
+                <button type="button" id="close-card-details-modal" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <input type="hidden" id="card-details-id" value="">
+            <div id="card-details-content" class="space-y-4">
+                <div class="card-gradient rounded-2xl p-5">
+                    <p id="card-details-brand" class="text-xs font-bold tracking-widest uppercase opacity-80"></p>
+                    <p id="card-details-number" class="text-lg tracking-[0.15em] font-medium mt-4">**** **** **** ****</p>
+                    <p id="card-details-holder" class="text-sm font-semibold mt-4"></p>
+                    <p id="card-details-expiry" class="text-xs opacity-70 mt-1"></p>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Linked account</label>
+                    <div id="card-details-linked-account-list" class="space-y-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account transactions modal -->
+    <div id="account-transactions-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet max-h-[85vh] flex flex-col" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h3 id="account-modal-title" class="text-lg font-bold">Account</h3>
+                    <p id="account-modal-subtitle" class="text-slate-400 text-xs mt-0.5">•••• 0000</p>
+                </div>
+                <button type="button" id="close-account-modal" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="rounded-xl glass px-4 py-3 mb-4 flex justify-between items-center">
+                <span class="text-slate-400 text-sm">Available balance</span>
+                <span id="account-modal-balance" class="font-bold text-lg">$0.00</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-2">Recent transactions</p>
+            <div id="account-transactions-list" class="space-y-2 overflow-y-auto flex-1 min-h-0">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings: Profile modal -->
+    <div id="profile-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold">Profile</h3>
+                <button type="button" data-close-modal="profile-modal" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Username</label>
+                    <input id="profile-username" type="text" readonly placeholder="Username" class="w-full rounded-xl bg-slate-800/50 border border-slate-700 px-4 py-3 focus:outline-none text-slate-400">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Full name</label>
+                    <input id="profile-name" type="text" value="" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Email <span class="text-slate-500">(optional)</span></label>
+                    <input id="profile-email" type="email" value="" placeholder="Optional" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Phone</label>
+                    <input id="profile-phone" type="tel" value="+1 555 0100" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <button type="button" id="save-profile" class="w-full py-3 rounded-xl font-semibold text-white card-gradient mt-2">Save changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings: Security modal -->
+    <div id="security-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold">Security</h3>
+                <button type="button" data-close-modal="security-modal" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <div class="rounded-2xl glass p-4 flex items-center justify-between">
+                    <div>
+                        <p class="font-semibold text-sm">Biometric login</p>
+                        <p class="text-[11px] text-slate-500">Use fingerprint/face to sign in</p>
+                    </div>
+                    <label class="switch">
+                        <input id="sec-biometric" type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="rounded-2xl glass p-4 flex items-center justify-between">
+                    <div>
+                        <p class="font-semibold text-sm">Two-factor authentication</p>
+                        <p class="text-[11px] text-slate-500">Extra verification on sign-in</p>
+                    </div>
+                    <label class="switch">
+                        <input id="sec-2fa" type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="rounded-2xl glass p-4 space-y-3">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="key-round" class="w-5 h-5 text-slate-400"></i>
+                        <span class="font-semibold text-sm">Transaction PIN (4 digits)</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500">Required for transfers, withdrawals, bills, and viewing card/transaction details.</p>
+                    <div id="pin-current-wrap" class="hidden">
+                        <label class="text-xs text-slate-400 block mb-1">Current PIN</label>
+                        <input type="password" id="sec-pin-current" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-2 text-center tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">New PIN</label>
+                        <input type="password" id="sec-pin-new" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-2 text-center tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Confirm PIN</label>
+                        <input type="password" id="sec-pin-confirm" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-2 text-center tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <p id="sec-pin-error" class="text-sm text-red-400 hidden"></p>
+                    <button type="button" id="set-transaction-pin" class="w-full py-2 rounded-xl font-semibold border border-indigo-500/50 text-indigo-400 hover:bg-indigo-500/10">Set PIN</button>
+                </div>
+                <button type="button" id="save-security" class="w-full py-3 rounded-xl font-semibold text-white card-gradient mt-2">Save security</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings: Notifications modal -->
+    <div id="notifications-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold">Notifications</h3>
+                <button type="button" data-close-modal="notifications-modal" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <div class="rounded-2xl glass p-4 flex items-center justify-between">
+                    <div>
+                        <p class="font-semibold text-sm">Transaction alerts</p>
+                        <p class="text-[11px] text-slate-500">Payments, transfers, deposits</p>
+                    </div>
+                    <label class="switch">
+                        <input id="notif-tx" type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="rounded-2xl glass p-4 flex items-center justify-between">
+                    <div>
+                        <p class="font-semibold text-sm">Monthly summary</p>
+                        <p class="text-[11px] text-slate-500">Spending and balance recap</p>
+                    </div>
+                    <label class="switch">
+                        <input id="notif-summary" type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="rounded-2xl glass p-4 flex items-center justify-between">
+                    <div>
+                        <p class="font-semibold text-sm">Marketing updates</p>
+                        <p class="text-[11px] text-slate-500">Product news and offers</p>
+                    </div>
+                    <label class="switch">
+                        <input id="notif-marketing" type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button type="button" id="save-notifications" class="w-full py-3 rounded-xl font-semibold text-white card-gradient mt-2">Save notifications</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings: Help modal -->
+    <div id="help-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold">Help & Support</h3>
+                <button type="button" data-close-modal="help-modal" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-2">
+                <div class="rounded-2xl glass p-4">
+                    <p class="font-semibold text-sm">Support email</p>
+                    <p class="text-[11px] text-slate-500 mt-0.5">support@bankapp.demo</p>
+                    <button type="button" id="copy-support-email" class="mt-3 w-full py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm font-semibold hover:bg-slate-700/40 transition-colors">Copy email</button>
+                </div>
+                <a href="mailto:support@bankapp.demo" class="w-full block rounded-2xl glass p-4 hover:bg-slate-700/20 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="mail" class="w-5 h-5 text-slate-400"></i>
+                            <span class="font-semibold text-sm">Contact support</span>
+                        </div>
+                        <i data-lucide="external-link" class="w-5 h-5 text-slate-500"></i>
+                    </div>
+                </a>
+                <button type="button" id="report-issue" class="w-full rounded-2xl glass p-4 hover:bg-slate-700/20 transition-colors text-left">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="bug" class="w-5 h-5 text-slate-400"></i>
+                            <span class="font-semibold text-sm">Report an issue</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-slate-500"></i>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification panel (bell dropdown) -->
+    <div id="notification-panel-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-sheet max-h-[85vh] flex flex-col" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Notifications</h3>
+                <div class="flex items-center gap-2">
+                    <button type="button" id="notification-clear-all" class="text-xs text-slate-400 hover:text-white font-medium px-2 py-1 rounded-lg hover:bg-slate-700/40 transition-colors">Clear all</button>
+                    <button type="button" id="close-notification-panel" class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="notification-list" class="space-y-2 overflow-y-auto flex-1 min-h-0">
+                <!-- Filled by JS -->
+            </div>
+            <p id="notification-empty" class="text-sm text-slate-500 text-center py-8 hidden">No notifications yet.</p>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast">
+        <div class="glass rounded-2xl px-4 py-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/15 flex items-center justify-center text-emerald-400">
+                    <i data-lucide="check" class="w-5 h-5"></i>
+                </div>
+                <p id="toast-message" class="text-sm font-semibold">Saved</p>
+            </div>
+            <button type="button" id="toast-close" class="w-9 h-9 rounded-xl bg-slate-800/60 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+
+            const screens = document.querySelectorAll('.screen');
+            const navBtns = document.querySelectorAll('.nav-btn');
+            const transferModal = document.getElementById('transfer-modal');
+            const closeModalBtn = document.getElementById('close-transfer-modal');
+            const accountTransactionsModal = document.getElementById('account-transactions-modal');
+            const closeAccountModalBtn = document.getElementById('close-account-modal');
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeLabel = document.getElementById('theme-label');
+            const toastEl = document.getElementById('toast');
+            const toastMsgEl = document.getElementById('toast-message');
+            const toastCloseEl = document.getElementById('toast-close');
+
+            let toastTimer = null;
+            function showToast(message) {
+                if (!toastEl || !toastMsgEl) return;
+                toastMsgEl.textContent = message;
+                toastEl.classList.add('show');
+                if (window.lucide) lucide.createIcons();
+                if (toastTimer) clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+            }
+            if (toastCloseEl) toastCloseEl.addEventListener('click', () => toastEl?.classList.remove('show'));
+
+            function openModal(modalId) {
+                const el = document.getElementById(modalId);
+                if (!el) return;
+                el.classList.add('active');
+                el.setAttribute('aria-hidden', 'false');
+                if (window.lucide) lucide.createIcons();
+            }
+            function closeModal(modalId) {
+                const el = document.getElementById(modalId);
+                if (!el) return;
+                el.classList.remove('active');
+                el.setAttribute('aria-hidden', 'true');
+            }
+
+            function applyTheme(theme) {
+                document.body.classList.toggle('theme-light', theme === 'light');
+                document.body.classList.toggle('theme-dark', theme === 'dark');
+                if (themeToggle) themeToggle.checked = (theme === 'dark');
+                if (themeLabel) themeLabel.textContent = (theme === 'dark') ? 'On' : 'Off';
+                try { localStorage.setItem('theme', theme); } catch {}
+                if (window.lucide) lucide.createIcons();
+            }
+            function initTheme() {
+                let theme = null;
+                try { theme = localStorage.getItem('theme'); } catch {}
+                if (theme !== 'light' && theme !== 'dark') {
+                    theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+                }
+                applyTheme(theme);
+            }
+            initTheme();
+            if (themeToggle) {
+                themeToggle.addEventListener('change', () => {
+                    applyTheme(themeToggle.checked ? 'dark' : 'light');
+                });
+            }
+
+            const NOTIFICATIONS_KEY = 'bankapp_notifications';
+            const DEFAULT_NOTIFICATIONS = [
+                { id: 'n1', title: 'Transaction completed', message: 'Payment of $12.50 to Starbucks was successful.', time: '5h ago', read: false, type: 'transaction', icon: 'check-circle' },
+                { id: 'n2', title: 'Salary deposited', message: '+$4,500.00 credited to Primary account.', time: 'Yesterday', read: false, type: 'deposit', icon: 'wallet-2' },
+                { id: 'n3', title: 'Card used', message: 'Platinum Pro •••• 8824 used at Apple Store.', time: '2h ago', read: false, type: 'transaction', icon: 'credit-card' },
+                { id: 'n4', title: 'Monthly summary ready', message: 'Your spending overview for last month is available.', time: '2 days ago', read: true, type: 'summary', icon: 'bar-chart-2' }
+            ];
+            function getNotifications() {
+                try {
+                    const raw = localStorage.getItem(NOTIFICATIONS_KEY);
+                    if (raw) return JSON.parse(raw);
+                    return JSON.parse(JSON.stringify(DEFAULT_NOTIFICATIONS));
+                } catch { return JSON.parse(JSON.stringify(DEFAULT_NOTIFICATIONS)); }
+            }
+            function saveNotifications(list) {
+                try { localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(list)); } catch {}
+                updateNotificationBadge();
+            }
+            function updateNotificationBadge() {
+                const badge = document.getElementById('notification-badge');
+                if (!badge) return;
+                const list = getNotifications();
+                const unread = list.filter(n => !n.read).length;
+                badge.textContent = unread > 99 ? '99+' : String(unread);
+                badge.classList.toggle('hidden', unread === 0);
+                if (window.lucide) lucide.createIcons();
+            }
+
+            const notificationPanelModal = document.getElementById('notification-panel-modal');
+            const notificationListEl = document.getElementById('notification-list');
+            const notificationEmptyEl = document.getElementById('notification-empty');
+            function renderNotificationList() {
+                const list = getNotifications();
+                if (!notificationListEl || !notificationEmptyEl) return;
+                if (list.length === 0) {
+                    notificationListEl.innerHTML = '';
+                    notificationListEl.classList.add('hidden');
+                    notificationEmptyEl.classList.remove('hidden');
+                } else {
+                    notificationEmptyEl.classList.add('hidden');
+                    notificationListEl.classList.remove('hidden');
+                    notificationListEl.innerHTML = list.map(n => `
+                        <button type="button" class="notification-item w-full flex items-start gap-3 p-3 rounded-xl text-left transition-colors ${n.read ? 'bg-slate-800/30 opacity-75' : 'bg-slate-800/60 hover:bg-slate-700/40'} border border-slate-700/50" data-notification-id="${n.id}">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${n.type === 'deposit' ? 'bg-emerald-500/20 text-emerald-400' : n.type === 'summary' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-slate-700 text-slate-400'}">
+                                <i data-lucide="${n.icon || 'bell'}" class="w-5 h-5"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-semibold text-sm">${n.title}</p>
+                                <p class="text-[11px] text-slate-500 mt-0.5">${n.message}</p>
+                                <p class="text-[10px] text-slate-500 mt-1">${n.time}</p>
+                            </div>
+                        </button>
+                    `).join('');
+                    if (window.lucide) lucide.createIcons();
+                    notificationListEl.querySelectorAll('.notification-item').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.getAttribute('data-notification-id');
+                            const list = getNotifications();
+                            const item = list.find(n => n.id === id);
+                            if (item) { item.read = true; saveNotifications(list); renderNotificationList(); }
+                        });
+                    });
+                }
+            }
+            function openNotificationPanel() {
+                if (!notificationPanelModal) return;
+                const list = getNotifications();
+                const hasUnread = list.some(n => !n.read);
+                if (hasUnread) {
+                    list.forEach(n => { n.read = true; });
+                    saveNotifications(list);
+                }
+                renderNotificationList();
+                notificationPanelModal.classList.add('active');
+                notificationPanelModal.setAttribute('aria-hidden', 'false');
+                if (window.lucide) lucide.createIcons();
+            }
+            function closeNotificationPanel() {
+                if (notificationPanelModal) {
+                    notificationPanelModal.classList.remove('active');
+                    notificationPanelModal.setAttribute('aria-hidden', 'true');
+                }
+            }
+            document.getElementById('header-notification-btn')?.addEventListener('click', openNotificationPanel);
+            document.getElementById('close-notification-panel')?.addEventListener('click', closeNotificationPanel);
+            document.getElementById('notification-clear-all')?.addEventListener('click', () => {
+                saveNotifications([]);
+                renderNotificationList();
+                closeNotificationPanel();
+                showToast('Notifications cleared');
+            });
+            if (notificationPanelModal) notificationPanelModal.addEventListener('click', (e) => { if (e.target === notificationPanelModal) closeNotificationPanel(); });
+            updateNotificationBadge();
+
+            const AUTH_USERS_KEY = 'bankapp_users';
+            const AUTH_CURRENT_KEY = 'bankapp_currentUser';
+            function getUsers() {
+                try {
+                    const raw = localStorage.getItem(AUTH_USERS_KEY);
+                    let users = raw ? JSON.parse(raw) : [];
+                    if (!users.some(u => (u.username || '').toLowerCase() === 'admin')) {
+                        users = [{ username: 'admin', name: 'Administrator', email: '', password: 'admin123', securityAnswer: 'admin', frozen: false }, ...users];
+                        try { localStorage.setItem(AUTH_USERS_KEY, JSON.stringify(users)); } catch {} 
+                    }
+                    return users;
+                } catch { return []; }
+            }
+            function saveUsers(users) {
+                try { localStorage.setItem(AUTH_USERS_KEY, JSON.stringify(users)); } catch {}
+            }
+            function setCurrentUser(user) {
+                try { localStorage.setItem(AUTH_CURRENT_KEY, JSON.stringify(user)); } catch {}
+            }
+            function getCurrentUser() {
+                try {
+                    const raw = localStorage.getItem(AUTH_CURRENT_KEY);
+                    return raw ? JSON.parse(raw) : null;
+                } catch { return null; }
+            }
+            function clearCurrentUser() {
+                try { localStorage.removeItem(AUTH_CURRENT_KEY); } catch {}
+            }
+            function getTransactionPin() {
+                const u = getCurrentUser();
+                if (!u || !u.username) return null;
+                const users = getUsers();
+                const user = users.find(x => (x.username || '').toLowerCase() === (u.username || '').toLowerCase());
+                return user && user.transactionPin ? user.transactionPin : null;
+            }
+            function setTransactionPin(pin) {
+                const u = getCurrentUser();
+                if (!u || !u.username) return;
+                const users = getUsers();
+                const idx = users.findIndex(x => (x.username || '').toLowerCase() === (u.username || '').toLowerCase());
+                if (idx >= 0) { users[idx].transactionPin = pin; saveUsers(users); }
+            }
+            function getAccountsKey() {
+                const u = getCurrentUser();
+                return 'bankapp_accounts_' + (u && u.username ? u.username.toLowerCase() : 'default');
+            }
+            function getCardsKey() {
+                const u = getCurrentUser();
+                return 'bankapp_cards_' + (u && u.username ? u.username.toLowerCase() : 'default');
+            }
+            const defaultAccounts = [
+                { id: '1', name: 'Primary', type: 'Checking', masked: '•••• 8824', balance: 42850.45 },
+                { id: '2', name: 'Savings', type: 'Savings', masked: '•••• 1234', balance: 12500.00 },
+                { id: '3', name: 'Checking', type: 'Checking', masked: '•••• 5566', balance: 3200.00 }
+            ];
+            function getAccounts() {
+                try {
+                    const raw = localStorage.getItem(getAccountsKey());
+                    if (raw) return JSON.parse(raw);
+                    return JSON.parse(JSON.stringify(defaultAccounts));
+                } catch { return JSON.parse(JSON.stringify(defaultAccounts)); }
+            }
+            function saveAccounts(accounts) {
+                try { localStorage.setItem(getAccountsKey(), JSON.stringify(accounts)); } catch {}
+            }
+            const defaultCards = [
+                { id: 'c1', linkedAccountId: '1', brand: 'Platinum Pro', last4: '8824', expiry: '09/27', nickname: '' }
+            ];
+            function getCards() {
+                try {
+                    const raw = localStorage.getItem(getCardsKey());
+                    if (raw) return JSON.parse(raw);
+                    return JSON.parse(JSON.stringify(defaultCards)); 
+                } catch { return JSON.parse(JSON.stringify(defaultCards)); }
+            }
+            function saveCards(cards) {
+                try { localStorage.setItem(getCardsKey(), JSON.stringify(cards)); } catch {}
+            }
+
+            const authView = document.getElementById('auth-view');
+            const appView = document.getElementById('app-view');
+            const adminView = document.getElementById('admin-view');
+            const headerUserName = document.getElementById('header-user-name');
+            const headerAvatar = document.getElementById('header-avatar');
+            function showApp(user) {
+                if (authView) { authView.classList.remove('active'); authView.style.display = 'none'; }
+                if (adminView) { adminView.classList.remove('active'); adminView.style.display = 'none'; }
+                if (appView) appView.style.display = 'block';
+                if (headerUserName && user) headerUserName.textContent = user.name || 'User';
+                if (headerAvatar && user) headerAvatar.src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + encodeURIComponent(user.email || user.username || 'user');
+                updateNotificationBadge();
+                if (window.lucide) lucide.createIcons();
+            }
+            function showAdminView() {
+                if (authView) { authView.classList.remove('active'); authView.style.display = 'none'; }
+                if (appView) appView.style.display = 'none'; 
+                if (adminView) { adminView.classList.add('active'); adminView.style.display = 'block'; }
+                renderAdminUserList();
+                if (window.lucide) lucide.createIcons();
+            }
+            function showAuth() {
+                if (authView) { authView.classList.add('active'); authView.style.display = 'block'; }
+                if (appView) appView.style.display = 'none'; 
+                if (adminView) { adminView.classList.remove('active'); adminView.style.display = 'none'; }
+                document.getElementById('auth-login')?.classList.add('active');
+                document.getElementById('auth-register')?.classList.remove('active');
+                document.getElementById('auth-forgot')?.classList.remove('active');
+                document.getElementById('login-error')?.classList.add('hidden');
+                document.getElementById('register-error')?.classList.add('hidden');
+                const step1 = document.getElementById('forgot-step-1');
+                const step2 = document.getElementById('forgot-step-2');
+                if (step1) step1.classList.remove('hidden');
+                if (step2) step2.classList.add('hidden');
+                if (window.lucide) lucide.createIcons();
+            }
+
+            const loginForm = document.getElementById('login-form');
+            const loginError = document.getElementById('login-error');
+            if (loginForm) {
+                loginForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const input = (document.getElementById('login-email')?.value || '').trim().toLowerCase();
+                    const password = document.getElementById('login-password')?.value || '';
+                    const users = getUsers();
+                    const user = users.find(u =>
+                        (u.username || '').toLowerCase() === input || (u.email || '').toLowerCase() === input
+                    );
+                    if (!user || user.password !== password) {
+                        if (loginError) { loginError.textContent = 'Invalid username/email or password.'; loginError.classList.remove('hidden'); }
+                        return;
+                    }
+                    if (user.frozen) {
+                        if (loginError) { loginError.textContent = 'Account is frozen. Contact administrator.'; loginError.classList.remove('hidden'); }
+                        return;
+                    }
+                    setCurrentUser({ username: user.username || user.email, email: user.email, name: user.name });
+                    const isAdmin = (user.username || '').toLowerCase() === 'admin';
+                    if (isAdmin) showAdminView();
+                    else showApp(getCurrentUser());
+                });
+            }
+            const registerForm = document.getElementById('register-form');
+            const registerError = document.getElementById('register-error');
+            if (registerForm) {
+                registerForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const username = (document.getElementById('register-username')?.value || '').trim();
+                    const name = (document.getElementById('register-name')?.value || '').trim();
+                    const email = (document.getElementById('register-email')?.value || '').trim().toLowerCase();
+                    const password = document.getElementById('register-password')?.value || '';
+                    const confirm = document.getElementById('register-confirm')?.value || '';
+                    if (!username) {
+                        if (registerError) { registerError.textContent = 'Username is required.'; registerError.classList.remove('hidden'); }
+                        return;
+                    }
+                    if (password.length < 6) {
+                        if (registerError) { registerError.textContent = 'Password must be at least 6 characters.'; registerError.classList.remove('hidden'); }
+                        return;
+                    }
+                    if (password !== confirm) {
+                        if (registerError) { registerError.textContent = 'Passwords do not match.'; registerError.classList.remove('hidden'); }
+                        return;
+                    }
+                    const users = getUsers();
+                    if (users.some(u => (u.username || '').toLowerCase() === username.toLowerCase())) {
+                        if (registerError) { registerError.textContent = 'This username is already taken.'; registerError.classList.remove('hidden'); }
+                        return;
+                    }
+                    if (email && users.some(u => (u.email || '').toLowerCase() === email)) {
+                        if (registerError) { registerError.textContent = 'An account with this email already exists.'; registerError.classList.remove('hidden'); }
+                        return;
+                    }
+                    const securityAnswer = (document.getElementById('register-security-answer')?.value || '').trim();
+                    if (!securityAnswer) {
+                        if (registerError) { registerError.textContent = 'Security answer is required.'; registerError.classList.remove('hidden'); }
+                        return;
+                    }
+                    users.push({ username: username.toLowerCase(), email: email || undefined, password, name: name || username, securityAnswer, frozen: false });
+                    saveUsers(users);
+                    setCurrentUser({ username: username.toLowerCase(), email: email || undefined, name: name || username });
+                    showApp(getCurrentUser());
+                });
+            }
+            document.getElementById('go-register')?.addEventListener('click', () => {
+                document.getElementById('auth-login')?.classList.remove('active');
+                document.getElementById('auth-register')?.classList.add('active');
+                document.getElementById('auth-forgot')?.classList.remove('active');
+                if (loginError) loginError.classList.add('hidden');
+                if (registerError) registerError.classList.add('hidden');
+                if (window.lucide) lucide.createIcons();
+            });
+            document.getElementById('go-login')?.addEventListener('click', () => {
+                document.getElementById('auth-register')?.classList.remove('active');
+                document.getElementById('auth-login')?.classList.add('active');
+                document.getElementById('auth-forgot')?.classList.remove('active');
+                if (registerError) registerError.classList.add('hidden');
+                if (loginError) loginError.classList.add('hidden');
+                if (window.lucide) lucide.createIcons();
+            });
+            let forgotPasswordUser = null;
+            document.getElementById('go-forgot')?.addEventListener('click', () => {
+                document.getElementById('auth-login')?.classList.remove('active');
+                document.getElementById('auth-register')?.classList.remove('active');
+                document.getElementById('auth-forgot')?.classList.add('active');
+                document.getElementById('forgot-step-1')?.classList.remove('hidden');
+                document.getElementById('forgot-step-2')?.classList.add('hidden');
+                document.getElementById('forgot-username').value = '';
+                document.getElementById('forgot-error')?.classList.add('hidden');
+                forgotPasswordUser = null;
+                if (window.lucide) lucide.createIcons();
+            });
+            document.getElementById('forgot-back-login')?.addEventListener('click', () => {
+                document.getElementById('auth-forgot')?.classList.remove('active');
+                document.getElementById('auth-login')?.classList.add('active');
+                forgotPasswordUser = null;
+                if (window.lucide) lucide.createIcons();
+            });
+            document.getElementById('forgot-continue')?.addEventListener('click', () => {
+                const input = (document.getElementById('forgot-username')?.value || '').trim().toLowerCase();
+                const errEl = document.getElementById('forgot-error');
+                if (!input) {
+                    if (errEl) { errEl.textContent = 'Enter your username or email.'; errEl.classList.remove('hidden'); }
+                    return;
+                }
+                const users = getUsers();
+                const user = users.find(u => (u.username || '').toLowerCase() === input || (u.email || '').toLowerCase() === input);
+                if (!user) {
+                    if (errEl) { errEl.textContent = 'No account found with that username or email.'; errEl.classList.remove('hidden'); }
+                    return;
+                }
+                forgotPasswordUser = { user, userIndex: users.indexOf(user) };
+                if (errEl) errEl.classList.add('hidden');
+                document.getElementById('forgot-step-1')?.classList.add('hidden');
+                document.getElementById('forgot-step-2')?.classList.remove('hidden');
+                document.getElementById('forgot-security-answer').value = '';
+                document.getElementById('forgot-new-password').value = '';
+                document.getElementById('forgot-confirm-password').value = '';
+                document.getElementById('forgot-step2-error')?.classList.add('hidden');
+                if (window.lucide) lucide.createIcons();
+            });
+            document.getElementById('forgot-reset-btn')?.addEventListener('click', () => {
+                const errEl = document.getElementById('forgot-step2-error');
+                if (!forgotPasswordUser) return;
+                const answer = (document.getElementById('forgot-security-answer')?.value || '').trim().toLowerCase();
+                const stored = ((forgotPasswordUser.user.securityAnswer || '') + '').trim().toLowerCase();
+                if (answer !== stored) {
+                    if (errEl) { errEl.textContent = 'Incorrect security answer.'; errEl.classList.remove('hidden'); }
+                    return;
+                }
+                const newPass = document.getElementById('forgot-new-password')?.value || '';
+                const confirmPass = document.getElementById('forgot-confirm-password')?.value || '';
+                if (newPass.length < 6) {
+                    if (errEl) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.classList.remove('hidden'); }
+                    return;
+                }
+                if (newPass !== confirmPass) {
+                    if (errEl) { errEl.textContent = 'Passwords do not match.'; errEl.classList.remove('hidden'); }
+                    return;
+                }
+                const users = getUsers();
+                if (users[forgotPasswordUser.userIndex]) {
+                    users[forgotPasswordUser.userIndex].password = newPass;
+                    saveUsers(users);
+                }
+                forgotPasswordUser = null;
+                document.getElementById('auth-forgot')?.classList.remove('active');
+                document.getElementById('auth-login')?.classList.add('active');
+                document.getElementById('forgot-step-1')?.classList.remove('hidden');
+                document.getElementById('forgot-step-2')?.classList.add('hidden');
+                if (errEl) errEl.classList.add('hidden');
+                showToast('Password updated. You can log in now.');
+                if (window.lucide) lucide.createIcons();
+            });
+            document.getElementById('logout-btn')?.addEventListener('click', () => {
+                clearCurrentUser();
+                showAuth();
+            });
+
+            const currentUser = getCurrentUser();
+            if (currentUser) {
+                if ((currentUser.username || '').toLowerCase() === 'admin') showAdminView();
+                else showApp(currentUser);
+            } else showAuth();
+
+            function renderAdminUserList() {
+                const listEl = document.getElementById('admin-user-list');
+                const emptyEl = document.getElementById('admin-no-users');
+                if (!listEl || !emptyEl) return;
+                const users = getUsers();
+                if (users.length === 0) {
+                    listEl.innerHTML = '';
+                    listEl.classList.add('hidden');
+                    emptyEl.classList.remove('hidden');
+                } else {
+                    emptyEl.classList.add('hidden');
+                    listEl.classList.remove('hidden');
+                    const currentUsername = (getCurrentUser()?.username || '').toLowerCase();
+                    listEl.innerHTML = users.map((u, idx) => {
+                        const un = (u.username || '').toLowerCase();
+                        const isAdminUser = un === 'admin';
+                        const frozen = !!u.frozen;
+                        return `
+                        <div class="rounded-2xl glass p-4 border border-slate-700/50 flex flex-col gap-2">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-slate-700 flex items-center justify-center text-slate-400">
+                                        <i data-lucide="${isAdminUser ? 'shield-check' : 'user'}" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-sm">${(u.name || u.username || 'User').replace(/</g, '&lt;')}</p>
+                                        <p class="text-[11px] text-slate-500">@${(u.username || '').replace(/</g, '&lt;')}</p>
+                                        ${u.email ? `<p class="text-[11px] text-slate-500">${(u.email || '').replace(/</g, '&lt;')}</p>` : ''}
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1.5 flex-shrink-0">
+                                    ${frozen ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-400">Frozen</span>' : ''}
+                                    ${isAdminUser ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400">Admin</span>' : ''}
+                                </div>
+                            </div>
+                            <div class="flex gap-2 mt-1">
+                                <button type="button" class="admin-edit-user flex-1 py-2 rounded-xl text-sm font-semibold border border-slate-600 text-slate-300 hover:bg-slate-700/40 transition-colors" data-user-index="${idx}">Edit</button>
+                                ${!isAdminUser ? `<button type="button" class="admin-delete-user py-2 rounded-xl text-sm font-semibold border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors flex-1" data-user-index="${idx}" data-username="${(u.username || '').replace(/"/g, '&quot;')}">Delete</button>` : ''}
+                            </div>
+                        </div>
+                    `}).join('');
+                    if (window.lucide) lucide.createIcons();
+                    listEl.querySelectorAll('.admin-edit-user').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const idx = parseInt(btn.getAttribute('data-user-index'), 10);
+                            const users = getUsers();
+                            const u = users[idx];
+                            if (!u) return;
+                            document.getElementById('admin-edit-user-index').value = String(idx);
+                            document.getElementById('admin-edit-username').value = u.username || '';
+                            document.getElementById('admin-edit-name').value = u.name || u.username || '';
+                            document.getElementById('admin-edit-password').value = '';
+                            document.getElementById('admin-edit-frozen').checked = !!u.frozen;
+                            const isAdminUser = (u.username || '').toLowerCase() === 'admin';
+                            document.getElementById('admin-edit-frozen').closest('.glass').style.display = isAdminUser ? 'none' : '';
+                            document.getElementById('admin-edit-user-modal').classList.add('active');
+                            document.getElementById('admin-edit-user-modal').setAttribute('aria-hidden', 'false');
+                            if (window.lucide) lucide.createIcons();
+                        });
+                    });
+                    listEl.querySelectorAll('.admin-delete-user').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const username = btn.getAttribute('data-username');
+                            if (!confirm('Delete user “‘ + username + ’”? This cannot be undone.')) return;
+                            const users = getUsers();
+                            const filtered = users.filter((u, i) => i !== parseInt(btn.getAttribute('data-user-index'), 10));
+                            saveUsers(filtered);
+                            const cur = getCurrentUser();
+                            if (cur && (cur.username || '').toLowerCase() === (username || '').toLowerCase()) {
+                                clearCurrentUser();
+                                showAuth();
+                                showToast('Your account was removed. Logged out.');
+                            } else {
+                                renderAdminUserList();
+                                showToast('User removed');
+                            }
+                        });
+                    });
+                }
+            }
+            const adminEditModal = document.getElementById('admin-edit-user-modal');
+            document.getElementById('close-admin-edit-modal')?.addEventListener('click', () => {
+                if (adminEditModal) { adminEditModal.classList.remove('active'); adminEditModal.setAttribute('aria-hidden', 'true'); }
+            });
+            if (adminEditModal) adminEditModal.addEventListener('click', (e) => { if (e.target === adminEditModal) { adminEditModal.classList.remove('active'); adminEditModal.setAttribute('aria-hidden', 'true'); } });
+            document.getElementById('admin-edit-save')?.addEventListener('click', () => {
+                const idx = parseInt(document.getElementById('admin-edit-user-index')?.value || '-1', 10);
+                const name = (document.getElementById('admin-edit-name')?.value || '').trim();
+                const newPassword = (document.getElementById('admin-edit-password')?.value || '').trim();
+                const frozen = document.getElementById('admin-edit-frozen')?.checked || false;
+                const users = getUsers();
+                if (idx < 0 || idx >= users.length) return;
+                if (name) users[idx].name = name;
+                if (newPassword.length >= 6) users[idx].password = newPassword;
+                users[idx].frozen = frozen;
+                saveUsers(users);
+                if (adminEditModal) { adminEditModal.classList.remove('active'); adminEditModal.setAttribute('aria-hidden', 'true'); }
+                renderAdminUserList();
+                showToast('User updated');
+            });
+            document.getElementById('admin-logout-btn')?.addEventListener('click', () => {
+                clearCurrentUser();
+                showAuth();
+            });
+
+            let userAccounts = getAccounts();
+            let selectedFromAccountId = userAccounts[0] ? userAccounts[0].id : '';
+            let selectedWithdrawAccountId = userAccounts[0] ? userAccounts[0].id : '';
+            let selectedDepositToAccountId = userAccounts[0] ? userAccounts[0].id : '';
+            let selectedAddCardAccountId = userAccounts[0] ? userAccounts[0].id : '';
+            let selectedElectricityAccountId = userAccounts[0] ? userAccounts[0].id : '';
+
+            const accountTransactions = {
+                '1': [
+                    { title: 'Apple Store', subtitle: 'Electronics • 2h ago', amount: -1299, icon: 'shopping-cart', iconBg: 'bg-orange-500/10', iconColor: 'text-orange-500' },
+                    { title: 'Starbucks', subtitle: 'Food & Drink • 5h ago', amount: -12.50, icon: 'coffee', iconBg: 'bg-blue-500/10', iconColor: 'text-blue-400' },
+                    { title: 'Salary Deposit', subtitle: 'Income • Yesterday', amount: 4500, icon: 'wallet-2', iconBg: 'bg-emerald-500/10', iconColor: 'text-emerald-400' },
+                    { title: 'Netflix', subtitle: 'Entertainment • 2 days ago', amount: -15.99, icon: 'tv-2', iconBg: 'bg-rose-500/10', iconColor: 'text-rose-400' },
+                    { title: 'Amazon', subtitle: 'Shopping • 3 days ago', amount: -89.00, icon: 'package', iconBg: 'bg-amber-500/10', iconColor: 'text-amber-400' }
+                ],
+                '2': [
+                    { title: 'Interest Credit', subtitle: 'Monthly interest • Today', amount: 42.15, icon: 'trending-up', iconBg: 'bg-emerald-500/10', iconColor: 'text-emerald-400' },
+                    { title: 'Transfer from Primary', subtitle: 'Internal transfer • Yesterday', amount: 500, icon: 'arrow-down-left', iconBg: 'bg-indigo-500/10', iconColor: 'text-indigo-400' },
+                    { title: 'Recurring Deposit', subtitle: 'Auto-save • 5 days ago', amount: 200, icon: 'piggy-bank', iconBg: 'bg-emerald-500/10', iconColor: 'text-emerald-400' }
+                ],
+                '3': [
+                    { title: 'Grocery Store', subtitle: 'Shopping • 1h ago', amount: -78.32, icon: 'shopping-bag', iconBg: 'bg-orange-500/10', iconColor: 'text-orange-500' },
+                    { title: 'Utility Bill', subtitle: 'Electric • 2 days ago', amount: -120.00, icon: 'zap', iconBg: 'bg-amber-500/10', iconColor: 'text-amber-400' },
+                    { title: 'Paycheck', subtitle: 'Income • 1 week ago', amount: 2800, icon: 'wallet-2', iconBg: 'bg-emerald-500/10', iconColor: 'text-emerald-400' }
+                ]
+            };
+
+            const fromAccountListEl = document.getElementById('from-account-list');
+            const withdrawFromAccountListEl = document.getElementById('withdraw-from-account-list');
+            function renderFromAccounts() {
+                if (!fromAccountListEl) return;
+                fromAccountListEl.innerHTML = userAccounts.map(acc => `
+                    <button type="button" class="account-option w-full flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-slate-700 text-left ${acc.id === selectedFromAccountId ? 'selected' : ''}" data-account-id="${acc.id}">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-slate-700 flex items-center justify-center">
+                                <i data-lucide="wallet" class="w-4 h-4 text-slate-400"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-sm">${acc.name}</p>
+                                <p class="text-[11px] text-slate-500">${acc.masked}</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-400">$${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                    </button>
+                `).join('');
+                if (window.lucide) lucide.createIcons();
+                fromAccountListEl.querySelectorAll('.account-option').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        selectedFromAccountId = btn.getAttribute('data-account-id');
+                        renderFromAccounts();
+                    });
+                });
+            }
+            renderFromAccounts();
+
+            function renderWithdrawFromAccounts() {
+                if (!withdrawFromAccountListEl) return;
+                withdrawFromAccountListEl.innerHTML = userAccounts.map(acc => `
+                    <button type="button" class="account-option w-full flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-slate-700 text-left ${acc.id === selectedWithdrawAccountId ? 'selected' : ''}" data-withdraw-account-id="${acc.id}">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-slate-700 flex items-center justify-center">
+                                <i data-lucide="wallet" class="w-4 h-4 text-slate-400"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-sm">${acc.name}</p>
+                                <p class="text-[11px] text-slate-500">${acc.masked}</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-400">$${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                    </button>
+                `).join('');
+                if (window.lucide) lucide.createIcons();
+                withdrawFromAccountListEl.querySelectorAll('.account-option').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        selectedWithdrawAccountId = btn.getAttribute('data-withdraw-account-id');
+                        renderWithdrawFromAccounts();
+                    });
+                });
+            }
+
+            const depositToAccountListEl = document.getElementById('deposit-to-account-list');
+            function renderDepositToAccounts() {
+                if (!depositToAccountListEl) return;
+                depositToAccountListEl.innerHTML = userAccounts.map(acc => `
+                    <button type="button" class="account-option w-full flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-slate-700 text-left ${acc.id === selectedDepositToAccountId ? 'selected' : ''}" data-deposit-to-account-id="${acc.id}">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-slate-700 flex items-center justify-center">
+                                <i data-lucide="wallet" class="w-4 h-4 text-slate-400"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-sm">${acc.name}</p>
+                                <p class="text-[11px] text-slate-500">${acc.masked}</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-400">$${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                    </button>
+                `).join('');
+                if (window.lucide) lucide.createIcons();
+                depositToAccountListEl.querySelectorAll('.account-option').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        selectedDepositToAccountId = btn.getAttribute('data-deposit-to-account-id');
+                        renderDepositToAccounts();
+                    });
+                });
+            }
+
+            const electricityAccountListEl = document.getElementById('electricity-account-list');
+            function renderElectricityAccounts() {
+                if (!electricityAccountListEl) return;
+                userAccounts = getAccounts();
+                if (!selectedElectricityAccountId && userAccounts[0]) {
+                    selectedElectricityAccountId = userAccounts[0].id;
+                }
+                electricityAccountListEl.innerHTML = userAccounts.map(acc => `
+                    <button type="button" class="account-option w-full flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-slate-700 text-left ${acc.id === selectedElectricityAccountId ? 'selected' : ''}" data-electricity-account-id="${acc.id}">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-slate-700 flex items-center justify-center">
+                                <i data-lucide="wallet" class="w-4 h-4 text-slate-400"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-sm">${acc.name}</p>
+                                <p class="text-[11px] text-slate-500">${acc.masked}</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-400">$${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                    </button>
+                `).join('');
+                if (window.lucide) lucide.createIcons();
+                electricityAccountListEl.querySelectorAll('.account-option').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        selectedElectricityAccountId = btn.getAttribute('data-electricity-account-id');
+                        renderElectricityAccounts();
+                    });
+                });
+            }
+
+            function showScreen(screenId) {
+                screens.forEach(el => {
+                    el.classList.toggle('active', el.id === 'screen-' + screenId);
+                });
+                navBtns.forEach(btn => {
+                    const isActive = btn.getAttribute('data-nav') === screenId;
+                    btn.classList.toggle('text-indigo-400', isActive);
+                    btn.classList.toggle('text-slate-500', !isActive);
+                    const label = btn.querySelector('span');
+                    if (label) label.classList.toggle('font-bold', isActive);
+                });
+                if (screenId === 'account') { userAccounts = getAccounts(); renderAccountList(); }
+                if (screenId === 'cards') renderCardsList();
+                if (window.lucide) lucide.createIcons();
+            }
+
+            navBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const screenId = btn.getAttribute('data-nav');
+                    if (screenId) showScreen(screenId);
+                });
+            });
+
+            let balanceVisible = true;
+            const homeBalanceEl = document.getElementById('home-balance-amount');
+            const toggleBalanceBtn = document.getElementById('toggle-balance-visibility');
+            const balanceVisibilityIcon = document.getElementById('balance-visibility-icon');
+            function updateBalanceVisibility() {
+                if (!homeBalanceEl) return;
+                const balance = homeBalanceEl.getAttribute('data-balance') || '$0.00';
+                if (balanceVisible) {
+                    homeBalanceEl.textContent = balance;
+                    homeBalanceEl.classList.remove('balance-blurred');
+                } else {
+                    homeBalanceEl.textContent = '••••••••';
+                    homeBalanceEl.classList.add('balance-blurred');
+                }
+                if (balanceVisibilityIcon) {
+                    balanceVisibilityIcon.setAttribute('data-lucide', balanceVisible ? 'eye-off' : 'eye');
+                    if (window.lucide) lucide.createIcons();
+                }
+            }
+            toggleBalanceBtn?.addEventListener('click', () => {
+                balanceVisible = !balanceVisible;
+                updateBalanceVisibility();
+            });
+
+            function openTransferModal() {
+                if (transferModal) {
+                    transferModal.classList.add('active');
+                    transferModal.setAttribute('aria-hidden', 'false');
+                    renderFromAccounts();
+                }
+            }
+            function closeTransferModal() {
+                if (transferModal) {
+                    transferModal.classList.remove('active');
+                    transferModal.setAttribute('aria-hidden', 'true');
+                }
+            }
+
+            if (closeModalBtn) closeModalBtn.addEventListener('click', closeTransferModal);
+            if (transferModal) transferModal.addEventListener('click', (e) => { if (e.target === transferModal) closeTransferModal(); });
+
+            const pinVerifyModal = document.getElementById('pin-verify-modal');
+            const pinVerifyInput = document.getElementById('pin-verify-input');
+            const pinVerifyError = document.getElementById('pin-verify-error');
+            let pinVerifyCallback = null;
+            function openPinVerifyModal(title, message, callback) {
+                pinVerifyCallback = callback;
+                if (document.getElementById('pin-verify-title')) document.getElementById('pin-verify-title').textContent = title || 'Enter PIN';
+                if (document.getElementById('pin-verify-message')) document.getElementById('pin-verify-message').textContent = message || 'Enter your 4-digit PIN to continue.';
+                if (pinVerifyInput) { pinVerifyInput.value = ''; pinVerifyInput.focus(); }
+                if (pinVerifyError) { pinVerifyError.classList.add('hidden'); pinVerifyError.textContent = ''; }
+                if (pinVerifyModal) { pinVerifyModal.classList.add('active'); pinVerifyModal.setAttribute('aria-hidden', 'false'); }
+            }
+            function closePinVerifyModal() {
+                pinVerifyCallback = null;
+                if (pinVerifyModal) { pinVerifyModal.classList.remove('active'); pinVerifyModal.setAttribute('aria-hidden', 'true'); }
+            }
+            function requirePinThen(callback) {
+                const pin = getTransactionPin();
+                if (!pin) { showToast('Set your 4-digit PIN in Settings > Security first.'); return; }
+                openPinVerifyModal('Enter PIN', 'Enter your 4-digit PIN to continue.', () => {
+                    const entered = (pinVerifyInput?.value || '').trim();
+                    if (entered.length !== 4 || !/^\d{4}$/.test(entered)) {
+                        if (pinVerifyError) { pinVerifyError.textContent = 'PIN must be 4 digits.'; pinVerifyError.classList.remove('hidden'); }
+                        return;
+                    }
+                    if (entered !== pin) {
+                        if (pinVerifyError) { pinVerifyError.textContent = 'Incorrect PIN.'; pinVerifyError.classList.remove('hidden'); }
+                        return;
+                    }
+                    closePinVerifyModal();
+                    if (callback) callback();
+                });
+            }
+            document.getElementById('pin-verify-cancel')?.addEventListener('click', closePinVerifyModal);
+            document.getElementById('close-pin-verify-modal')?.addEventListener('click', closePinVerifyModal);
+            document.getElementById('pin-verify-confirm')?.addEventListener('click', () => {
+                const entered = (pinVerifyInput?.value || '').trim();
+                const pin = getTransactionPin();
+                if (!pin) { closePinVerifyModal(); return; }
+                if (entered.length !== 4 || !/^\d{4}$/.test(entered)) {
+                    if (pinVerifyError) { pinVerifyError.textContent = 'PIN must be 4 digits.'; pinVerifyError.classList.remove('hidden'); }
+                    return;
+                }
+                if (entered !== pin) {
+                    if (pinVerifyError) { pinVerifyError.textContent = 'Incorrect PIN.'; pinVerifyError.classList.remove('hidden'); }
+                    return;
+                }
+                if (pinVerifyError) pinVerifyError.classList.add('hidden');
+                if (pinVerifyCallback) { pinVerifyCallback(); pinVerifyCallback = null; }
+                closePinVerifyModal();
+            });
+            if (pinVerifyModal) pinVerifyModal.addEventListener('click', (e) => { if (e.target === pinVerifyModal) closePinVerifyModal(); });
+
+            const withdrawalModal = document.getElementById('withdrawal-modal');
+            const closeWithdrawalModalBtn = document.getElementById('close-withdrawal-modal');
+            function openWithdrawalModal() {
+                if (withdrawalModal) {
+                    withdrawalModal.classList.add('active');
+                    withdrawalModal.setAttribute('aria-hidden', 'false');
+                    renderWithdrawFromAccounts();
+                }
+            }
+            function closeWithdrawalModal() {
+                if (withdrawalModal) {
+                    withdrawalModal.classList.remove('active');
+                    withdrawalModal.setAttribute('aria-hidden', 'true');
+                }
+            }
+            if (closeWithdrawalModalBtn) closeWithdrawalModalBtn.addEventListener('click', closeWithdrawalModal);
+            if (withdrawalModal) withdrawalModal.addEventListener('click', (e) => { if (e.target === withdrawalModal) closeWithdrawalModal(); });
+
+            const depositModal = document.getElementById('deposit-modal');
+            const closeDepositModalBtn = document.getElementById('close-deposit-modal');
+            function openDepositModal() {
+                if (depositModal) {
+                    depositModal.classList.add('active');
+                    depositModal.setAttribute('aria-hidden', 'false');
+                    renderDepositToAccounts();
+                    if (window.lucide) lucide.createIcons();
+                }
+            }
+            function closeDepositModal() {
+                if (depositModal) {
+                    depositModal.classList.remove('active');
+                    depositModal.setAttribute('aria-hidden', 'true');
+                }
+            }
+            if (closeDepositModalBtn) closeDepositModalBtn.addEventListener('click', closeDepositModal);
+            if (depositModal) depositModal.addEventListener('click', (e) => { if (e.target === depositModal) closeDepositModal(); });
+            const depositSubmitBtn = document.getElementById('deposit-submit-btn');
+            if (depositSubmitBtn) depositSubmitBtn.addEventListener('click', () => {
+                const amount = document.getElementById('deposit-amount')?.value?.trim();
+                if (!amount) return;
+                closeDepositModal();
+                document.getElementById('deposit-amount').value = '';
+                document.getElementById('deposit-note').value = '';
+            });
+
+            const billsModal = document.getElementById('bills-modal');
+            const closeBillsModalBtn = document.getElementById('close-bills-modal');
+            function openBillsModal() {
+                if (billsModal) {
+                    billsModal.classList.add('active');
+                    billsModal.setAttribute('aria-hidden', 'false');
+                    if (window.lucide) lucide.createIcons();
+                }
+            }
+            function closeBillsModal() {
+                if (billsModal) {
+                    billsModal.classList.remove('active');
+                    billsModal.setAttribute('aria-hidden', 'true');
+                }
+            }
+            if (closeBillsModalBtn) closeBillsModalBtn.addEventListener('click', closeBillsModal);
+            if (billsModal) billsModal.addEventListener('click', (e) => { if (e.target === billsModal) closeBillsModal(); });
+            document.querySelectorAll('.bill-option').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    if (btn.id === 'bill-option-electricity') {
+                        closeBillsModal();
+                        document.getElementById('electricity-address').value = '';
+                        document.getElementById('electricity-home-id').value = '';
+                        document.getElementById('electricity-amount').value = '';
+                        selectedElectricityAccountId = userAccounts[0] ? userAccounts[0].id : selectedElectricityAccountId;
+                        renderElectricityAccounts();
+                        document.getElementById('electricity-bill-modal')?.classList.add('active');
+                        document.getElementById('electricity-bill-modal')?.setAttribute('aria-hidden', 'false');
+                        if (window.lucide) lucide.createIcons();
+                    } else {
+                        requirePinThen(() => { closeBillsModal(); openTransferModal(); });
+                    }
+                });
+            });
+            const electricityBillModal = document.getElementById('electricity-bill-modal');
+            document.getElementById('close-electricity-bill-modal')?.addEventListener('click', () => {
+                if (electricityBillModal) { electricityBillModal.classList.remove('active'); electricityBillModal.setAttribute('aria-hidden', 'true'); }
+            });
+            if (electricityBillModal) electricityBillModal.addEventListener('click', (e) => { if (e.target === electricityBillModal) { electricityBillModal.classList.remove('active'); electricityBillModal.setAttribute('aria-hidden', 'true'); } });
+            document.getElementById('electricity-pay-btn')?.addEventListener('click', () => {
+                const address = document.getElementById('electricity-address')?.value?.trim();
+                const homeId = document.getElementById('electricity-home-id')?.value?.trim();
+                const amountStr = document.getElementById('electricity-amount')?.value?.trim();
+                const amount = amountStr ? parseFloat(amountStr) : NaN;
+                if (!amountStr || isNaN(amount) || amount <= 0) {
+                    showToast('Enter a valid amount.');
+                    return;
+                }
+                if (!selectedElectricityAccountId) {
+                    showToast('Choose an account to pay from.');
+                    return;
+                }
+                const fromAcc = userAccounts.find(a => a.id === selectedElectricityAccountId);
+                requirePinThen(() => {
+                    if (electricityBillModal) { electricityBillModal.classList.remove('active'); electricityBillModal.setAttribute('aria-hidden', 'true'); }
+                    showToast('Electricity payment of $' + amount.toFixed(2) + ' submitted from ' + (fromAcc?.name || 'account') + (address ? ' • ' + address : '') + (homeId ? ' (ID: ' + homeId + ')' : ''));
+                });
+            });
+            const withdrawSubmitBtn = document.getElementById('withdraw-submit-btn');
+            if (withdrawSubmitBtn) withdrawSubmitBtn.addEventListener('click', () => {
+                const amount = document.getElementById('withdraw-amount')?.value?.trim();
+                if (!amount) return;
+                closeWithdrawalModal();
+                document.getElementById('withdraw-amount').value = '';
+                document.getElementById('withdraw-note').value = '';
+            });
+
+            function openAccountTransactionsModal(accountId) {
+                const acc = userAccounts.find(a => a.id === accountId);
+                const txList = accountTransactions[accountId] || [];
+                if (!acc || !accountTransactionsModal) return;
+                document.getElementById('account-modal-title').textContent = acc.name;
+                document.getElementById('account-modal-subtitle').textContent = acc.masked;
+                document.getElementById('account-modal-balance').textContent = '$' + acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                const listEl = document.getElementById('account-transactions-list');
+                listEl.innerHTML = txList.map(t => {
+                    const amt = t.amount >= 0 ? '+' + t.amount.toFixed(2) : t.amount.toFixed(2);
+                    const amtClass = t.amount >= 0 ? 'text-emerald-400' : 'text-white';
+                    return `
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/50 border border-slate-800/50">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl ${t.iconBg} flex items-center justify-center ${t.iconColor}">
+                                    <i data-lucide="${t.icon}" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-sm">${t.title}</p>
+                                    <p class="text-[11px] text-slate-500">${t.subtitle}</p>
+                                </div>
+                            </div>
+                            <p class="font-bold text-sm ${amtClass}">$${amt}</p>
+                        </div>
+                    `;
+                }).join('');
+                accountTransactionsModal.classList.add('active');
+                accountTransactionsModal.setAttribute('aria-hidden', 'false');
+                if (window.lucide) lucide.createIcons();
+            }
+            function closeAccountTransactionsModal() {
+                if (accountTransactionsModal) {
+                    accountTransactionsModal.classList.remove('active');
+                    accountTransactionsModal.setAttribute('aria-hidden', 'true');
+                }
+            }
+            if (closeAccountModalBtn) closeAccountModalBtn.addEventListener('click', closeAccountTransactionsModal);
+            if (accountTransactionsModal) accountTransactionsModal.addEventListener('click', (e) => { if (e.target === accountTransactionsModal) closeAccountTransactionsModal(); });
+
+            document.querySelectorAll('.account-row').forEach(row => {
+                row.addEventListener('click', () => {
+                    const id = row.getAttribute('data-account-id');
+                    if (id) openAccountTransactionsModal(id);
+                });
+            });
+
+            // Settings: open modals
+            document.querySelectorAll('.setting-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const key = btn.getAttribute('data-setting');
+                    if (key === 'profile') {
+                        const u = getCurrentUser();
+                        const usernameEl = document.getElementById('profile-username');
+                        const nameEl = document.getElementById('profile-name');
+                        const emailEl = document.getElementById('profile-email');
+                        if (usernameEl) usernameEl.value = u?.username || u?.email || '';
+                        if (nameEl) nameEl.value = u?.name || '';
+                        if (emailEl) emailEl.value = u?.email || '';
+                        openModal('profile-modal');
+                    }
+                    if (key === 'security') openModal('security-modal');
+                    if (key === 'notifications') openModal('notifications-modal');
+                    if (key === 'help') openModal('help-modal');
+                });
+            });
+
+            // Settings: close buttons
+            document.querySelectorAll('[data-close-modal]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-close-modal');
+                    if (id) closeModal(id);
+                });
+            });
+            ['profile-modal','security-modal','notifications-modal','help-modal'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('click', (e) => { if (e.target === el) closeModal(id); });
+            });
+
+            // Settings: actions
+            const saveProfileBtn = document.getElementById('save-profile');
+            if (saveProfileBtn) saveProfileBtn.addEventListener('click', () => {
+                const name = (document.getElementById('profile-name')?.value || '').trim();
+                const email = (document.getElementById('profile-email')?.value || '').trim().toLowerCase();
+                const prev = getCurrentUser();
+                if (!prev) { closeModal('profile-modal'); return; }
+                const username = prev.username || prev.email;
+                setCurrentUser({ username: prev.username, email: email || undefined, name: name || prev.name || username });
+                if (headerUserName) headerUserName.textContent = name || prev.name || username;
+                if (headerAvatar) headerAvatar.src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + encodeURIComponent(email || prev.username || 'user');
+                const users = getUsers();
+                const idx = users.findIndex(u =>
+                    (u.username || '').toLowerCase() === (prev.username || '').toLowerCase() ||
+                    (u.email || '').toLowerCase() === (prev.email || '').toLowerCase()
+                );
+                if (idx >= 0) { users[idx].name = name || users[idx].name; users[idx].email = email || users[idx].email; saveUsers(users); }
+                closeModal('profile-modal');
+                showToast('Profile updated');
+            });
+            const saveNotifsBtn = document.getElementById('save-notifications');
+            if (saveNotifsBtn) saveNotifsBtn.addEventListener('click', () => {
+                closeModal('notifications-modal');
+                showToast('Notification preferences saved');
+            });
+            const copySupportBtn = document.getElementById('copy-support-email');
+            if (copySupportBtn) copySupportBtn.addEventListener('click', async () => {
+                const email = 'support@bankapp.demo';
+                try {
+                    await navigator.clipboard.writeText(email);
+                    showToast('Support email copied');
+                } catch {
+                    showToast('Copy not supported in this browser');
+                }
+            });
+            const reportIssueBtn = document.getElementById('report-issue');
+            if (reportIssueBtn) reportIssueBtn.addEventListener('click', () => {
+                showToast('Issue report opened (demo)');
+            });
+
+            const transferSendBtn = document.getElementById('transfer-send-btn');
+            if (transferSendBtn) {
+                transferSendBtn.addEventListener('click', () => {
+                    const amount = document.getElementById('transfer-amount')?.value?.trim();
+                    const to = document.getElementById('transfer-to')?.value?.trim();
+                    const from = userAccounts.find(a => a.id === selectedFromAccountId);
+                    if (!amount || !to) return;
+                    closeTransferModal();
+                    document.getElementById('transfer-amount').value = '';
+                    document.getElementById('transfer-to').value = '';
+                    document.getElementById('transfer-note').value = '';
+                });
+            }
+
+            // Quick actions on Home: Transfer, Deposit, Withdrawal, Bills (each requires PIN except opening Bills list)
+            document.querySelectorAll('#screen-home section.grid.grid-cols-4 > div').forEach((el, i) => {
+                el.addEventListener('click', () => {
+                    if (i === 0) requirePinThen(openTransferModal);
+                    else if (i === 1) requirePinThen(openDepositModal);
+                    else if (i === 2) requirePinThen(openWithdrawalModal);
+                    else if (i === 3) openBillsModal();
+                });
+            });
+
+            // Scan button: open scan modal
+            const scanModal = document.getElementById('scan-modal');
+            document.getElementById('nav-scan-btn')?.addEventListener('click', () => {
+                if (scanModal) { scanModal.classList.add('active'); scanModal.setAttribute('aria-hidden', 'false'); if (window.lucide) lucide.createIcons(); }
+            });
+            document.getElementById('close-scan-modal')?.addEventListener('click', () => {
+                if (scanModal) { scanModal.classList.remove('active'); scanModal.setAttribute('aria-hidden', 'true'); }
+            });
+            if (scanModal) scanModal.addEventListener('click', (e) => { if (e.target === scanModal) scanModal.classList.remove('active'); });
+
+            // Account list: render from userAccounts; total balance; home balance update
+            function updateHomeBalance() {
+                userAccounts = getAccounts();
+                const total = userAccounts.reduce((s, a) => s + (Number(a.balance) || 0), 0);
+                const str = '$' + total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                const el = document.getElementById('home-balance-amount');
+                if (el) { el.setAttribute('data-balance', str); if (balanceVisible) el.textContent = str; }
+                const totalEl = document.getElementById('account-total-balance');
+                if (totalEl) totalEl.textContent = str;
+                const countEl = document.getElementById('home-account-count');
+                if (countEl) {
+                    const count = userAccounts.length || 0;
+                    countEl.textContent = count === 1 ? '1 account' : `${count} accounts`;
+                }
+            }
+            function getAccountIcon(type) {
+                if (type === 'Savings') return { icon: 'piggy-bank', bg: 'bg-emerald-500/20', color: 'text-emerald-400' };
+                if (type === 'Checking') return { icon: 'landmark', bg: 'bg-amber-500/20', color: 'text-amber-400' };
+                return { icon: 'wallet', bg: 'bg-indigo-500/20', color: 'text-indigo-400' };
+            }
+            function renderAccountList() {
+                userAccounts = getAccounts();
+                const listEl = document.getElementById('account-list');
+                if (!listEl) return;
+                listEl.innerHTML = userAccounts.map(acc => {
+                    const { icon, bg, color } = getAccountIcon(acc.type || 'Other');
+                    return `<button type="button" class="account-row w-full rounded-2xl glass p-4 flex items-center justify-between border border-slate-700/50 text-left cursor-pointer hover:bg-slate-800/40 transition-colors" data-account-id="${acc.id}">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl ${bg} flex items-center justify-center ${color}">
+                                <i data-lucide="${icon}" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-sm">${(acc.name || 'Account').replace(/</g, '&lt;')}</p>
+                                <p class="text-[11px] text-slate-500">${(acc.masked || '••••').replace(/</g, '&lt;')}</p>
+                            </div>
+                        </div>
+                        <p class="font-bold text-sm">$${(Number(acc.balance) || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                    </button>`;
+                }).join('');
+                if (window.lucide) lucide.createIcons();
+                listEl.querySelectorAll('.account-row').forEach(row => {
+                    row.addEventListener('click', () => {
+                        const id = row.getAttribute('data-account-id');
+                        if (id) requirePinThen(() => openAccountTransactionsModal(id));
+                    });
+                });
+                updateHomeBalance();
+            }
+            renderAccountList();
+
+            // Add account modal
+            const addAccountModal = document.getElementById('add-account-modal');
+            document.getElementById('account-add-new-btn')?.addEventListener('click', () => {
+                document.getElementById('new-account-type').value = 'Savings';
+                document.getElementById('new-account-name').value = '';
+                document.getElementById('new-account-balance').value = '';
+                document.getElementById('add-account-error')?.classList.add('hidden');
+                if (addAccountModal) { addAccountModal.classList.add('active'); addAccountModal.setAttribute('aria-hidden', 'false'); if (window.lucide) lucide.createIcons(); }
+            });
+            document.getElementById('close-add-account-modal')?.addEventListener('click', () => {
+                if (addAccountModal) { addAccountModal.classList.remove('active'); addAccountModal.setAttribute('aria-hidden', 'true'); }
+            });
+            if (addAccountModal) addAccountModal.addEventListener('click', (e) => { if (e.target === addAccountModal) addAccountModal.classList.remove('active'); });
+            document.getElementById('add-account-submit')?.addEventListener('click', () => {
+                const type = document.getElementById('new-account-type')?.value || 'Other';
+                const name = (document.getElementById('new-account-name')?.value || '').trim() || (type === 'Savings' ? 'Savings' : type === 'Checking' ? 'Checking' : 'New account');
+                const balanceInput = document.getElementById('new-account-balance')?.value?.trim();
+                const balance = balanceInput ? parseFloat(balanceInput) : 0;
+                if (isNaN(balance) || balance < 0) {
+                    const err = document.getElementById('add-account-error');
+                    if (err) { err.textContent = 'Enter a valid balance.'; err.classList.remove('hidden'); }
+                    return;
+                }
+                const ids = userAccounts.map(a => parseInt(a.id, 10)).filter(n => !isNaN(n));
+                const nextId = ids.length ? String(Math.max(...ids) + 1) : '1';
+                const last4 = String(Math.floor(1000 + Math.random() * 9000));
+                const newAccount = { id: nextId, name, type, masked: '•••• ' + last4, balance };
+                userAccounts.push(newAccount);
+                if (!accountTransactions[nextId]) accountTransactions[nextId] = [];
+                saveAccounts(userAccounts);
+                renderAccountList();
+                if (addAccountModal) addAccountModal.classList.remove('active');
+                showToast('Account created');
+            });
+
+            // Cards: render list, add card, card details (change linked account)
+            function renderCardsList() {
+                const cards = getCards();
+                const listEl = document.getElementById('cards-list');
+                const userName = (getCurrentUser()?.name || getCurrentUser()?.username || 'CARD HOLDER').toUpperCase();
+                if (!listEl) return;
+                listEl.innerHTML = cards.map(card => {
+                    const acc = userAccounts.find(a => a.id === card.linkedAccountId);
+                    const label = acc ? acc.name + ' •••• ' + card.last4 : '•••• ' + card.last4;
+                    return `<div class="card-item card-gradient rounded-3xl p-6 h-44 relative overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform" data-card-id="${card.id}">
+                        <div class="absolute top-0 right-0 p-4 opacity-20"><i data-lucide="nfc" class="w-10 h-10"></i></div>
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-bold tracking-widest uppercase">${(card.brand || 'Card').replace(/</g, '&lt;')}</span>
+                            <div class="w-9 h-5 bg-yellow-400/80 rounded border border-yellow-500/50"></div>
+                        </div>
+                        <p class="mt-6 text-lg tracking-[0.15em] font-medium">**** **** **** ${(card.last4 || '').replace(/</g, '&lt;')}</p>
+                        <div class="absolute bottom-6 left-6 right-6 flex justify-between items-end">
+                            <span class="text-xs opacity-70">${userName.replace(/</g, '&lt;')}</span>
+                            <span class="text-xs opacity-70">${(card.expiry || '').replace(/</g, '&lt;')}</span>
+                        </div>
+                    </div>`;
+                }).join('');
+                if (window.lucide) lucide.createIcons();
+                listEl.querySelectorAll('.card-item').forEach(el => {
+                    el.addEventListener('click', () => {
+                        const id = el.getAttribute('data-card-id');
+                        if (id) requirePinThen(() => openCardDetailsModal(id));
+                    });
+                });
+            }
+            function openCardDetailsModal(cardId) {
+                userAccounts = getAccounts();
+                const cards = getCards();
+                const card = cards.find(c => c.id === cardId);
+                if (!card) return;
+                document.getElementById('card-details-id').value = cardId;
+                document.getElementById('card-details-brand').textContent = card.brand || 'Card';
+                document.getElementById('card-details-number').textContent = '**** **** **** ' + (card.last4 || '');
+                document.getElementById('card-details-holder').textContent = (getCurrentUser()?.name || getCurrentUser()?.username || 'Card Holder').toUpperCase();
+                document.getElementById('card-details-expiry').textContent = 'Expires ' + (card.expiry || '');
+                const listEl = document.getElementById('card-details-linked-account-list');
+                listEl.innerHTML = userAccounts.map(acc => `
+                    <button type="button" class="account-option w-full flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-slate-700 text-left ${acc.id === card.linkedAccountId ? 'selected' : ''}" data-link-account-id="${acc.id}">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="wallet" class="w-4 h-4 text-slate-400"></i></div>
+                            <div><p class="font-semibold text-sm">${acc.name}</p><p class="text-[11px] text-slate-500">${acc.masked}</p></div>
+                        </div>
+                    </button>
+                `).join('');
+                if (window.lucide) lucide.createIcons();
+                document.getElementById('card-details-modal')?.classList.add('active');
+                document.getElementById('card-details-modal')?.setAttribute('aria-hidden', 'false');
+            }
+            document.getElementById('close-card-details-modal')?.addEventListener('click', () => {
+                const m = document.getElementById('card-details-modal');
+                if (m) { m.classList.remove('active'); m.setAttribute('aria-hidden', 'true'); }
+            });
+            document.getElementById('card-details-modal')?.addEventListener('click', (e) => {
+                if (e.target === document.getElementById('card-details-modal')) document.getElementById('card-details-modal').classList.remove('active');
+                const btn = e.target.closest('#card-details-linked-account-list [data-link-account-id]');
+                if (btn) {
+                    const cardId = document.getElementById('card-details-id')?.value;
+                    const newAccountId = btn.getAttribute('data-link-account-id');
+                    if (cardId && newAccountId) {
+                        const cards = getCards();
+                        const c = cards.find(x => x.id === cardId);
+                        if (c) { c.linkedAccountId = newAccountId; saveCards(cards); renderCardsList(); openCardDetailsModal(cardId); showToast('Linked account updated'); }
+                    }
+                }
+            });
+
+            document.getElementById('cards-add-new-btn')?.addEventListener('click', () => {
+                userAccounts = getAccounts();
+                selectedAddCardAccountId = userAccounts[0] ? userAccounts[0].id : '';
+                const listEl = document.getElementById('add-card-account-list');
+                listEl.innerHTML = userAccounts.map(acc => `
+                    <button type="button" class="account-option w-full flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-slate-700 text-left ${acc.id === selectedAddCardAccountId ? 'selected' : ''}" data-add-card-account-id="${acc.id}">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="wallet" class="w-4 h-4 text-slate-400"></i></div>
+                            <div><p class="font-semibold text-sm">${acc.name}</p><p class="text-[11px] text-slate-500">${acc.masked}</p></div>
+                        </div>
+                    </button>
+                `).join('');
+                if (window.lucide) lucide.createIcons();
+                document.getElementById('new-card-nickname').value = '';
+                document.getElementById('add-card-modal')?.classList.add('active');
+                document.getElementById('add-card-modal')?.setAttribute('aria-hidden', 'false');
+            });
+            document.getElementById('add-card-account-list')?.addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-add-card-account-id]');
+                if (!btn) return;
+                selectedAddCardAccountId = btn.getAttribute('data-add-card-account-id');
+                const listEl = document.getElementById('add-card-account-list');
+                userAccounts = getAccounts();
+                listEl.innerHTML = userAccounts.map(acc => `
+                    <button type="button" class="account-option w-full flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-slate-700 text-left ${acc.id === selectedAddCardAccountId ? 'selected' : ''}" data-add-card-account-id="${acc.id}">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="wallet" class="w-4 h-4 text-slate-400"></i></div>
+                            <div><p class="font-semibold text-sm">${acc.name}</p><p class="text-[11px] text-slate-500">${acc.masked}</p></div>
+                        </div>
+                    </button>
+                `).join('');
+                if (window.lucide) lucide.createIcons();
+            });
+            document.getElementById('close-add-card-modal')?.addEventListener('click', () => { document.getElementById('add-card-modal')?.classList.remove('active'); });
+            document.getElementById('add-card-modal')?.addEventListener('click', (e) => { if (e.target === document.getElementById('add-card-modal')) document.getElementById('add-card-modal').classList.remove('active'); });
+            document.getElementById('add-card-submit')?.addEventListener('click', () => {
+                const cards = getCards();
+                const newId = 'c' + (cards.length + 1);
+                const last4 = String(Math.floor(1000 + Math.random() * 9000));
+                const nickname = (document.getElementById('new-card-nickname')?.value || '').trim();
+                const newCard = { id: newId, linkedAccountId: selectedAddCardAccountId || userAccounts[0]?.id, brand: nickname ? nickname : 'Card', last4, expiry: '12/28', nickname };
+                cards.push(newCard);
+                saveCards(cards);
+                renderCardsList();
+                document.getElementById('add-card-modal')?.classList.remove('active');
+                showToast('Card added');
+            });
+            renderCardsList();
+
+            // Security modal: Set / Change transaction PIN
+            document.querySelector('[data-setting="security"]')?.closest('.setting-btn')?.addEventListener('click', () => {
+                const hasPin = !!getTransactionPin();
+                document.getElementById('pin-current-wrap').classList.toggle('hidden', !hasPin);
+                document.getElementById('set-transaction-pin').textContent = hasPin ? 'Change PIN' : 'Set PIN';
+                document.getElementById('sec-pin-current').value = '';
+                document.getElementById('sec-pin-new').value = '';
+                document.getElementById('sec-pin-confirm').value = '';
+                document.getElementById('sec-pin-error').classList.add('hidden');
+            });
+            document.getElementById('set-transaction-pin')?.addEventListener('click', () => {
+                const hasPin = !!getTransactionPin();
+                const current = (document.getElementById('sec-pin-current')?.value || '').trim();
+                const newPin = (document.getElementById('sec-pin-new')?.value || '').trim();
+                const confirmPin = (document.getElementById('sec-pin-confirm')?.value || '').trim();
+                const errEl = document.getElementById('sec-pin-error');
+                if (newPin.length !== 4 || !/^\d{4}$/.test(newPin)) { errEl.textContent = 'New PIN must be 4 digits.'; errEl.classList.remove('hidden'); return; }
+                if (newPin !== confirmPin) { errEl.textContent = 'New PIN and confirm do not match.'; errEl.classList.remove('hidden'); return; }
+                if (hasPin && current !== getTransactionPin()) { errEl.textContent = 'Current PIN is incorrect.'; errEl.classList.remove('hidden'); return; }
+                setTransactionPin(newPin);
+                errEl.classList.add('hidden');
+                document.getElementById('sec-pin-new').value = '';
+                document.getElementById('sec-pin-confirm').value = '';
+                document.getElementById('sec-pin-current').value = '';
+                showToast('Transaction PIN ' + (hasPin ? 'updated' : 'set'));
+            });
+            ['profile-modal','security-modal','notifications-modal','help-modal'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('click', (e) => { if (e.target === el) closeModal(id); });
+            });
+        });
+    </script>
+<!-- Code injected by live-server -->
+<script type="text/javascript">
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function() {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					head.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					head.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function(msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			console.log('Live reload enabled.');
+		})();
+	}
+	// ]]>
+</script>
+</body>
+</html>

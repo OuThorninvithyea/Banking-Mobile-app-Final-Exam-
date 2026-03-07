@@ -29,7 +29,7 @@ fun MainBottomNavBar(navController: NavController) {
     val currentRoute = navBackStackEntry.value?.destination?.route
 
     // Only show the floating nav bar on these three main screens
-    val showBottomBar = currentRoute in listOf("dashboard", "history", "profile")
+    val showBottomBar = currentRoute in listOf("dashboard", "history", "profile", "cards")
     if (!showBottomBar) return
 
     Box(
@@ -60,7 +60,7 @@ fun MainBottomNavBar(navController: NavController) {
                 icon = Icons.Filled.CreditCard,
                 label = "Cards",
                 isSelected = currentRoute == "cards",
-                onClick = { /* Not implemented in this phase */ },
+                onClick = { navController.navigate("cards") { launchSingleTop = true; restoreState = true } },
                 modifier = Modifier.weight(1f)
             )
 

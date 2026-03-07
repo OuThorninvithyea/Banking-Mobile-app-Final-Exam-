@@ -33,6 +33,7 @@ import com.hustle.bankapp.ui.profile.ProfileScreen
 import com.hustle.bankapp.ui.profile.ProfileViewModel
 import com.hustle.bankapp.ui.transaction.DepositWithdrawScreen
 import com.hustle.bankapp.ui.transaction.DepositWithdrawViewModel
+import com.hustle.bankapp.ui.cards.CardsScreen
 import com.hustle.bankapp.ui.transfer.QRScannerScreen
 import com.hustle.bankapp.ui.transfer.TransferScreen
 import com.hustle.bankapp.ui.transfer.TransferViewModel
@@ -148,6 +149,14 @@ class MainActivity : FragmentActivity() {
                                 onNavigateToHistory = { navController.navigate("history") },
                                 onNavigateToProfile = { navController.navigate("profile") },
                                 onNavigateToQrScanner = { navController.navigate("qr_scanner") }
+                            )
+                        }
+
+                        // ── Cards ──────────────────────────────────────────────────
+                        composable("cards") {
+                            CardsScreen(
+                                repository = repository,
+                                onNavigateBack = { navController.popBackStack() }
                             )
                         }
 
