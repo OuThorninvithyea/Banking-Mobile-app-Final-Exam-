@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.hustle.bankapp-mergeDebugResources-56:/values-watch-v20/values-watch-v20.xml",
+            "outputFile": "com.hustle.bankapp-mergeDebugResources-57:/values-watch-v20/values-watch-v20.xml",
             "map": [
                 {
                     "source": "/Users/vithea/.gradle/caches/8.13/transforms/fefff85c22ec98734d3507a47e1fd3db/transformed/core-splashscreen-1.0.1/res/values-watch-v20/values-watch-v20.xml",

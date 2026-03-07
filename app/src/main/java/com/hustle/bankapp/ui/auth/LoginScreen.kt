@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
@@ -21,7 +22,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
+import androidx.fragment.app.FragmentActivity
+import com.hustle.bankapp.util.BiometricPromptManager
+import com.hustle.bankapp.util.BiometricResult
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -44,6 +50,10 @@ fun LoginScreen(
     val focusManager = LocalFocusManager.current
     var pinVisible by remember { mutableStateOf(false) }
 
+    val activity = LocalContext.current as FragmentActivity
+    val promptManager = remember { BiometricPromptManager(activity) }
+    val biometricResult by promptManager.result.collectAsState()
+
     // Staggered entrance animations
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { visible = true }
@@ -59,6 +69,17 @@ fun LoginScreen(
     // Navigate when authenticated
     LaunchedEffect(uiState.isAuthenticated) {
         if (uiState.isAuthenticated) onNavigateToDashboard()
+    }
+
+    // Handle biometric authentication result
+    LaunchedEffect(biometricResult) {
+        when (biometricResult) {
+            is BiometricResult.Success -> {
+                promptManager.resetResult()
+                onNavigateToDashboard()
+            }
+            else -> Unit
+        }
     }
 
     Box(
@@ -275,7 +296,51 @@ fun LoginScreen(
                             }
                         }
 
-                        Spacer(Modifier.height(12.dp))
+                        Spacer(Modifier.height(16.dp))
+
+                        // Biometric login button
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Surface(
+                                shape = RoundedCornerShape(50),
+                                color = SurfaceDark,
+                                tonalElevation = 2.dp
+                            ) {
+                                IconButton(
+                                    onClick = {
+                                        promptManager.showBiometricPrompt(
+                                            title = "Biometric Login",
+                                            subtitle = "Use your fingerprint or face to sign in"
+                                        )
+                                    },
+                                    modifier = Modifier
+                                        .size(56.dp)
+                                        .testTag("biometrics_button")
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Fingerprint,
+                                        contentDescription = "Sign in with biometrics",
+                                        tint = BinanceGreen,
+                                        modifier = Modifier.size(32.dp)
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(Modifier.height(4.dp))
+
+                        Text(
+                            text = "or use biometrics",
+                            color = TextSecondary.copy(alpha = 0.6f),
+                            fontSize = 12.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(Modifier.height(8.dp))
 
                         // Secondary Register Link
                         TextButton(

@@ -14,8 +14,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.hustle.bankapp.data.MockBankRepositoryImpl
+import com.hustle.bankapp.data.RemoteBankRepositoryImpl
 import com.hustle.bankapp.data.TransactionType
+import com.hustle.bankapp.data.api.BankApiService
 import com.hustle.bankapp.theme.HustleBankTheme
 import com.hustle.bankapp.ui.auth.AuthViewModel
 import com.hustle.bankapp.ui.auth.LoginScreen
@@ -29,8 +30,14 @@ import com.hustle.bankapp.ui.profile.ProfileScreen
 import com.hustle.bankapp.ui.profile.ProfileViewModel
 import com.hustle.bankapp.ui.transaction.DepositWithdrawScreen
 import com.hustle.bankapp.ui.transaction.DepositWithdrawViewModel
+import com.hustle.bankapp.ui.transfer.QRScannerScreen
 import com.hustle.bankapp.ui.transfer.TransferScreen
 import com.hustle.bankapp.ui.transfer.TransferViewModel
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,8 +45,29 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition { false }
 
-        // Single shared repository instance across the app
-        val repository = MockBankRepositoryImpl()
+        // ── Retrofit Setup ────────────────────────────────────────────
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+
+        val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(15, TimeUnit.SECONDS)
+            .writeTimeout(15, TimeUnit.SECONDS)
+            .build()
+
+        // 10.0.2.2 is the Android emulator alias for localhost on the host machine
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://10.0.2.2:8080/")
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val apiService = retrofit.create(BankApiService::class.java)
+
+        // Single shared repository instance across the app (now using real network calls)
+        val repository = RemoteBankRepositoryImpl(apiService)
 
         setContent {
             HustleBankTheme {
@@ -102,7 +130,8 @@ class MainActivity : ComponentActivity() {
                                 onNavigateToDeposit = { navController.navigate("deposit") },
                                 onNavigateToWithdraw = { navController.navigate("withdraw") },
                                 onNavigateToHistory = { navController.navigate("history") },
-                                onNavigateToProfile = { navController.navigate("profile") }
+                                onNavigateToProfile = { navController.navigate("profile") },
+                                onNavigateToQrScanner = { navController.navigate("qr_scanner") }
                             )
                         }
 
@@ -117,6 +146,13 @@ class MainActivity : ComponentActivity() {
                             )
                             TransferScreen(
                                 viewModel = vm,
+                                onNavigateBack = { navController.popBackStack() }
+                            )
+                        }
+
+                        // ── QR Scanner ────────────────────────────────────────────
+                        composable("qr_scanner") {
+                            QRScannerScreen(
                                 onNavigateBack = { navController.popBackStack() }
                             )
                         }

@@ -11,6 +11,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.ui.platform.testTag
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -53,6 +55,7 @@ fun DashboardScreen(
     onNavigateToWithdraw: () -> Unit = {},
     onNavigateToHistory: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
+    onNavigateToQrScanner: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState(initial = DashboardUiState.Loading)
@@ -72,6 +75,12 @@ fun DashboardScreen(
                     )
                 },
                 actions = {
+                    IconButton(
+                        onClick = onNavigateToQrScanner,
+                        modifier = Modifier.testTag("scan_qr_button")
+                    ) {
+                        Icon(Icons.Filled.QrCodeScanner, "Scan QR", tint = BinanceGreen)
+                    }
                     IconButton(onClick = onNavigateToHistory) {
                         Icon(Icons.Filled.History, "History", tint = TextSecondary)
                     }

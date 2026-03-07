@@ -1,21 +1,19 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:2:1-23:12
-INJECTED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:2:1-23:12
-INJECTED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:2:1-23:12
-INJECTED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:2:1-23:12
+ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:2:1-27:12
+INJECTED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:2:1-27:12
+INJECTED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:2:1-27:12
+INJECTED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:2:1-27:12
+MERGED from [androidx.biometric:biometric:1.2.0-alpha05] /Users/vithea/.gradle/caches/8.13/transforms/717c5dd2157ac1bada31e0f40fd6a7a1/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:17:1-27:12
+MERGED from [com.patrykandpatrick.vico:compose-m3:1.13.1] /Users/vithea/.gradle/caches/8.13/transforms/b33bff9e071daa800b3c0d8185537ea5/transformed/compose-m3-1.13.1/AndroidManifest.xml:2:1-7:12
+MERGED from [com.patrykandpatrick.vico:compose:1.13.1] /Users/vithea/.gradle/caches/8.13/transforms/05684b2e761db989ddd5ad82eae2cd06/transformed/compose-1.13.1/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.navigation:navigation-common:2.7.7] /Users/vithea/.gradle/caches/8.13/transforms/5c0f5c0190eaf054abd8846b01487978/transformed/navigation-common-2.7.7/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.navigation:navigation-runtime:2.7.7] /Users/vithea/.gradle/caches/8.13/transforms/bf5837e69dd912d0b465f57dac3d42e6/transformed/navigation-runtime-2.7.7/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.navigation:navigation-common-ktx:2.7.7] /Users/vithea/.gradle/caches/8.13/transforms/eec3b3bf8d7dccd7c1b4577f8d2a2ebc/transformed/navigation-common-ktx-2.7.7/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.navigation:navigation-runtime-ktx:2.7.7] /Users/vithea/.gradle/caches/8.13/transforms/36f9342bfc329e31c6ca0d368a835af1/transformed/navigation-runtime-ktx-2.7.7/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.navigation:navigation-compose:2.7.7] /Users/vithea/.gradle/caches/8.13/transforms/85cc4e91c470a8e47b9dd7e3cac0fae1/transformed/navigation-compose-2.7.7/AndroidManifest.xml:2:1-7:12
-MERGED from [com.patrykandpatrick.vico:compose-m3:1.13.1] /Users/vithea/.gradle/caches/8.13/transforms/b33bff9e071daa800b3c0d8185537ea5/transformed/compose-m3-1.13.1/AndroidManifest.xml:2:1-7:12
-MERGED from [com.patrykandpatrick.vico:compose:1.13.1] /Users/vithea/.gradle/caches/8.13/transforms/05684b2e761db989ddd5ad82eae2cd06/transformed/compose-1.13.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.activity:activity-ktx:1.8.2] /Users/vithea/.gradle/caches/8.13/transforms/6a8c2f1d579b7a9a70ad7689b041e811/transformed/activity-ktx-1.8.2/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.material3:material3-android:1.2.0] /Users/vithea/.gradle/caches/8.13/transforms/2d10aeb6985ed3d51aa591449ad6e8e3/transformed/material3-release/AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /Users/vithea/.gradle/caches/8.13/transforms/a5e19ce9a425421920c45bb8de0ab934/transformed/appcompat-resources-1.6.1/AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.appcompat:appcompat:1.6.1] /Users/vithea/.gradle/caches/8.13/transforms/a102f34b314ef637258c382a8fb77860/transformed/appcompat-1.6.1/AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.fragment:fragment:1.3.6] /Users/vithea/.gradle/caches/8.13/transforms/861075a24e510c0155f031e0e332662d/transformed/fragment-1.3.6/AndroidManifest.xml:17:1-24:12
-MERGED from [androidx.loader:loader:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/9bdb4611425908d6754e23e7ccf1261d/transformed/loader-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.compose.material:material-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/6e74fdeea39b9ce2c01f674cdb11e83a/transformed/material-release/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.material:material-icons-core-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/420c35dfd17f1d8465229ea625175e9b/transformed/material-icons-core-release/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.material:material-icons-extended-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/10db7f17883c957f49f93b98af5e7ec2/transformed/material-icons-extended-release/AndroidManifest.xml:2:1-7:12
@@ -28,17 +26,23 @@ MERGED from [androidx.compose.ui:ui-tooling-data-android:1.6.2] /Users/vithea/.g
 MERGED from [androidx.compose.ui:ui-unit-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/88e0016702bfeeab39e3900907bbb6d7/transformed/ui-unit-release/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.ui:ui-geometry-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/39af9424de1cf73eddbafe65c77937b4/transformed/ui-geometry-release/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.ui:ui-util-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/82e08a92f869f2e2bcbb60ada3564a31/transformed/ui-util-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-text-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/052f38a966a21a5535d6bfa2ab952865/transformed/ui-text-release/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/13ecad7c17f8a92e9700eef5c97bc3c3/transformed/ui-tooling-preview-release/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.compose.ui:ui-graphics-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/d1b6726c85610d0a80ebcdb55ab09f97/transformed/ui-graphics-release/AndroidManifest.xml:2:1-7:12
-MERGED from [androidx.compose.ui:ui-text-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/052f38a966a21a5535d6bfa2ab952865/transformed/ui-text-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-tooling-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/11e41d5d7d69975979db7cc0c8b2f843/transformed/ui-tooling-release/AndroidManifest.xml:17:1-28:12
+MERGED from [androidx.activity:activity-compose:1.8.2] /Users/vithea/.gradle/caches/8.13/transforms/227204063f4f87d5061b971b0749dce2/transformed/activity-compose-1.8.2/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /Users/vithea/.gradle/caches/8.13/transforms/2b60cd0afc66ff008a97dc7a594ed5ee/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /Users/vithea/.gradle/caches/8.13/transforms/a5e19ce9a425421920c45bb8de0ab934/transformed/appcompat-resources-1.6.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.appcompat:appcompat:1.6.1] /Users/vithea/.gradle/caches/8.13/transforms/a102f34b314ef637258c382a8fb77860/transformed/appcompat-1.6.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.fragment:fragment:1.3.6] /Users/vithea/.gradle/caches/8.13/transforms/861075a24e510c0155f031e0e332662d/transformed/fragment-1.3.6/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/vithea/.gradle/caches/8.13/transforms/6fff149766b706c83c6edf6e6594c9cd/transformed/savedstate-1.2.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.loader:loader:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/9bdb4611425908d6754e23e7ccf1261d/transformed/loader-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.emoji2:emoji2-views-helper:1.3.0] /Users/vithea/.gradle/caches/8.13/transforms/3be0f8c6e865b3a390c71dcf96d6c134/transformed/emoji2-views-helper-1.3.0/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/vithea/.gradle/caches/8.13/transforms/e6842a50a645e51a187e3cf96d151fd7/transformed/emoji2-1.3.0/AndroidManifest.xml:17:1-35:12
 MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/9f9ed1a70e400848e46a048cdacad5a9/transformed/lifecycle-livedata-core-ktx-2.7.0/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.lifecycle:lifecycle-process:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/29910469e84279fe653ce0ad1f098f96/transformed/lifecycle-process-2.7.0/AndroidManifest.xml:17:1-35:12
 MERGED from [androidx.lifecycle:lifecycle-livedata:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/b7a9cd50eee3511bf7ac9301eaac51f6/transformed/lifecycle-livedata-2.7.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/69c0e92c1cbe45e0ebf85f341a0235f3/transformed/lifecycle-livedata-core-2.7.0/AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /Users/vithea/.gradle/caches/8.13/transforms/2b60cd0afc66ff008a97dc7a594ed5ee/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/vithea/.gradle/caches/8.13/transforms/6fff149766b706c83c6edf6e6594c9cd/transformed/savedstate-1.2.1/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/298790d3c388e94b42ab6fecadbce80f/transformed/lifecycle-viewmodel-savedstate-2.7.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/154570c79534c389d41fc22207ece750/transformed/lifecycle-viewmodel-ktx-2.7.0/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/ba8a3401d24e83033d456503386a71c7/transformed/lifecycle-viewmodel-2.7.0/AndroidManifest.xml:17:1-22:12
@@ -47,15 +51,12 @@ MERGED from [androidx.lifecycle:lifecycle-runtime-ktx:2.7.0] /Users/vithea/.grad
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/383d9ca9b7c8504de77da7eeb29e1d9f/transformed/lifecycle-viewmodel-compose-2.7.0/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.ui:ui-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/648612793c9a77a05f54ebe7dce836ae/transformed/ui-release/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.ui:ui-test-manifest:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/744158be06c17e82691f9c4a15df66e1/transformed/ui-test-manifest-1.6.2/AndroidManifest.xml:17:1-28:12
-MERGED from [androidx.compose.ui:ui-tooling-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/11e41d5d7d69975979db7cc0c8b2f843/transformed/ui-tooling-release/AndroidManifest.xml:17:1-28:12
-MERGED from [androidx.activity:activity-compose:1.8.2] /Users/vithea/.gradle/caches/8.13/transforms/227204063f4f87d5061b971b0749dce2/transformed/activity-compose-1.8.2/AndroidManifest.xml:2:1-7:12
-MERGED from [androidx.activity:activity-ktx:1.8.2] /Users/vithea/.gradle/caches/8.13/transforms/6a8c2f1d579b7a9a70ad7689b041e811/transformed/activity-ktx-1.8.2/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.activity:activity:1.8.2] /Users/vithea/.gradle/caches/8.13/transforms/17e3359ca4056188113c69c46c17ac48/transformed/activity-1.8.2/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.autofill:autofill:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/cda439b99d5389a8b6e263ca683bc848/transformed/autofill-1.0.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/5fec740bee793c1ed26fde01e07ec7f2/transformed/drawerlayout-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/1dac240028df575f8c78cc2a29430d93/transformed/viewpager-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/vithea/.gradle/caches/8.13/transforms/0bd09a697b90f1701a072ed01c841b6a/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/vithea/.gradle/caches/8.13/transforms/90875f5830171405fb1d19b794bcc6c1/transformed/vectordrawable-1.1.0/AndroidManifest.xml:17:1-24:12
-MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/1dac240028df575f8c78cc2a29430d93/transformed/viewpager-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.customview:customview:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/f52404c74ed457af663f2b02686e20aa/transformed/customview-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.core:core:1.12.0] /Users/vithea/.gradle/caches/8.13/transforms/72e8c1c540b3fafe3831c175d5a76d24/transformed/core-1.12.0/AndroidManifest.xml:17:1-30:12
 MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/7b5fdb19c2eaed7fccd61aa1e66a540d/transformed/customview-poolingcontainer-1.0.0/AndroidManifest.xml:17:1-23:12
@@ -81,17 +82,31 @@ MERGED from [androidx.annotation:annotation-experimental:1.4.0] /Users/vithea/.g
 		INJECTED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml
 	xmlns:android
 		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:2:11-69
+uses-permission#android.permission.INTERNET
+ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:5:5-67
+	android:name
+		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:5:22-64
+uses-permission#android.permission.USE_BIOMETRIC
+ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:6:4-71
+MERGED from [androidx.biometric:biometric:1.2.0-alpha05] /Users/vithea/.gradle/caches/8.13/transforms/717c5dd2157ac1bada31e0f40fd6a7a1/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:22:5-72
+MERGED from [androidx.biometric:biometric:1.2.0-alpha05] /Users/vithea/.gradle/caches/8.13/transforms/717c5dd2157ac1bada31e0f40fd6a7a1/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:22:5-72
+	android:name
+		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:6:21-68
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:7:5-79
+	android:name
+		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:7:22-76
 application
-ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:5:5-21:19
-INJECTED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:5:5-21:19
+ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:9:5-25:19
+INJECTED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:9:5-25:19
+MERGED from [androidx.compose.ui:ui-tooling-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/11e41d5d7d69975979db7cc0c8b2f843/transformed/ui-tooling-release/AndroidManifest.xml:22:5-26:19
+MERGED from [androidx.compose.ui:ui-tooling-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/11e41d5d7d69975979db7cc0c8b2f843/transformed/ui-tooling-release/AndroidManifest.xml:22:5-26:19
 MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/vithea/.gradle/caches/8.13/transforms/e6842a50a645e51a187e3cf96d151fd7/transformed/emoji2-1.3.0/AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/vithea/.gradle/caches/8.13/transforms/e6842a50a645e51a187e3cf96d151fd7/transformed/emoji2-1.3.0/AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.lifecycle:lifecycle-process:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/29910469e84279fe653ce0ad1f098f96/transformed/lifecycle-process-2.7.0/AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.lifecycle:lifecycle-process:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/29910469e84279fe653ce0ad1f098f96/transformed/lifecycle-process-2.7.0/AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.compose.ui:ui-test-manifest:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/744158be06c17e82691f9c4a15df66e1/transformed/ui-test-manifest-1.6.2/AndroidManifest.xml:22:5-26:19
 MERGED from [androidx.compose.ui:ui-test-manifest:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/744158be06c17e82691f9c4a15df66e1/transformed/ui-test-manifest-1.6.2/AndroidManifest.xml:22:5-26:19
-MERGED from [androidx.compose.ui:ui-tooling-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/11e41d5d7d69975979db7cc0c8b2f843/transformed/ui-tooling-release/AndroidManifest.xml:22:5-26:19
-MERGED from [androidx.compose.ui:ui-tooling-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/11e41d5d7d69975979db7cc0c8b2f843/transformed/ui-tooling-release/AndroidManifest.xml:22:5-26:19
 MERGED from [androidx.core:core:1.12.0] /Users/vithea/.gradle/caches/8.13/transforms/72e8c1c540b3fafe3831c175d5a76d24/transformed/core-1.12.0/AndroidManifest.xml:28:5-89
 MERGED from [androidx.core:core:1.12.0] /Users/vithea/.gradle/caches/8.13/transforms/72e8c1c540b3fafe3831c175d5a76d24/transformed/core-1.12.0/AndroidManifest.xml:28:5-89
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/vithea/.gradle/caches/8.13/transforms/b85414778a1c3d55d6c68eae4aaacfa1/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
@@ -105,39 +120,45 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/vithea/.gradle/cache
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.12.0] /Users/vithea/.gradle/caches/8.13/transforms/72e8c1c540b3fafe3831c175d5a76d24/transformed/core-1.12.0/AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:10:9-35
+		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:14:9-35
 	android:label
-		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:9:9-41
+		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:13:9-41
 	android:fullBackupContent
-		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:8:9-54
+		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:12:9-54
 	android:allowBackup
-		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:6:9-35
+		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:10:9-35
 	android:theme
-		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:11:9-48
+		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:15:9-48
 	android:dataExtractionRules
-		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:7:9-65
+		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:11:9-65
 activity#com.hustle.bankapp.MainActivity
-ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:12:9-20:20
+ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:16:9-24:20
 	android:exported
-		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:14:13-36
+		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:18:13-36
 	android:theme
-		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:15:13-54
+		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:19:13-54
 	android:name
-		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:13:13-41
+		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:17:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:16:13-19:29
+ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:20:13-23:29
 action#android.intent.action.MAIN
-ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:17:17-69
+ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:21:17-69
 	android:name
-		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:17:25-66
+		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:21:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:18:17-77
+ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:22:17-77
 	android:name
-		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:18:27-74
+		ADDED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:22:27-74
 uses-sdk
 INJECTED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml
 INJECTED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml
+MERGED from [androidx.biometric:biometric:1.2.0-alpha05] /Users/vithea/.gradle/caches/8.13/transforms/717c5dd2157ac1bada31e0f40fd6a7a1/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:20:5-44
+MERGED from [androidx.biometric:biometric:1.2.0-alpha05] /Users/vithea/.gradle/caches/8.13/transforms/717c5dd2157ac1bada31e0f40fd6a7a1/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:20:5-44
+MERGED from [com.patrykandpatrick.vico:compose-m3:1.13.1] /Users/vithea/.gradle/caches/8.13/transforms/b33bff9e071daa800b3c0d8185537ea5/transformed/compose-m3-1.13.1/AndroidManifest.xml:5:5-44
+MERGED from [com.patrykandpatrick.vico:compose-m3:1.13.1] /Users/vithea/.gradle/caches/8.13/transforms/b33bff9e071daa800b3c0d8185537ea5/transformed/compose-m3-1.13.1/AndroidManifest.xml:5:5-44
+MERGED from [com.patrykandpatrick.vico:compose:1.13.1] /Users/vithea/.gradle/caches/8.13/transforms/05684b2e761db989ddd5ad82eae2cd06/transformed/compose-1.13.1/AndroidManifest.xml:5:5-44
+MERGED from [com.patrykandpatrick.vico:compose:1.13.1] /Users/vithea/.gradle/caches/8.13/transforms/05684b2e761db989ddd5ad82eae2cd06/transformed/compose-1.13.1/AndroidManifest.xml:5:5-44
 MERGED from [androidx.navigation:navigation-common:2.7.7] /Users/vithea/.gradle/caches/8.13/transforms/5c0f5c0190eaf054abd8846b01487978/transformed/navigation-common-2.7.7/AndroidManifest.xml:20:5-44
 MERGED from [androidx.navigation:navigation-common:2.7.7] /Users/vithea/.gradle/caches/8.13/transforms/5c0f5c0190eaf054abd8846b01487978/transformed/navigation-common-2.7.7/AndroidManifest.xml:20:5-44
 MERGED from [androidx.navigation:navigation-runtime:2.7.7] /Users/vithea/.gradle/caches/8.13/transforms/bf5837e69dd912d0b465f57dac3d42e6/transformed/navigation-runtime-2.7.7/AndroidManifest.xml:20:5-44
@@ -148,20 +169,10 @@ MERGED from [androidx.navigation:navigation-runtime-ktx:2.7.7] /Users/vithea/.gr
 MERGED from [androidx.navigation:navigation-runtime-ktx:2.7.7] /Users/vithea/.gradle/caches/8.13/transforms/36f9342bfc329e31c6ca0d368a835af1/transformed/navigation-runtime-ktx-2.7.7/AndroidManifest.xml:5:5-44
 MERGED from [androidx.navigation:navigation-compose:2.7.7] /Users/vithea/.gradle/caches/8.13/transforms/85cc4e91c470a8e47b9dd7e3cac0fae1/transformed/navigation-compose-2.7.7/AndroidManifest.xml:5:5-44
 MERGED from [androidx.navigation:navigation-compose:2.7.7] /Users/vithea/.gradle/caches/8.13/transforms/85cc4e91c470a8e47b9dd7e3cac0fae1/transformed/navigation-compose-2.7.7/AndroidManifest.xml:5:5-44
-MERGED from [com.patrykandpatrick.vico:compose-m3:1.13.1] /Users/vithea/.gradle/caches/8.13/transforms/b33bff9e071daa800b3c0d8185537ea5/transformed/compose-m3-1.13.1/AndroidManifest.xml:5:5-44
-MERGED from [com.patrykandpatrick.vico:compose-m3:1.13.1] /Users/vithea/.gradle/caches/8.13/transforms/b33bff9e071daa800b3c0d8185537ea5/transformed/compose-m3-1.13.1/AndroidManifest.xml:5:5-44
-MERGED from [com.patrykandpatrick.vico:compose:1.13.1] /Users/vithea/.gradle/caches/8.13/transforms/05684b2e761db989ddd5ad82eae2cd06/transformed/compose-1.13.1/AndroidManifest.xml:5:5-44
-MERGED from [com.patrykandpatrick.vico:compose:1.13.1] /Users/vithea/.gradle/caches/8.13/transforms/05684b2e761db989ddd5ad82eae2cd06/transformed/compose-1.13.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-ktx:1.8.2] /Users/vithea/.gradle/caches/8.13/transforms/6a8c2f1d579b7a9a70ad7689b041e811/transformed/activity-ktx-1.8.2/AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-ktx:1.8.2] /Users/vithea/.gradle/caches/8.13/transforms/6a8c2f1d579b7a9a70ad7689b041e811/transformed/activity-ktx-1.8.2/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.material3:material3-android:1.2.0] /Users/vithea/.gradle/caches/8.13/transforms/2d10aeb6985ed3d51aa591449ad6e8e3/transformed/material3-release/AndroidManifest.xml:20:5-44
 MERGED from [androidx.compose.material3:material3-android:1.2.0] /Users/vithea/.gradle/caches/8.13/transforms/2d10aeb6985ed3d51aa591449ad6e8e3/transformed/material3-release/AndroidManifest.xml:20:5-44
-MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /Users/vithea/.gradle/caches/8.13/transforms/a5e19ce9a425421920c45bb8de0ab934/transformed/appcompat-resources-1.6.1/AndroidManifest.xml:20:5-44
-MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /Users/vithea/.gradle/caches/8.13/transforms/a5e19ce9a425421920c45bb8de0ab934/transformed/appcompat-resources-1.6.1/AndroidManifest.xml:20:5-44
-MERGED from [androidx.appcompat:appcompat:1.6.1] /Users/vithea/.gradle/caches/8.13/transforms/a102f34b314ef637258c382a8fb77860/transformed/appcompat-1.6.1/AndroidManifest.xml:20:5-44
-MERGED from [androidx.appcompat:appcompat:1.6.1] /Users/vithea/.gradle/caches/8.13/transforms/a102f34b314ef637258c382a8fb77860/transformed/appcompat-1.6.1/AndroidManifest.xml:20:5-44
-MERGED from [androidx.fragment:fragment:1.3.6] /Users/vithea/.gradle/caches/8.13/transforms/861075a24e510c0155f031e0e332662d/transformed/fragment-1.3.6/AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.fragment:fragment:1.3.6] /Users/vithea/.gradle/caches/8.13/transforms/861075a24e510c0155f031e0e332662d/transformed/fragment-1.3.6/AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.loader:loader:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/9bdb4611425908d6754e23e7ccf1261d/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
-MERGED from [androidx.loader:loader:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/9bdb4611425908d6754e23e7ccf1261d/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.compose.material:material-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/6e74fdeea39b9ce2c01f674cdb11e83a/transformed/material-release/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.material:material-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/6e74fdeea39b9ce2c01f674cdb11e83a/transformed/material-release/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.material:material-icons-core-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/420c35dfd17f1d8465229ea625175e9b/transformed/material-icons-core-release/AndroidManifest.xml:5:5-44
@@ -186,12 +197,28 @@ MERGED from [androidx.compose.ui:ui-geometry-android:1.6.2] /Users/vithea/.gradl
 MERGED from [androidx.compose.ui:ui-geometry-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/39af9424de1cf73eddbafe65c77937b4/transformed/ui-geometry-release/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.ui:ui-util-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/82e08a92f869f2e2bcbb60ada3564a31/transformed/ui-util-release/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.ui:ui-util-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/82e08a92f869f2e2bcbb60ada3564a31/transformed/ui-util-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-text-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/052f38a966a21a5535d6bfa2ab952865/transformed/ui-text-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-text-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/052f38a966a21a5535d6bfa2ab952865/transformed/ui-text-release/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/13ecad7c17f8a92e9700eef5c97bc3c3/transformed/ui-tooling-preview-release/AndroidManifest.xml:20:5-44
 MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/13ecad7c17f8a92e9700eef5c97bc3c3/transformed/ui-tooling-preview-release/AndroidManifest.xml:20:5-44
 MERGED from [androidx.compose.ui:ui-graphics-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/d1b6726c85610d0a80ebcdb55ab09f97/transformed/ui-graphics-release/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.ui:ui-graphics-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/d1b6726c85610d0a80ebcdb55ab09f97/transformed/ui-graphics-release/AndroidManifest.xml:5:5-44
-MERGED from [androidx.compose.ui:ui-text-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/052f38a966a21a5535d6bfa2ab952865/transformed/ui-text-release/AndroidManifest.xml:5:5-44
-MERGED from [androidx.compose.ui:ui-text-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/052f38a966a21a5535d6bfa2ab952865/transformed/ui-text-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-tooling-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/11e41d5d7d69975979db7cc0c8b2f843/transformed/ui-tooling-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-tooling-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/11e41d5d7d69975979db7cc0c8b2f843/transformed/ui-tooling-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity-compose:1.8.2] /Users/vithea/.gradle/caches/8.13/transforms/227204063f4f87d5061b971b0749dce2/transformed/activity-compose-1.8.2/AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-compose:1.8.2] /Users/vithea/.gradle/caches/8.13/transforms/227204063f4f87d5061b971b0749dce2/transformed/activity-compose-1.8.2/AndroidManifest.xml:5:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /Users/vithea/.gradle/caches/8.13/transforms/2b60cd0afc66ff008a97dc7a594ed5ee/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /Users/vithea/.gradle/caches/8.13/transforms/2b60cd0afc66ff008a97dc7a594ed5ee/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /Users/vithea/.gradle/caches/8.13/transforms/a5e19ce9a425421920c45bb8de0ab934/transformed/appcompat-resources-1.6.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /Users/vithea/.gradle/caches/8.13/transforms/a5e19ce9a425421920c45bb8de0ab934/transformed/appcompat-resources-1.6.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat:1.6.1] /Users/vithea/.gradle/caches/8.13/transforms/a102f34b314ef637258c382a8fb77860/transformed/appcompat-1.6.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat:1.6.1] /Users/vithea/.gradle/caches/8.13/transforms/a102f34b314ef637258c382a8fb77860/transformed/appcompat-1.6.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.fragment:fragment:1.3.6] /Users/vithea/.gradle/caches/8.13/transforms/861075a24e510c0155f031e0e332662d/transformed/fragment-1.3.6/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment:1.3.6] /Users/vithea/.gradle/caches/8.13/transforms/861075a24e510c0155f031e0e332662d/transformed/fragment-1.3.6/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/vithea/.gradle/caches/8.13/transforms/6fff149766b706c83c6edf6e6594c9cd/transformed/savedstate-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/vithea/.gradle/caches/8.13/transforms/6fff149766b706c83c6edf6e6594c9cd/transformed/savedstate-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/9bdb4611425908d6754e23e7ccf1261d/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/9bdb4611425908d6754e23e7ccf1261d/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.emoji2:emoji2-views-helper:1.3.0] /Users/vithea/.gradle/caches/8.13/transforms/3be0f8c6e865b3a390c71dcf96d6c134/transformed/emoji2-views-helper-1.3.0/AndroidManifest.xml:5:5-44
 MERGED from [androidx.emoji2:emoji2-views-helper:1.3.0] /Users/vithea/.gradle/caches/8.13/transforms/3be0f8c6e865b3a390c71dcf96d6c134/transformed/emoji2-views-helper-1.3.0/AndroidManifest.xml:5:5-44
 MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/vithea/.gradle/caches/8.13/transforms/e6842a50a645e51a187e3cf96d151fd7/transformed/emoji2-1.3.0/AndroidManifest.xml:21:5-44
@@ -204,10 +231,6 @@ MERGED from [androidx.lifecycle:lifecycle-livedata:2.7.0] /Users/vithea/.gradle/
 MERGED from [androidx.lifecycle:lifecycle-livedata:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/b7a9cd50eee3511bf7ac9301eaac51f6/transformed/lifecycle-livedata-2.7.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/69c0e92c1cbe45e0ebf85f341a0235f3/transformed/lifecycle-livedata-core-2.7.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/69c0e92c1cbe45e0ebf85f341a0235f3/transformed/lifecycle-livedata-core-2.7.0/AndroidManifest.xml:20:5-44
-MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /Users/vithea/.gradle/caches/8.13/transforms/2b60cd0afc66ff008a97dc7a594ed5ee/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:20:5-44
-MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /Users/vithea/.gradle/caches/8.13/transforms/2b60cd0afc66ff008a97dc7a594ed5ee/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:20:5-44
-MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/vithea/.gradle/caches/8.13/transforms/6fff149766b706c83c6edf6e6594c9cd/transformed/savedstate-1.2.1/AndroidManifest.xml:20:5-44
-MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/vithea/.gradle/caches/8.13/transforms/6fff149766b706c83c6edf6e6594c9cd/transformed/savedstate-1.2.1/AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/298790d3c388e94b42ab6fecadbce80f/transformed/lifecycle-viewmodel-savedstate-2.7.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/298790d3c388e94b42ab6fecadbce80f/transformed/lifecycle-viewmodel-savedstate-2.7.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/154570c79534c389d41fc22207ece750/transformed/lifecycle-viewmodel-ktx-2.7.0/AndroidManifest.xml:5:5-44
@@ -224,24 +247,18 @@ MERGED from [androidx.compose.ui:ui-android:1.6.2] /Users/vithea/.gradle/caches/
 MERGED from [androidx.compose.ui:ui-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/648612793c9a77a05f54ebe7dce836ae/transformed/ui-release/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.ui:ui-test-manifest:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/744158be06c17e82691f9c4a15df66e1/transformed/ui-test-manifest-1.6.2/AndroidManifest.xml:20:5-44
 MERGED from [androidx.compose.ui:ui-test-manifest:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/744158be06c17e82691f9c4a15df66e1/transformed/ui-test-manifest-1.6.2/AndroidManifest.xml:20:5-44
-MERGED from [androidx.compose.ui:ui-tooling-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/11e41d5d7d69975979db7cc0c8b2f843/transformed/ui-tooling-release/AndroidManifest.xml:20:5-44
-MERGED from [androidx.compose.ui:ui-tooling-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/11e41d5d7d69975979db7cc0c8b2f843/transformed/ui-tooling-release/AndroidManifest.xml:20:5-44
-MERGED from [androidx.activity:activity-compose:1.8.2] /Users/vithea/.gradle/caches/8.13/transforms/227204063f4f87d5061b971b0749dce2/transformed/activity-compose-1.8.2/AndroidManifest.xml:5:5-44
-MERGED from [androidx.activity:activity-compose:1.8.2] /Users/vithea/.gradle/caches/8.13/transforms/227204063f4f87d5061b971b0749dce2/transformed/activity-compose-1.8.2/AndroidManifest.xml:5:5-44
-MERGED from [androidx.activity:activity-ktx:1.8.2] /Users/vithea/.gradle/caches/8.13/transforms/6a8c2f1d579b7a9a70ad7689b041e811/transformed/activity-ktx-1.8.2/AndroidManifest.xml:5:5-44
-MERGED from [androidx.activity:activity-ktx:1.8.2] /Users/vithea/.gradle/caches/8.13/transforms/6a8c2f1d579b7a9a70ad7689b041e811/transformed/activity-ktx-1.8.2/AndroidManifest.xml:5:5-44
 MERGED from [androidx.activity:activity:1.8.2] /Users/vithea/.gradle/caches/8.13/transforms/17e3359ca4056188113c69c46c17ac48/transformed/activity-1.8.2/AndroidManifest.xml:20:5-44
 MERGED from [androidx.activity:activity:1.8.2] /Users/vithea/.gradle/caches/8.13/transforms/17e3359ca4056188113c69c46c17ac48/transformed/activity-1.8.2/AndroidManifest.xml:20:5-44
 MERGED from [androidx.autofill:autofill:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/cda439b99d5389a8b6e263ca683bc848/transformed/autofill-1.0.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.autofill:autofill:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/cda439b99d5389a8b6e263ca683bc848/transformed/autofill-1.0.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/5fec740bee793c1ed26fde01e07ec7f2/transformed/drawerlayout-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/5fec740bee793c1ed26fde01e07ec7f2/transformed/drawerlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/1dac240028df575f8c78cc2a29430d93/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/1dac240028df575f8c78cc2a29430d93/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/vithea/.gradle/caches/8.13/transforms/0bd09a697b90f1701a072ed01c841b6a/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/vithea/.gradle/caches/8.13/transforms/0bd09a697b90f1701a072ed01c841b6a/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/vithea/.gradle/caches/8.13/transforms/90875f5830171405fb1d19b794bcc6c1/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/vithea/.gradle/caches/8.13/transforms/90875f5830171405fb1d19b794bcc6c1/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/1dac240028df575f8c78cc2a29430d93/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
-MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/1dac240028df575f8c78cc2a29430d93/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.customview:customview:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/f52404c74ed457af663f2b02686e20aa/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.customview:customview:1.0.0] /Users/vithea/.gradle/caches/8.13/transforms/f52404c74ed457af663f2b02686e20aa/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.core:core:1.12.0] /Users/vithea/.gradle/caches/8.13/transforms/72e8c1c540b3fafe3831c175d5a76d24/transformed/core-1.12.0/AndroidManifest.xml:20:5-44
@@ -278,6 +295,16 @@ MERGED from [androidx.annotation:annotation-experimental:1.4.0] /Users/vithea/.g
 		INJECTED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml
 	android:minSdkVersion
 		INJECTED from /Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml
+uses-permission#android.permission.USE_FINGERPRINT
+ADDED from [androidx.biometric:biometric:1.2.0-alpha05] /Users/vithea/.gradle/caches/8.13/transforms/717c5dd2157ac1bada31e0f40fd6a7a1/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:25:5-74
+	android:name
+		ADDED from [androidx.biometric:biometric:1.2.0-alpha05] /Users/vithea/.gradle/caches/8.13/transforms/717c5dd2157ac1bada31e0f40fd6a7a1/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:25:22-71
+activity#androidx.compose.ui.tooling.PreviewActivity
+ADDED from [androidx.compose.ui:ui-tooling-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/11e41d5d7d69975979db7cc0c8b2f843/transformed/ui-tooling-release/AndroidManifest.xml:23:9-25:39
+	android:exported
+		ADDED from [androidx.compose.ui:ui-tooling-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/11e41d5d7d69975979db7cc0c8b2f843/transformed/ui-tooling-release/AndroidManifest.xml:25:13-36
+	android:name
+		ADDED from [androidx.compose.ui:ui-tooling-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/11e41d5d7d69975979db7cc0c8b2f843/transformed/ui-tooling-release/AndroidManifest.xml:24:13-71
 provider#androidx.startup.InitializationProvider
 ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/vithea/.gradle/caches/8.13/transforms/e6842a50a645e51a187e3cf96d151fd7/transformed/emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
 MERGED from [androidx.lifecycle:lifecycle-process:2.7.0] /Users/vithea/.gradle/caches/8.13/transforms/29910469e84279fe653ce0ad1f098f96/transformed/lifecycle-process-2.7.0/AndroidManifest.xml:24:9-32:20
@@ -312,12 +339,6 @@ ADDED from [androidx.compose.ui:ui-test-manifest:1.6.2] /Users/vithea/.gradle/ca
 		ADDED from [androidx.compose.ui:ui-test-manifest:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/744158be06c17e82691f9c4a15df66e1/transformed/ui-test-manifest-1.6.2/AndroidManifest.xml:25:13-36
 	android:name
 		ADDED from [androidx.compose.ui:ui-test-manifest:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/744158be06c17e82691f9c4a15df66e1/transformed/ui-test-manifest-1.6.2/AndroidManifest.xml:24:13-63
-activity#androidx.compose.ui.tooling.PreviewActivity
-ADDED from [androidx.compose.ui:ui-tooling-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/11e41d5d7d69975979db7cc0c8b2f843/transformed/ui-tooling-release/AndroidManifest.xml:23:9-25:39
-	android:exported
-		ADDED from [androidx.compose.ui:ui-tooling-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/11e41d5d7d69975979db7cc0c8b2f843/transformed/ui-tooling-release/AndroidManifest.xml:25:13-36
-	android:name
-		ADDED from [androidx.compose.ui:ui-tooling-android:1.6.2] /Users/vithea/.gradle/caches/8.13/transforms/11e41d5d7d69975979db7cc0c8b2f843/transformed/ui-tooling-release/AndroidManifest.xml:24:13-71
 permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
 ADDED from [androidx.core:core:1.12.0] /Users/vithea/.gradle/caches/8.13/transforms/72e8c1c540b3fafe3831c175d5a76d24/transformed/core-1.12.0/AndroidManifest.xml:22:5-24:47
 	android:protectionLevel
