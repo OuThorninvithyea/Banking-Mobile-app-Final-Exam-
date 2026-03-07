@@ -35,41 +35,42 @@
 22-->[androidx.core:core:1.12.0] /Users/vithea/.gradle/caches/8.13/transforms/72e8c1c540b3fafe3831c175d5a76d24/transformed/core-1.12.0/AndroidManifest.xml:26:22-94
 23
 24    <application
-24-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:9:5-25:19
+24-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:9:5-26:19
 25        android:allowBackup="true"
 25-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:10:9-35
 26        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
 26-->[androidx.core:core:1.12.0] /Users/vithea/.gradle/caches/8.13/transforms/72e8c1c540b3fafe3831c175d5a76d24/transformed/core-1.12.0/AndroidManifest.xml:28:18-86
 27        android:dataExtractionRules="@xml/data_extraction_rules"
-27-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:11:9-65
+27-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:12:9-65
 28        android:debuggable="true"
 29        android:extractNativeLibs="false"
 30        android:fullBackupContent="@xml/backup_rules"
-30-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:12:9-54
+30-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:13:9-54
 31        android:label="@string/app_name"
-31-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:13:9-41
+31-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:14:9-41
 32        android:supportsRtl="true"
-32-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:14:9-35
-33        android:testOnly="true"
-34        android:theme="@style/Theme.HustleBank" >
-34-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:15:9-48
+32-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:15:9-35
+33        android:theme="@style/Theme.HustleBank"
+33-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:16:9-48
+34        android:usesCleartextTraffic="true" >
+34-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:11:9-44
 35        <activity
-35-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:16:9-24:20
+35-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:17:9-25:20
 36            android:name="com.hustle.bankapp.MainActivity"
-36-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:17:13-41
+36-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:18:13-41
 37            android:exported="true"
-37-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:18:13-36
+37-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:19:13-36
 38            android:theme="@style/Theme.App.Starting" >
-38-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:19:13-54
+38-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:20:13-54
 39            <intent-filter>
-39-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:20:13-23:29
+39-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:21:13-24:29
 40                <action android:name="android.intent.action.MAIN" />
-40-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:21:17-69
-40-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:21:25-66
+40-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:22:17-69
+40-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:22:25-66
 41
 42                <category android:name="android.intent.category.LAUNCHER" />
-42-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:22:17-77
-42-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:22:27-74
+42-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:23:17-77
+42-->/Users/vithea/Documents/mobile_banking_app/app/src/main/AndroidManifest.xml:23:27-74
 43            </intent-filter>
 44        </activity>
 45        <activity

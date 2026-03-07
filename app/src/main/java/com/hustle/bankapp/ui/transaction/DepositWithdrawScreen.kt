@@ -10,6 +10,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hustle.bankapp.data.TransactionType
 import com.hustle.bankapp.theme.*
+import com.hustle.bankapp.ui.components.glassmorphism
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,17 +35,15 @@ fun DepositWithdrawScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    // The accent color is determined by the transaction type
     val isDeposit = viewModel.transactionType == TransactionType.DEPOSIT
     val accentColor = if (isDeposit) BinanceGreen else ErrorRed
     val screenTitle = if (isDeposit) "Deposit" else "Withdraw"
 
-    // Success animation state
     var showSuccess by remember { mutableStateOf(false) }
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
             showSuccess = true
-            delay(1500) // Let user see the animation
+            delay(1500)
             viewModel.resetSuccess()
             onNavigateBack()
         }
@@ -53,17 +54,19 @@ fun DepositWithdrawScreen(
         containerColor = BackgroundBlack,
         topBar = {
             TopAppBar(
-                title = { Text(screenTitle, color = accentColor) },
+                title = { Text(screenTitle, color = accentColor, fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = BackgroundBlack)
             )
         }
     ) { innerPadding ->
-        // Success Overlay
         if (showSuccess) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(BackgroundBlack),
+                modifier = Modifier.fillMaxSize().background(BackgroundBlack),
                 contentAlignment = Alignment.Center
             ) {
                 AnimatedVisibility(
@@ -78,11 +81,7 @@ fun DepositWithdrawScreen(
                                 .background(accentColor.copy(alpha = 0.15f)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                text = if (isDeposit) "↑" else "↓",
-                                color = accentColor,
-                                fontSize = 48.sp
-                            )
+                            Text(if (isDeposit) "↑" else "↓", color = accentColor, fontSize = 48.sp)
                         }
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
@@ -104,15 +103,15 @@ fun DepositWithdrawScreen(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(horizontal = 24.dp, vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Error message
                 if (uiState.error != null) {
-                    Surface(
-                        color = ErrorRed.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .glassmorphism(alpha = 0.2f, borderColor = ErrorRed.copy(alpha = 0.5f))
+                            .padding(bottom = 16.dp)
                     ) {
                         Text(
                             text = uiState.error!!,
@@ -124,53 +123,54 @@ fun DepositWithdrawScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.weight(0.5f))
 
-                // Amount display — big and centered with accent color
-                Text(
-                    text = "$${if (uiState.amountString.isEmpty()) "0.00" else uiState.amountString}",
-                    color = if (uiState.amountString.isEmpty()) TextSecondary else accentColor,
-                    style = MaterialTheme.typography.displayLarge.copy(fontSize = 56.sp),
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold
-                )
+                // Big Glass Input Area
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .glassmorphism(cornerRadius = 32.dp, alpha = 0.2f)
+                        .padding(vertical = 48.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "$${if (uiState.amountString.isEmpty()) "0.00" else uiState.amountString}",
+                        color = if (uiState.amountString.isEmpty()) TextSecondary else accentColor,
+                        style = MaterialTheme.typography.displayLarge.copy(fontSize = 64.sp),
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = RobotoMono
+                    )
+                }
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                // Custom number pad (reused pattern from Phase 4)
                 TransactionNumberPad(
                     onNumberClick = { viewModel.updateAmount(it.toString()) },
                     onDecimalClick = { viewModel.updateAmount(".") },
                     onDeleteClick = { viewModel.updateAmount("DELETE") }
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
-                // Submit button styled with accent color
                 Button(
                     onClick = { viewModel.submit() },
                     enabled = !uiState.isLoading,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = accentColor,
-                        contentColor = if (isDeposit) BackgroundBlack else TextPrimary,
+                        contentColor = BackgroundBlack,
                         disabledContainerColor = SurfaceDark,
                         disabledContentColor = TextSecondary
                     ),
-                    modifier = Modifier.fillMaxWidth().height(56.dp),
-                    shape = RoundedCornerShape(12.dp)
+                    modifier = Modifier.fillMaxWidth().height(64.dp),
+                    shape = RoundedCornerShape(20.dp)
                 ) {
                     if (uiState.isLoading) {
-                        CircularProgressIndicator(color = accentColor, modifier = Modifier.size(24.dp))
+                        CircularProgressIndicator(color = BackgroundBlack, modifier = Modifier.size(24.dp))
                     } else {
-                        Text(
-                            text = "Confirm $screenTitle",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
-                        )
+                        Text("Confirm $screenTitle", fontWeight = FontWeight.Bold, fontSize = 18.sp, letterSpacing = 1.sp)
                     }
                 }
-
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
@@ -192,7 +192,7 @@ fun TransactionNumberPad(
     )
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         rows.forEach { row ->
             Row(
@@ -203,7 +203,7 @@ fun TransactionNumberPad(
                     val isAction = key == "." || key == "DEL"
                     Box(
                         modifier = Modifier
-                            .size(80.dp)
+                            .size(76.dp)
                             .clip(CircleShape)
                             .background(if (isAction) SurfaceDark else androidx.compose.ui.graphics.Color.Transparent)
                             .clickable {
@@ -218,7 +218,7 @@ fun TransactionNumberPad(
                         Text(
                             text = key,
                             color = if (key == "DEL") ErrorRed else TextPrimary,
-                            fontSize = if (isAction) 20.sp else 28.sp,
+                            fontSize = if (isAction) 22.sp else 32.sp,
                             fontWeight = FontWeight.Medium,
                             fontFamily = RobotoMono
                         )

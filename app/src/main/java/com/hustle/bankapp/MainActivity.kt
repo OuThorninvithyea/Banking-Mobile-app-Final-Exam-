@@ -71,16 +71,20 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             HustleBankTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val navController = rememberNavController()
-
-                    NavHost(
-                        navController = navController,
-                        startDestination = "login"
+                val navController = rememberNavController()
+                
+                androidx.compose.material3.Scaffold(
+                    bottomBar = { com.hustle.bankapp.ui.navigation.MainBottomNavBar(navController) },
+                    containerColor = com.hustle.bankapp.theme.BackgroundBlack
+                ) { innerPadding ->
+                    // Floating nav bar: Box ignores innerPadding so the content scrolls underneath
+                    androidx.compose.foundation.layout.Box(
+                        modifier = Modifier.fillMaxSize()
                     ) {
+                        NavHost(
+                            navController = navController,
+                            startDestination = "login"
+                        ) {
                         // ── Login ──────────────────────────────────────────────────
                         composable("login") {
                             val vm: AuthViewModel = viewModel()
@@ -223,9 +227,10 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
-                    }
-                }
-            }
-        }
-    }
-}
+                        } // composable closing
+                    } // NavHost closing
+                } // Box closing
+            } // Scaffold closing
+        } // HustleBankTheme closing
+    } // setContent closing
+} // MainActivity closing

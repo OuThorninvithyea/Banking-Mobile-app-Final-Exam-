@@ -1,14 +1,14 @@
 package com.hustle.bankapp.ui.history
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.AccountBalanceWallet
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.hustle.bankapp.data.Transaction
 import com.hustle.bankapp.data.TransactionType
 import com.hustle.bankapp.theme.*
+import com.hustle.bankapp.ui.components.glassmorphism
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -41,7 +42,7 @@ fun HistoryScreen(
         containerColor = BackgroundBlack,
         topBar = {
             TopAppBar(
-                title = { Text("Transaction History", color = TextPrimary) },
+                title = { Text("Transaction History", color = TextPrimary, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
@@ -69,8 +70,8 @@ fun HistoryScreen(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 100.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(transactions, key = { it.id }) { tx ->
                     TransactionCard(tx)
@@ -83,48 +84,44 @@ fun HistoryScreen(
 @Composable
 private fun TransactionCard(tx: Transaction) {
     val isIncoming = tx.type == TransactionType.DEPOSIT
-    val isSentTransfer = tx.type == TransactionType.TRANSFER
     val amountColor = if (isIncoming) BinanceGreen else ErrorRed
+    val operator = if (isIncoming) "+" else "-"
+    val label = tx.type.name.lowercase().replaceFirstChar { it.uppercase() }
+    
     val icon = when (tx.type) {
-        TransactionType.DEPOSIT -> Icons.Filled.ArrowDownward
-        TransactionType.WITHDRAW -> Icons.Filled.ArrowUpward
+        TransactionType.DEPOSIT -> Icons.Filled.AccountBalanceWallet
+        TransactionType.WITHDRAW -> Icons.Filled.ShoppingCart
         TransactionType.TRANSFER -> Icons.Filled.SwapHoriz
     }
-    val label = when (tx.type) {
-        TransactionType.DEPOSIT -> "Deposit"
-        TransactionType.WITHDRAW -> "Withdrawal"
-        TransactionType.TRANSFER -> "Transfer"
-    }
+    
     val dateStr = SimpleDateFormat("MMM dd, yyyy • hh:mm a", Locale.US).format(Date(tx.timestamp))
 
-    Surface(
-        shape = RoundedCornerShape(14.dp),
-        color = SurfaceDark,
-        modifier = Modifier.fillMaxWidth()
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .glassmorphism(cornerRadius = 16.dp, alpha = 0.3f)
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Icon container
-            Surface(
-                shape = CircleShape,
-                color = amountColor.copy(alpha = 0.12f),
-                modifier = Modifier.size(44.dp)
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .background(amountColor.copy(alpha = 0.1f)),
+                contentAlignment = Alignment.Center
             ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = label,
-                        tint = amountColor,
-                        modifier = Modifier.size(22.dp)
-                    )
-                }
+                Icon(
+                    imageVector = icon,
+                    contentDescription = label,
+                    tint = amountColor,
+                    modifier = Modifier.size(20.dp)
+                )
             }
 
-            Spacer(Modifier.width(14.dp))
+            Spacer(Modifier.width(16.dp))
 
-            // Label + date
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = label,
@@ -139,10 +136,9 @@ private fun TransactionCard(tx: Transaction) {
                 )
             }
 
-            // Amount
             Text(
-                text = "${if (isIncoming) "+" else "-"}${"$%.2f".format(tx.amount)}",
-                color = amountColor,
+                text = "$operator${"$%.2f".format(tx.amount)}",
+                color = TextPrimary,
                 fontFamily = RobotoMono,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp

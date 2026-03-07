@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,6 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hustle.bankapp.theme.*
+import com.hustle.bankapp.ui.components.OutlinedInputField
+import com.hustle.bankapp.ui.components.glassmorphism
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +33,6 @@ fun TransferScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    // Handle success navigation
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
             viewModel.resetSuccess()
@@ -42,10 +45,13 @@ fun TransferScreen(
         containerColor = BackgroundBlack,
         topBar = {
             TopAppBar(
-                title = { Text("Transfer Funds", color = TextPrimary) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = BackgroundBlack
-                )
+                title = { Text("Transfer Funds", color = TextPrimary, fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = BackgroundBlack)
             )
         }
     ) { innerPadding ->
@@ -53,16 +59,16 @@ fun TransferScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // Error Message
             if (uiState.error != null) {
-                Surface(
-                    color = ErrorRed.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .glassmorphism(alpha = 0.2f, borderColor = ErrorRed.copy(alpha = 0.5f))
+                        .padding(bottom = 16.dp)
                 ) {
                     Text(
                         text = uiState.error!!,
@@ -74,45 +80,47 @@ fun TransferScreen(
                 }
             }
 
-            // Recipient Input
-            OutlinedTextField(
-                value = uiState.recipientId,
-                onValueChange = { viewModel.updateRecipientId(it) },
-                label = { Text("Recipient ID", color = TextSecondary) },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = BinanceGreen,
-                    unfocusedBorderColor = SurfaceDark,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextPrimary,
-                    cursorColor = BinanceGreen
-                ),
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .glassmorphism(cornerRadius = 24.dp, alpha = 0.3f)
+                    .padding(20.dp)
+            ) {
+                OutlinedInputField(
+                    value = uiState.recipientId,
+                    onValueChange = { viewModel.updateRecipientId(it) },
+                    label = "Recipient Email or Account ID"
+                )
+            }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.weight(0.5f))
 
-            // Amount Display
-            Text(
-                text = "$${if (uiState.amountString.isEmpty()) "0.00" else uiState.amountString}",
-                color = if (uiState.amountString.isEmpty()) TextSecondary else BinanceGreen,
-                style = MaterialTheme.typography.displayLarge.copy(fontSize = 56.sp),
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "$${if (uiState.amountString.isEmpty()) "0.00" else uiState.amountString}",
+                    color = if (uiState.amountString.isEmpty()) TextSecondary else BinanceGreen,
+                    style = MaterialTheme.typography.displayLarge.copy(fontSize = 64.sp),
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = RobotoMono
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Custom Number Pad
             CustomNumberPad(
                 onNumberClick = { viewModel.updateAmount(it.toString()) },
                 onDecimalClick = { viewModel.updateAmount(".") },
                 onDeleteClick = { viewModel.updateAmount("DELETE") }
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
-            // Submit Button
             Button(
                 onClick = { viewModel.submitTransfer() },
                 enabled = !uiState.isLoading,
@@ -124,20 +132,13 @@ fun TransferScreen(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(12.dp)
+                    .height(64.dp),
+                shape = RoundedCornerShape(20.dp)
             ) {
                 if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        color = BinanceGreen,
-                        modifier = Modifier.size(24.dp)
-                    )
+                    CircularProgressIndicator(color = BackgroundBlack, modifier = Modifier.size(24.dp))
                 } else {
-                    Text(
-                        text = "Confirm Transfer",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    )
+                    Text("Confirm Transfer", fontWeight = FontWeight.Bold, fontSize = 18.sp, letterSpacing = 1.sp)
                 }
             }
             
@@ -155,7 +156,7 @@ fun CustomNumberPad(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         val rows = listOf(
             listOf("1", "2", "3"),
@@ -196,7 +197,7 @@ fun NumberPadKey(
     
     Box(
         modifier = modifier
-            .size(80.dp)
+            .size(76.dp)
             .clip(CircleShape)
             .background(if (isActionKey) SurfaceDark else Color.Transparent)
             .clickable(onClick = onClick),
@@ -205,7 +206,7 @@ fun NumberPadKey(
         Text(
             text = text,
             color = if (text == "DEL") ErrorRed else TextPrimary,
-            fontSize = if (isActionKey) 20.sp else 28.sp,
+            fontSize = if (isActionKey) 22.sp else 32.sp,
             fontWeight = FontWeight.Medium,
             fontFamily = RobotoMono
         )
