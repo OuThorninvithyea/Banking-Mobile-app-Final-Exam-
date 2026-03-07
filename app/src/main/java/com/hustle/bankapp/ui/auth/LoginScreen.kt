@@ -101,9 +101,9 @@ fun LoginScreen(
             ) {
                 GlassCard {
                     OutlinedInputField(
-                        value = uiState.accountNumber,
-                        onValueChange = viewModel::onAccountNumberChange,
-                        label = "Username or Email (Account Number for now)"
+                        value = uiState.email,
+                        onValueChange = viewModel::onEmailChange,
+                        label = "Email Address"
                     )
 
                     Spacer(Modifier.height(16.dp))

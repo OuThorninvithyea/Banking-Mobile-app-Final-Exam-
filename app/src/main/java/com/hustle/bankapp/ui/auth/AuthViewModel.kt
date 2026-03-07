@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class AuthUiState(
-    val accountNumber: String = "",
+    val email: String = "",
     val password: String = "",
     val isLoading: Boolean = false,
     val error: String? = null,
@@ -24,8 +24,8 @@ class AuthViewModel(
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
-    fun onAccountNumberChange(value: String) {
-        _uiState.update { it.copy(accountNumber = value, error = null) }
+    fun onEmailChange(value: String) {
+        _uiState.update { it.copy(email = value, error = null) }
     }
 
     fun onPasswordChange(value: String) {
@@ -34,14 +34,14 @@ class AuthViewModel(
 
     fun login() {
         val state = _uiState.value
-        if (state.accountNumber.isBlank() || state.password.isBlank()) {
+        if (state.email.isBlank() || state.password.isBlank()) {
             _uiState.update { it.copy(error = "Please fill in all fields.") }
             return
         }
         _uiState.update { it.copy(isLoading = true, error = null) }
 
         viewModelScope.launch {
-            repository.login(state.accountNumber.trim(), state.password)
+            repository.login(state.email.trim(), state.password)
                 .onSuccess {
                     _uiState.update { it.copy(isLoading = false, isAuthenticated = true) }
                 }
