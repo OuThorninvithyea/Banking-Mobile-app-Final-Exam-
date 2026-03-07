@@ -69,6 +69,13 @@ class MockBankRepositoryImpl : BankRepository {
 
     override fun getUserProfile(): Flow<User?> = _userFlow.asStateFlow()
 
+    // ── Login ────────────────────────────────────────────────────────────
+
+    override suspend fun login(email: String, password: String): Result<User> {
+        val user = _userFlow.value ?: return Result.failure(Exception("Invalid credentials."))
+        return Result.success(user)
+    }
+
     // ── Deposit / Withdraw ─────────────────────────────────────────────
 
     override suspend fun deposit(amount: Double): Result<Unit> {

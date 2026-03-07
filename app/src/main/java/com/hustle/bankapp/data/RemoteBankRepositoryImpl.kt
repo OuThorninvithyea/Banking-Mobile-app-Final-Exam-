@@ -11,7 +11,8 @@ import kotlinx.coroutines.flow.flow
  * crashing.
  */
 class RemoteBankRepositoryImpl(
-    private val api: BankApiService
+    private val api: BankApiService,
+    private val tokenManager: TokenManager
 ) : BankRepository {
 
     // ── Reads (Flow-based) ────────────────────────────────────────────
@@ -52,6 +53,25 @@ class RemoteBankRepositoryImpl(
             }
         } catch (e: Exception) {
             throw Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}")
+        }
+    }
+
+    // ── Login ───────────────────────────────────────────────────────────
+
+    override suspend fun login(email: String, password: String): Result<User> {
+        return try {
+            val response = api.login(LoginRequest(email, password))
+            if (response.isSuccessful) {
+                val body = response.body()
+                    ?: return Result.failure(Exception("Empty response from server."))
+                tokenManager.saveToken(body.token)
+                Result.success(body.user)
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                Result.failure(Exception("Login failed: $errorMsg"))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
         }
     }
 
@@ -109,6 +129,7 @@ class RemoteBankRepositoryImpl(
             if (response.isSuccessful) {
                 val body = response.body()
                     ?: return Result.failure(Exception("Empty response from server."))
+                tokenManager.saveToken(body.token)
                 Result.success(body.user)
             } else {
                 val errorMsg = response.errorBody()?.string() ?: response.message()
@@ -138,8 +159,7 @@ class RemoteBankRepositoryImpl(
     // ── Logout ────────────────────────────────────────────────────────
 
     override suspend fun logout(): Result<Unit> {
-        // Logout is typically a local-only operation (clear token, etc.)
-        // If your backend has a logout endpoint, call it here.
+        tokenManager.clearToken()
         return Result.success(Unit)
     }
 }

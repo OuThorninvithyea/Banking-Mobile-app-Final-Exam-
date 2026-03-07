@@ -16,7 +16,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hustle.bankapp.data.RemoteBankRepositoryImpl
+import com.hustle.bankapp.data.TokenManager
 import com.hustle.bankapp.data.TransactionType
+import com.hustle.bankapp.data.api.AuthInterceptor
 import com.hustle.bankapp.data.api.BankApiService
 import com.hustle.bankapp.theme.HustleBankTheme
 import com.hustle.bankapp.ui.auth.AuthViewModel
@@ -46,12 +48,17 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition { false }
 
-        // ── Retrofit Setup ────────────────────────────────────────────
+        // ── Token & Networking Setup ──────────────────────────────────────
+        val tokenManager = TokenManager(applicationContext)
+
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
 
+        val authInterceptor = AuthInterceptor(tokenManager)
+
         val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
             .addInterceptor(loggingInterceptor)
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
@@ -66,8 +73,7 @@ class MainActivity : FragmentActivity() {
 
         val apiService = retrofit.create(BankApiService::class.java)
 
-        // Single shared repository instance across the app (now using real network calls)
-        val repository = RemoteBankRepositoryImpl(apiService)
+        val repository = RemoteBankRepositoryImpl(apiService, tokenManager)
 
         setContent {
             HustleBankTheme {
@@ -87,7 +93,13 @@ class MainActivity : FragmentActivity() {
                         ) {
                         // ── Login ──────────────────────────────────────────────────
                         composable("login") {
-                            val vm: AuthViewModel = viewModel()
+                            val vm: AuthViewModel = viewModel(
+                                factory = object : ViewModelProvider.Factory {
+                                    @Suppress("UNCHECKED_CAST")
+                                    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                                        AuthViewModel(repository) as T
+                                }
+                            )
                             LoginScreen(
                                 viewModel = vm,
                                 onNavigateToDashboard = {

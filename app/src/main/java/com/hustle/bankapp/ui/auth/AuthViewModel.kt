@@ -1,10 +1,13 @@
 package com.hustle.bankapp.ui.auth
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.hustle.bankapp.data.BankRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 data class AuthUiState(
     val accountNumber: String = "",
@@ -14,11 +17,9 @@ data class AuthUiState(
     val isAuthenticated: Boolean = false
 )
 
-class AuthViewModel : ViewModel() {
-
-    // Mock credentials — can be swapped for real backend later
-    private val validAccount = "001-234-5678"
-    private val validPassword = "1234"
+class AuthViewModel(
+    private val repository: BankRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
@@ -39,13 +40,16 @@ class AuthViewModel : ViewModel() {
         }
         _uiState.update { it.copy(isLoading = true, error = null) }
 
-        // Simulate network delay using simple check
-        if (state.accountNumber.trim() == validAccount && state.password == validPassword) {
-            _uiState.update { it.copy(isLoading = false, isAuthenticated = true) }
-        } else {
-            _uiState.update {
-                it.copy(isLoading = false, error = "Invalid account number or PIN. Please try again.")
-            }
+        viewModelScope.launch {
+            repository.login(state.accountNumber.trim(), state.password)
+                .onSuccess {
+                    _uiState.update { it.copy(isLoading = false, isAuthenticated = true) }
+                }
+                .onFailure { e ->
+                    _uiState.update {
+                        it.copy(isLoading = false, error = e.message ?: "Login failed. Please try again.")
+                    }
+                }
         }
     }
 
