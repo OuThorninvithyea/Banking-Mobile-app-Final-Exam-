@@ -1,0 +1,14 @@
+# Environment variables (contains DB credentials & secrets)
+.env
+
+# Go build output
+/bin/
+*.exe
+*.test
+*.out
+
+# Go module cache
+vendor/
+
+# macOS
+.DS_Store
