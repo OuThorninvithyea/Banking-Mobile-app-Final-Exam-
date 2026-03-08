@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.hustle.bankapp-mergeDebugResources-57:/values-v27/values-v27.xml",
+            "outputFile": "com.hustle.bankapp-mergeDebugResources-64:/values-v27/values-v27.xml",
             "map": [
                 {
                     "source": "/Users/outhorninvuth/.gradle/caches/8.13/transforms/22fe902450cca53c1ed271eadf69e4c0/transformed/core-splashscreen-1.0.1/res/values-v27/values-v27.xml",

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.hustle.bankapp-mergeDebugResources-57:/values-en-rXC/values-en-rXC.xml",
+            "outputFile": "com.hustle.bankapp-mergeDebugResources-64:/values-en-rXC/values-en-rXC.xml",
             "map": [
                 {
                     "source": "/Users/outhorninvuth/.gradle/caches/8.13/transforms/17925b90f0ec87b97d1952023e75fe51/transformed/foundation-release/res/values-en-rXC/values-en-rXC.xml",
