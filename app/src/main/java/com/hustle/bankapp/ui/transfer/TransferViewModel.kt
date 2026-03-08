@@ -11,10 +11,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class TransferViewModel(
-    private val repository: BankRepository
+    private val repository: BankRepository,
+    initialRecipient: String = ""
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(TransferUiState())
+    private val _uiState = MutableStateFlow(TransferUiState(recipientId = initialRecipient))
     val uiState: StateFlow<TransferUiState> = _uiState.asStateFlow()
 
     fun updateRecipientId(id: String) {

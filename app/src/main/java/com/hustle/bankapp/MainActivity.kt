@@ -12,9 +12,11 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.hustle.bankapp.data.RemoteBankRepositoryImpl
 import com.hustle.bankapp.data.TokenManager
 import com.hustle.bankapp.data.TransactionType
@@ -145,7 +147,7 @@ class MainActivity : FragmentActivity() {
                             )
                             DashboardScreen(
                                 viewModel = vm,
-                                onNavigateToTransfer = { navController.navigate("transfer") },
+                                onNavigateToTransfer = { navController.navigate("transfer?recipient=") },
                                 onNavigateToDeposit = { navController.navigate("deposit") },
                                 onNavigateToWithdraw = { navController.navigate("withdraw") },
                                 onNavigateToHistory = { navController.navigate("history") },
@@ -170,12 +172,21 @@ class MainActivity : FragmentActivity() {
                         }
 
                         // ── Transfer ───────────────────────────────────────────────
-                        composable("transfer") {
+                        composable(
+                            route = "transfer?recipient={recipient}",
+                            arguments = listOf(navArgument("recipient") {
+                                type = NavType.StringType
+                                defaultValue = ""
+                                nullable = true
+                            })
+                        ) { backStackEntry ->
+                            val initialRecipient = backStackEntry.arguments?.getString("recipient") ?: ""
                             val vm: TransferViewModel = viewModel(
+                                key = "transfer_$initialRecipient",
                                 factory = object : ViewModelProvider.Factory {
                                     @Suppress("UNCHECKED_CAST")
                                     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                                        TransferViewModel(repository) as T
+                                        TransferViewModel(repository, initialRecipient) as T
                                 }
                             )
                             TransferScreen(
@@ -187,7 +198,12 @@ class MainActivity : FragmentActivity() {
                         // ── QR Scanner ────────────────────────────────────────────
                         composable("qr_scanner") {
                             QRScannerScreen(
-                                onNavigateBack = { navController.popBackStack() }
+                                onNavigateBack = { navController.popBackStack() },
+                                onQrCodeScanned = { scannedValue ->
+                                    navController.navigate("transfer?recipient=$scannedValue") {
+                                        popUpTo("qr_scanner") { inclusive = true }
+                                    }
+                                }
                             )
                         }
 
