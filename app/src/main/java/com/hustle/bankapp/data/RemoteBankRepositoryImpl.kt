@@ -3,6 +3,7 @@ package com.hustle.bankapp.data
 import com.hustle.bankapp.data.api.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * Real implementation of [BankRepository] that delegates to [BankApiService]
@@ -26,6 +27,7 @@ class RemoteBankRepositoryImpl(
                 throw Exception("Failed to fetch balance: ${response.message()}")
             }
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             throw Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}")
         }
     }
@@ -39,6 +41,7 @@ class RemoteBankRepositoryImpl(
                 throw Exception("Failed to fetch transactions: ${response.message()}")
             }
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             throw Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}")
         }
     }
@@ -52,6 +55,7 @@ class RemoteBankRepositoryImpl(
                 throw Exception("Failed to fetch profile: ${response.message()}")
             }
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             throw Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}")
         }
     }
@@ -71,6 +75,7 @@ class RemoteBankRepositoryImpl(
                 Result.failure(Exception("Login failed: $errorMsg"))
             }
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
         }
     }
@@ -87,6 +92,7 @@ class RemoteBankRepositoryImpl(
                 Result.failure(Exception("Transfer failed: $errorMsg"))
             }
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
         }
     }
@@ -103,6 +109,7 @@ class RemoteBankRepositoryImpl(
                 Result.failure(Exception("Deposit failed: $errorMsg"))
             }
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
         }
     }
@@ -117,6 +124,7 @@ class RemoteBankRepositoryImpl(
                 Result.failure(Exception("Withdrawal failed: $errorMsg"))
             }
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
         }
     }
@@ -136,6 +144,7 @@ class RemoteBankRepositoryImpl(
                 Result.failure(Exception("Registration failed: $errorMsg"))
             }
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
         }
     }
@@ -152,6 +161,7 @@ class RemoteBankRepositoryImpl(
                 Result.failure(Exception("Profile update failed: $errorMsg"))
             }
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
         }
     }
@@ -161,5 +171,81 @@ class RemoteBankRepositoryImpl(
     override suspend fun logout(): Result<Unit> {
         tokenManager.clearToken()
         return Result.success(Unit)
+    }
+
+    // ── Cards ─────────────────────────────────────────────────────────
+
+    override fun getCards(): Flow<List<Card>> = flow {
+        try {
+            val response = api.getCards()
+            if (response.isSuccessful) {
+                emit(response.body() ?: emptyList())
+            } else {
+                throw Exception("Failed to fetch cards: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            throw Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}")
+        }
+    }
+
+    override suspend fun createCard(): Result<Card> {
+        return try {
+            val response = api.createCard()
+            if (response.isSuccessful) {
+                Result.success(response.body()!!)
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                Result.failure(Exception("Failed to create card: $errorMsg"))
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
+        }
+    }
+
+    override suspend fun toggleFreezeCard(cardId: String): Result<Card> {
+        return try {
+            val response = api.toggleFreezeCard(cardId)
+            if (response.isSuccessful) {
+                Result.success(response.body()!!)
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                Result.failure(Exception("Failed to toggle freeze: $errorMsg"))
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
+        }
+    }
+
+    override suspend fun updateCardLimit(cardId: String, limit: Double): Result<Card> {
+        return try {
+            val response = api.updateCardLimit(cardId, LimitRequest(limit))
+            if (response.isSuccessful) {
+                Result.success(response.body()!!)
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                Result.failure(Exception("Failed to update limit: $errorMsg"))
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
+        }
+    }
+
+    override suspend fun updateCardInfo(cardId: String, type: String): Result<Card> {
+        return try {
+            val response = api.updateCardInfo(cardId, EditCardRequest(type))
+            if (response.isSuccessful) {
+                Result.success(response.body()!!)
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                Result.failure(Exception("Failed to update card info: $errorMsg"))
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
+        }
     }
 }

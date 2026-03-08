@@ -172,4 +172,48 @@ class MockBankRepositoryImpl : BankRepository {
         _transactionsFlow.value = emptyList()
         return Result.success(Unit)
     }
+
+    // ── Cards (mock stubs) ─────────────────────────────────────────────
+
+    private val _cardsFlow = MutableStateFlow<List<Card>>(emptyList())
+
+    override fun getCards(): Flow<List<Card>> = _cardsFlow.asStateFlow()
+
+    override suspend fun createCard(): Result<Card> {
+        val card = Card(
+            id = UUID.randomUUID().toString(),
+            number = (1000000000000000L..9999999999999999L).random().toString(),
+            expiry = "03/29",
+            cvv = (100..999).random().toString(),
+            isFrozen = false,
+            type = "Virtual",
+            limit = 10000.0
+        )
+        _cardsFlow.value = _cardsFlow.value + card
+        return Result.success(card)
+    }
+
+    override suspend fun toggleFreezeCard(cardId: String): Result<Card> {
+        val updated = _cardsFlow.value.map { if (it.id == cardId) it.copy(isFrozen = !it.isFrozen) else it }
+        _cardsFlow.value = updated
+        return updated.find { it.id == cardId }
+            ?.let { Result.success(it) }
+            ?: Result.failure(Exception("Card not found"))
+    }
+
+    override suspend fun updateCardLimit(cardId: String, limit: Double): Result<Card> {
+        val updated = _cardsFlow.value.map { if (it.id == cardId) it.copy(limit = limit) else it }
+        _cardsFlow.value = updated
+        return updated.find { it.id == cardId }
+            ?.let { Result.success(it) }
+            ?: Result.failure(Exception("Card not found"))
+    }
+
+    override suspend fun updateCardInfo(cardId: String, type: String): Result<Card> {
+        val updated = _cardsFlow.value.map { if (it.id == cardId) it.copy(type = type) else it }
+        _cardsFlow.value = updated
+        return updated.find { it.id == cardId }
+            ?.let { Result.success(it) }
+            ?: Result.failure(Exception("Card not found"))
+    }
 }

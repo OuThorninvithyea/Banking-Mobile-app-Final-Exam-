@@ -34,6 +34,7 @@ import com.hustle.bankapp.ui.profile.ProfileViewModel
 import com.hustle.bankapp.ui.transaction.DepositWithdrawScreen
 import com.hustle.bankapp.ui.transaction.DepositWithdrawViewModel
 import com.hustle.bankapp.ui.cards.CardsScreen
+import com.hustle.bankapp.ui.cards.CardsViewModel
 import com.hustle.bankapp.ui.transfer.QRScannerScreen
 import com.hustle.bankapp.ui.transfer.TransferScreen
 import com.hustle.bankapp.ui.transfer.TransferViewModel
@@ -155,8 +156,15 @@ class MainActivity : FragmentActivity() {
 
                         // ── Cards ──────────────────────────────────────────────────
                         composable("cards") {
+                            val vm: CardsViewModel = viewModel(
+                                factory = object : ViewModelProvider.Factory {
+                                    @Suppress("UNCHECKED_CAST")
+                                    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                                        CardsViewModel(repository) as T
+                                }
+                            )
                             CardsScreen(
-                                repository = repository,
+                                viewModel = vm,
                                 onNavigateBack = { navController.popBackStack() }
                             )
                         }

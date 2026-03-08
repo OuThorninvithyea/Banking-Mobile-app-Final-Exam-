@@ -3,10 +3,13 @@ package com.hustle.bankapp.data.api
 import com.google.gson.annotations.SerializedName
 import com.hustle.bankapp.data.Transaction
 import com.hustle.bankapp.data.User
+import com.hustle.bankapp.data.Card
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
 
 // ── Request DTOs ──────────────────────────────────────────────────────
 
@@ -29,6 +32,10 @@ data class TransferRequest(
 data class DepositRequest(val amount: Double)
 
 data class WithdrawRequest(val amount: Double)
+
+data class LimitRequest(val limit: Double)
+
+data class EditCardRequest(val type: String)
 
 data class UpdateProfileRequest(
     val name: String,
@@ -88,4 +95,20 @@ interface BankApiService {
 
     @GET("/api/transactions/history")
     suspend fun getTransactionHistory(): Response<TransactionListResponse>
+
+    // Cards
+    @GET("/api/cards")
+    suspend fun getCards(): Response<List<Card>>
+
+    @POST("/api/cards")
+    suspend fun createCard(): Response<Card>
+
+    @PUT("/api/cards/{id}/freeze")
+    suspend fun toggleFreezeCard(@Path("id") cardId: String): Response<Card>
+
+    @PUT("/api/cards/{id}/limit")
+    suspend fun updateCardLimit(@Path("id") cardId: String, @Body request: LimitRequest): Response<Card>
+
+    @PUT("/api/cards/{id}/edit")
+    suspend fun updateCardInfo(@Path("id") cardId: String, @Body request: EditCardRequest): Response<Card>
 }

@@ -25,12 +25,14 @@ func main() {
 	// Wire up repositories, services, handlers
 	userRepo := repository.NewUserRepository(config.DB)
 	txRepo := repository.NewTransactionRepository(config.DB)
+	cardRepo := repository.NewCardRepository(config.DB)
 
 	authService := services.NewAuthService(userRepo)
 	txService := services.NewTransactionService(userRepo, txRepo)
 
 	authHandler := handlers.NewAuthHandler(authService, userRepo)
 	txHandler := handlers.NewTransactionHandler(txService)
+	cardHandler := handlers.NewCardHandler(cardRepo)
 
 	// Gin engine
 	r := gin.Default()
@@ -56,6 +58,13 @@ func main() {
 		protected.POST("/transactions/withdraw", txHandler.Withdraw)
 		protected.POST("/transactions/transfer", txHandler.Transfer)
 		protected.GET("/transactions/history", txHandler.GetHistory)
+
+		// Cards
+		protected.POST("/cards", cardHandler.CreateCard)
+		protected.GET("/cards", cardHandler.GetCards)
+		protected.PUT("/cards/:id/freeze", cardHandler.ToggleFreezeCard)
+		protected.PUT("/cards/:id/limit", cardHandler.UpdateCardLimit)
+		protected.PUT("/cards/:id/edit", cardHandler.UpdateCardInfo)
 	}
 
 	port := os.Getenv("PORT")

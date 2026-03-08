@@ -13,4 +13,11 @@ interface BankRepository {
     suspend fun registerUser(name: String, email: String, password: String): Result<User>
     suspend fun updateProfile(name: String, email: String, contact: String): Result<Unit>
     suspend fun logout(): Result<Unit>
+
+    // Cards
+    fun getCards(): Flow<List<Card>>
+    suspend fun createCard(): Result<Card>
+    suspend fun toggleFreezeCard(cardId: String): Result<Card>
+    suspend fun updateCardLimit(cardId: String, limit: Double): Result<Card>
+    suspend fun updateCardInfo(cardId: String, type: String): Result<Card>
 }

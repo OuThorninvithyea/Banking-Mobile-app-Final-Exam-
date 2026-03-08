@@ -27,7 +27,7 @@ func ConnectDatabase() {
 
 	log.Println("Database connection established")
 
-	if err := db.AutoMigrate(&models.User{}, &models.Transaction{}); err != nil {
+	if err := db.AutoMigrate(&models.User{}, &models.Transaction{}, &models.Card{}); err != nil {
 		log.Fatalf("AutoMigrate failed: %v", err)
 	}
 
