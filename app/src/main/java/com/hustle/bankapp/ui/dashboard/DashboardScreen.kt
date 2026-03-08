@@ -69,7 +69,7 @@ fun DashboardScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState(initial = DashboardUiState.Loading)
-    var isBalanceVisible by remember { mutableStateOf(true) }
+    var isBalanceVisible by remember { mutableStateOf(false) }
     
     // Entrance animation trigger
     var visible by remember { mutableStateOf(false) }
