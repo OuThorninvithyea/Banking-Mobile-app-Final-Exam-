@@ -4,24 +4,7 @@
             "outputFile": "com.hustle.bankapp-mergeDebugResources-57:/values-zh-rCN/values-zh-rCN.xml",
             "map": [
                 {
-                    "source": "/Users/vithea/.gradle/caches/8.13/transforms/72e8c1c540b3fafe3831c175d5a76d24/transformed/core-1.12.0/res/values-zh-rCN/values-zh-rCN.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,147,248,342,436,529,623,719",
-                        "endColumns": "91,100,93,93,92,93,95,100",
-                        "endOffsets": "142,243,337,431,524,618,714,815"
-                    },
-                    "to": {
-                        "startLines": "31,32,33,34,35,36,37,127",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "2886,2978,3079,3173,3267,3360,3454,11953",
-                        "endColumns": "91,100,93,93,92,93,95,100",
-                        "endOffsets": "2973,3074,3168,3262,3355,3449,3545,12049"
-                    }
-                },
-                {
-                    "source": "/Users/vithea/.gradle/caches/8.13/transforms/a102f34b314ef637258c382a8fb77860/transformed/appcompat-1.6.1/res/values-zh-rCN/values-zh-rCN.xml",
+                    "source": "/Users/outhorninvuth/.gradle/caches/8.13/transforms/733743d2600d4fa968d679c129ac3aa7/transformed/appcompat-1.6.1/res/values-zh-rCN/values-zh-rCN.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -38,7 +21,24 @@
                     }
                 },
                 {
-                    "source": "/Users/vithea/.gradle/caches/8.13/transforms/648612793c9a77a05f54ebe7dce836ae/transformed/ui-release/res/values-zh-rCN/values-zh-rCN.xml",
+                    "source": "/Users/outhorninvuth/.gradle/caches/8.13/transforms/8a72b3731e7921432f0178056e75fbea/transformed/core-1.12.0/res/values-zh-rCN/values-zh-rCN.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,147,248,342,436,529,623,719",
+                        "endColumns": "91,100,93,93,92,93,95,100",
+                        "endOffsets": "142,243,337,431,524,618,714,815"
+                    },
+                    "to": {
+                        "startLines": "31,32,33,34,35,36,37,127",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "2886,2978,3079,3173,3267,3360,3454,11953",
+                        "endColumns": "91,100,93,93,92,93,95,100",
+                        "endOffsets": "2973,3074,3168,3262,3355,3449,3545,12049"
+                    }
+                },
+                {
+                    "source": "/Users/outhorninvuth/.gradle/caches/8.13/transforms/0386c06382741257deceec838767e890/transformed/ui-release/res/values-zh-rCN/values-zh-rCN.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -55,24 +55,7 @@
                     }
                 },
                 {
-                    "source": "/Users/vithea/.gradle/caches/8.13/transforms/717c5dd2157ac1bada31e0f40fd6a7a1/transformed/biometric-1.2.0-alpha05/res/values-zh-rCN/values-zh-rCN.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,179,279,377,458,577,668,767,866,969,1071,1169,1270,1371,1461,1585,1685,1797,1903,2000,2102,2187,2296,2374,2478,2563,2672",
-                        "endColumns": "123,99,97,80,118,90,98,98,102,101,97,100,100,89,123,99,111,105,96,101,84,108,77,103,84,108,90",
-                        "endOffsets": "174,274,372,453,572,663,762,861,964,1066,1164,1265,1366,1456,1580,1680,1792,1898,1995,2097,2182,2291,2369,2473,2558,2667,2758"
-                    },
-                    "to": {
-                        "startLines": "29,30,40,42,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,124,133,134,135,136,137,138,139",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "2662,2786,3703,3886,4135,4254,4345,4444,4543,4646,4748,4846,4947,5048,5138,5262,5362,5474,5580,11704,12467,12552,12661,12739,12843,12928,13037",
-                        "endColumns": "123,99,97,80,118,90,98,98,102,101,97,100,100,89,123,99,111,105,96,101,84,108,77,103,84,108,90",
-                        "endOffsets": "2781,2881,3796,3962,4249,4340,4439,4538,4641,4743,4841,4942,5043,5133,5257,5357,5469,5575,5672,11801,12547,12656,12734,12838,12923,13032,13123"
-                    }
-                },
-                {
-                    "source": "/Users/vithea/.gradle/caches/8.13/transforms/2d10aeb6985ed3d51aa591449ad6e8e3/transformed/material3-release/res/values-zh-rCN/values-zh-rCN.xml",
+                    "source": "/Users/outhorninvuth/.gradle/caches/8.13/transforms/4c413c4bc7084e08f63533dce8af1eef/transformed/material3-release/res/values-zh-rCN/values-zh-rCN.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -89,7 +72,24 @@
                     }
                 },
                 {
-                    "source": "/Users/vithea/.gradle/caches/8.13/transforms/09cb8f449adc9ee89cbb156af53771ef/transformed/foundation-release/res/values-zh-rCN/values-zh-rCN.xml",
+                    "source": "/Users/outhorninvuth/.gradle/caches/8.13/transforms/dedf4d4f15e7a54194622cf5457d43bf/transformed/biometric-1.2.0-alpha05/res/values-zh-rCN/values-zh-rCN.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,179,279,377,458,577,668,767,866,969,1071,1169,1270,1371,1461,1585,1685,1797,1903,2000,2102,2187,2296,2374,2478,2563,2672",
+                        "endColumns": "123,99,97,80,118,90,98,98,102,101,97,100,100,89,123,99,111,105,96,101,84,108,77,103,84,108,90",
+                        "endOffsets": "174,274,372,453,572,663,762,861,964,1066,1164,1265,1366,1456,1580,1680,1792,1898,1995,2097,2182,2291,2369,2473,2558,2667,2758"
+                    },
+                    "to": {
+                        "startLines": "29,30,40,42,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,124,133,134,135,136,137,138,139",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "2662,2786,3703,3886,4135,4254,4345,4444,4543,4646,4748,4846,4947,5048,5138,5262,5362,5474,5580,11704,12467,12552,12661,12739,12843,12928,13037",
+                        "endColumns": "123,99,97,80,118,90,98,98,102,101,97,100,100,89,123,99,111,105,96,101,84,108,77,103,84,108,90",
+                        "endOffsets": "2781,2881,3796,3962,4249,4340,4439,4538,4641,4743,4841,4942,5043,5133,5257,5357,5469,5575,5672,11801,12547,12656,12734,12838,12923,13032,13123"
+                    }
+                },
+                {
+                    "source": "/Users/outhorninvuth/.gradle/caches/8.13/transforms/17925b90f0ec87b97d1952023e75fe51/transformed/foundation-release/res/values-zh-rCN/values-zh-rCN.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",

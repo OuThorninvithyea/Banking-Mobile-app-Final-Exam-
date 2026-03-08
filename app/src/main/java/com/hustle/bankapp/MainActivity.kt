@@ -75,6 +75,7 @@ class MainActivity : FragmentActivity() {
         val apiService = retrofit.create(BankApiService::class.java)
 
         val repository = RemoteBankRepositoryImpl(apiService, tokenManager)
+        val hasToken = !tokenManager.getToken().isNullOrEmpty()
 
         setContent {
             HustleBankTheme {
@@ -90,7 +91,7 @@ class MainActivity : FragmentActivity() {
                     ) {
                         NavHost(
                             navController = navController,
-                            startDestination = "login"
+                            startDestination = if (hasToken) "dashboard" else "login"
                         ) {
                         // ── Login ──────────────────────────────────────────────────
                         composable("login") {

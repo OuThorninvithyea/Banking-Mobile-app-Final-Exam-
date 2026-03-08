@@ -45,9 +45,15 @@ fun Double.formatAsCurrency(): String {
     return format.format(this)
 }
 
-fun Long.formatAsDate(): String {
-    val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-    return formatter.format(Date(this))
+fun String.formatAsDate(): String {
+    return try {
+        val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX", Locale.US)
+        val date = parser.parse(this) ?: Date()
+        val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+        formatter.format(date)
+    } catch (e: Exception) {
+        this
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

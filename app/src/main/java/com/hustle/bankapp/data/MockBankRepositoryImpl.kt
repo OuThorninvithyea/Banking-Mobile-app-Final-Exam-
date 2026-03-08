@@ -25,38 +25,38 @@ class MockBankRepositoryImpl : BankRepository {
                 id = UUID.randomUUID().toString(),
                 type = TransactionType.DEPOSIT,
                 amount = 2000.0,
-                timestamp = System.currentTimeMillis() - 86400000 * 6
+                timestamp = "2026-03-02T10:00:00Z"
             ),
             Transaction(
                 id = UUID.randomUUID().toString(),
                 type = TransactionType.DEPOSIT,
                 amount = 1500.0,
-                timestamp = System.currentTimeMillis() - 86400000 * 5
+                timestamp = "2026-03-03T10:00:00Z"
             ),
             Transaction(
                 id = UUID.randomUUID().toString(),
                 type = TransactionType.WITHDRAW,
                 amount = 350.0,
-                timestamp = System.currentTimeMillis() - 86400000 * 4
+                timestamp = "2026-03-04T10:00:00Z"
             ),
             Transaction(
                 id = UUID.randomUUID().toString(),
                 type = TransactionType.TRANSFER,
                 amount = 200.0,
-                timestamp = System.currentTimeMillis() - 86400000 * 3,
+                timestamp = "2026-03-05T10:00:00Z",
                 recipientId = "user_ext_1"
             ),
             Transaction(
                 id = UUID.randomUUID().toString(),
                 type = TransactionType.DEPOSIT,
                 amount = 750.0,
-                timestamp = System.currentTimeMillis() - 86400000 * 2
+                timestamp = "2026-03-06T10:00:00Z"
             ),
             Transaction(
                 id = UUID.randomUUID().toString(),
                 type = TransactionType.WITHDRAW,
                 amount = 150.0,
-                timestamp = System.currentTimeMillis() - 86400000 * 1
+                timestamp = "2026-03-07T10:00:00Z"
             )
         )
     )
@@ -86,7 +86,7 @@ class MockBankRepositoryImpl : BankRepository {
             id = UUID.randomUUID().toString(),
             type = TransactionType.DEPOSIT,
             amount = amount,
-            timestamp = System.currentTimeMillis()
+            timestamp = "2026-03-08T10:00:00Z"
         )
         _transactionsFlow.value = listOf(tx) + _transactionsFlow.value
         return Result.success(Unit)
@@ -103,7 +103,7 @@ class MockBankRepositoryImpl : BankRepository {
             id = UUID.randomUUID().toString(),
             type = TransactionType.WITHDRAW,
             amount = amount,
-            timestamp = System.currentTimeMillis()
+            timestamp = "2026-03-08T10:00:00Z"
         )
         _transactionsFlow.value = listOf(tx) + _transactionsFlow.value
         return Result.success(Unit)
@@ -122,7 +122,7 @@ class MockBankRepositoryImpl : BankRepository {
             id = UUID.randomUUID().toString(),
             type = TransactionType.TRANSFER,
             amount = amount,
-            timestamp = System.currentTimeMillis(),
+            timestamp = "2026-03-08T10:00:00Z",
             recipientId = recipientId
         )
         _transactionsFlow.value = listOf(tx) + _transactionsFlow.value
@@ -151,7 +151,7 @@ class MockBankRepositoryImpl : BankRepository {
                 id = UUID.randomUUID().toString(),
                 type = TransactionType.DEPOSIT,
                 amount = 500.0,
-                timestamp = System.currentTimeMillis()
+                timestamp = "2026-03-08T10:00:00Z"
             )
         )
         return Result.success(newUser)

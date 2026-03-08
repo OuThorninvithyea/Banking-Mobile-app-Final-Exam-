@@ -10,6 +10,6 @@ data class Transaction(
     val id: String,
     val type: TransactionType,
     val amount: Double,
-    val timestamp: Long,
+    val timestamp: String,
     val recipientId: String? = null
 )

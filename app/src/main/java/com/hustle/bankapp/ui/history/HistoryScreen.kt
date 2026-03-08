@@ -94,7 +94,13 @@ private fun TransactionCard(tx: Transaction) {
         TransactionType.TRANSFER -> Icons.Filled.SwapHoriz
     }
     
-    val dateStr = SimpleDateFormat("MMM dd, yyyy • hh:mm a", Locale.US).format(Date(tx.timestamp))
+    val dateStr = try {
+        val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX", Locale.US)
+        val date = parser.parse(tx.timestamp) ?: Date()
+        SimpleDateFormat("MMM dd, yyyy • hh:mm a", Locale.US).format(date)
+    } catch (e: Exception) {
+        tx.timestamp
+    }
 
     Box(
         modifier = Modifier
