@@ -27,9 +27,6 @@ class RegisterViewModel(private val repository: BankRepository) : ViewModel() {
 
     fun onNameChange(v: String)            = _uiState.update { it.copy(name = v, error = null) }
     fun onEmailChange(v: String)           = _uiState.update { it.copy(email = v, error = null) }
-
-
-
     fun onPasswordChange(v: String)        = _uiState.update { it.copy(password = v, error = null) }
     fun onConfirmPasswordChange(v: String) = _uiState.update { it.copy(confirmPassword = v, error = null) }
 

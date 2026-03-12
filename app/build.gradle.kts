@@ -22,7 +22,8 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://api3.vvivid.dev/\"")
+
         }
         release {
             isMinifyEnabled = false
@@ -30,7 +31,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "API_BASE_URL", "\"https://hustlebank-api.onrender.com/\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://api3.vvivid.dev/\"")
+
         }
     }
     compileOptions {
