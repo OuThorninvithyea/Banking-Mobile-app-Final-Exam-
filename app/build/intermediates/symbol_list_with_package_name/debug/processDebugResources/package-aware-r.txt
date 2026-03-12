@@ -729,6 +729,14 @@ drawable notify_panel_notification_icon_bg
 drawable test_level_drawable
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
+font inter_black
+font inter_bold
+font inter_medium
+font inter_regular
+font inter_semibold
+font jetbrains_mono_bold
+font jetbrains_mono_medium
+font jetbrains_mono_regular
 id ALT
 id CTRL
 id FUNCTION

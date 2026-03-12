@@ -15,7 +15,7 @@ import com.hustle.bankapp.theme.BinanceGreen
 import com.hustle.bankapp.theme.SurfaceDark
 import com.hustle.bankapp.theme.TextPrimary
 import com.hustle.bankapp.theme.TextSecondary
-import com.hustle.bankapp.theme.RobotoMono
+import com.hustle.bankapp.theme.Inter
 
 @Composable
 fun GlassCard(
@@ -59,9 +59,9 @@ fun BrandButton(
         } else {
             Text(
                 text = text.uppercase(),
-                fontFamily = RobotoMono,
+                fontFamily = Inter,
                 fontWeight = FontWeight.Bold,
-                letterSpacing = 1.5.sp,
+                letterSpacing = 1.sp,
                 fontSize = 15.sp
             )
         }

@@ -66,7 +66,7 @@ fun RegisterScreen(
                         color = TextPrimary,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
-                        fontFamily = RobotoMono
+                        fontFamily = com.hustle.bankapp.theme.Inter
                     )
                     Text(
                         text = "Join HustleBank today.",

@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModel
@@ -83,7 +84,15 @@ class MainActivity : FragmentActivity() {
         setContent {
             HustleBankTheme {
                 val navController = rememberNavController()
-                
+
+                LaunchedEffect(Unit) {
+                    tokenManager.sessionExpired.collect {
+                        navController.navigate("login") {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                }
+
                 androidx.compose.material3.Scaffold(
                     bottomBar = { com.hustle.bankapp.ui.navigation.MainBottomNavBar(navController) },
                     containerColor = com.hustle.bankapp.theme.BackgroundBlack

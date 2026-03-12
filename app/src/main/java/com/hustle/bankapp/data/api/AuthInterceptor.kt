@@ -10,13 +10,20 @@ class AuthInterceptor(private val tokenManager: TokenManager) : Interceptor {
         val originalRequest = chain.request()
 
         val token = tokenManager.getToken()
-        if (token != null) {
-            val authenticatedRequest = originalRequest.newBuilder()
+        val request = if (token != null) {
+            originalRequest.newBuilder()
                 .header("Authorization", "Bearer $token")
                 .build()
-            return chain.proceed(authenticatedRequest)
+        } else {
+            originalRequest
         }
 
-        return chain.proceed(originalRequest)
+        val response = chain.proceed(request)
+
+        if (response.code == 401 && token != null) {
+            tokenManager.notifySessionExpired()
+        }
+
+        return response
     }
 }

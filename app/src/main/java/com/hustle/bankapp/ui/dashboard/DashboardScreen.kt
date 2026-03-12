@@ -148,7 +148,12 @@ fun DashboardScreen(
                                         Spacer(modifier = Modifier.width(16.dp))
                                         Column {
                                             Text("Welcome back,", color = TextSecondary, fontSize = 13.sp)
-                                            Text("Alex Johnson", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                                            Text(
+                                                text = state.userName.ifEmpty { "User" },
+                                                color = TextPrimary,
+                                                fontSize = 18.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
                                         }
                                     }
                                     Box(

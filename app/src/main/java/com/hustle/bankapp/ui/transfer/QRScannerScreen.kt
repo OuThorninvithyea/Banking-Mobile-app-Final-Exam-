@@ -59,7 +59,7 @@ fun QRScannerScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Scan QR Code", color = TextPrimary, fontWeight = FontWeight.Bold, fontFamily = RobotoMono)
+                    Text("Scan QR Code", color = TextPrimary, fontWeight = FontWeight.Bold, fontFamily = com.hustle.bankapp.theme.Inter)
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
@@ -199,7 +199,7 @@ private fun CameraPreviewWithScanner(onQrCodeScanned: (String) -> Unit) {
                 text = "QR code will be detected automatically",
                 color = Color.White.copy(alpha = 0.5f),
                 fontSize = 12.sp,
-                fontFamily = RobotoMono,
+                fontFamily = com.hustle.bankapp.theme.Inter,
                 textAlign = TextAlign.Center
             )
         }

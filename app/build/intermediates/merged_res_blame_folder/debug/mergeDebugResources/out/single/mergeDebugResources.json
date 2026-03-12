@@ -1,10 +1,42 @@
 [
     {
-        "merged": "com.hustle.bankapp-debug-66:/xml_data_extraction_rules.xml.flat",
-        "source": "com.hustle.bankapp-main-68:/xml/data_extraction_rules.xml"
+        "merged": "com.hustle.bankapp-debug-66:/font_inter_black.ttf.flat",
+        "source": "com.hustle.bankapp-main-68:/font/inter_black.ttf"
     },
     {
-        "merged": "com.hustle.bankapp-debug-66:/xml_backup_rules.xml.flat",
-        "source": "com.hustle.bankapp-main-68:/xml/backup_rules.xml"
+        "merged": "com.hustle.bankapp-debug-66:/font_jetbrains_mono_bold.ttf.flat",
+        "source": "com.hustle.bankapp-main-68:/font/jetbrains_mono_bold.ttf"
+    },
+    {
+        "merged": "com.hustle.bankapp-debug-66:/font_inter_semibold.ttf.flat",
+        "source": "com.hustle.bankapp-main-68:/font/inter_semibold.ttf"
+    },
+    {
+        "merged": "com.hustle.bankapp-debug-66:/font_jetbrains_mono_medium.ttf.flat",
+        "source": "com.hustle.bankapp-main-68:/font/jetbrains_mono_medium.ttf"
+    },
+    {
+        "merged": "com.hustle.bankapp-debug-66:/font_inter_bold.ttf.flat",
+        "source": "com.hustle.bankapp-main-68:/font/inter_bold.ttf"
+    },
+    {
+        "merged": "com.hustle.bankapp-debug-66:/font_inter_regular.ttf.flat",
+        "source": "com.hustle.bankapp-main-68:/font/inter_regular.ttf"
+    },
+    {
+        "merged": "/Users/outhorninvuth/.gradle/daemon/8.13/com.hustle.bankapp-debug-66:/xml_data_extraction_rules.xml.flat",
+        "source": "/Users/outhorninvuth/.gradle/daemon/8.13/com.hustle.bankapp-main-68:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.hustle.bankapp-debug-66:/font_inter_medium.ttf.flat",
+        "source": "com.hustle.bankapp-main-68:/font/inter_medium.ttf"
+    },
+    {
+        "merged": "com.hustle.bankapp-debug-66:/font_jetbrains_mono_regular.ttf.flat",
+        "source": "com.hustle.bankapp-main-68:/font/jetbrains_mono_regular.ttf"
+    },
+    {
+        "merged": "/Users/outhorninvuth/.gradle/daemon/8.13/com.hustle.bankapp-debug-66:/xml_backup_rules.xml.flat",
+        "source": "/Users/outhorninvuth/.gradle/daemon/8.13/com.hustle.bankapp-main-68:/xml/backup_rules.xml"
     }
 ]

@@ -84,7 +84,7 @@ fun LoginScreen(
                         color = TextPrimary,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
-                        fontFamily = RobotoMono
+                        fontFamily = com.hustle.bankapp.theme.Inter
                     )
                     Text(
                         text = "Sign in to your account",

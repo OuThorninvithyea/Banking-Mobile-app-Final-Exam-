@@ -15,8 +15,9 @@ class DashboardViewModel(
 
     val uiState: StateFlow<DashboardUiState> = combine(
         repository.getBalance(),
-        repository.getTransactions()
-    ) { balance, transactions ->
+        repository.getTransactions(),
+        repository.getUserProfile()
+    ) { balance, transactions, user ->
         val chartData = listOf(
             (balance * 0.95f).toFloat(),
             (balance * 0.92f).toFloat(),
@@ -30,7 +31,8 @@ class DashboardViewModel(
         DashboardUiState.Success(
             balance = balance,
             recentTransactions = transactions.take(5),
-            chartData = chartData
+            chartData = chartData,
+            userName = user?.name ?: ""
         ) as DashboardUiState
     }
         .catch { emit(DashboardUiState.Error(it.message ?: "An unknown error occurred") as DashboardUiState) }

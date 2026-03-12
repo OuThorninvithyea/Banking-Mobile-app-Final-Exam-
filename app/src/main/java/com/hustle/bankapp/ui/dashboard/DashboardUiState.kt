@@ -7,7 +7,8 @@ sealed class DashboardUiState {
     data class Success(
         val balance: Double,
         val recentTransactions: List<Transaction>,
-        val chartData: List<Float>
+        val chartData: List<Float>,
+        val userName: String = ""
     ) : DashboardUiState()
     data class Error(val message: String) : DashboardUiState()
 }

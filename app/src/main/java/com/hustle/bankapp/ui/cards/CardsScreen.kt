@@ -245,7 +245,7 @@ fun CardsScreen(
                             color = TextPrimary,
                             fontSize = 26.sp,
                             fontWeight = FontWeight.Black,
-                            fontFamily = RobotoMono
+                            fontFamily = com.hustle.bankapp.theme.Inter
                         )
                         IconButton(
                             onClick = { viewModel.createCard() },
