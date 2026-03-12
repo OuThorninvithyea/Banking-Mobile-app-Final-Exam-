@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.hustle.bankapp-mergeDebugResources-64:/values-ru/values-ru.xml",
+            "outputFile": "com.hustle.bankapp-mergeDebugResources-2:/values-ru/values-ru.xml",
             "map": [
                 {
-                    "source": "/Users/outhorninvuth/.gradle/caches/8.13/transforms/8e6600cc48afaf136262b0a257fde5e2/transformed/play-services-base-18.1.0/res/values-ru/values.xml",
+                    "source": "/Users/outhorninvuth/Documents/mobile_banking_app/build/reports/caches/8.13/transforms/8e6600cc48afaf136262b0a257fde5e2/transformed/play-services-base-18.1.0/res/values-ru/values.xml",
                     "from": {
                         "startLines": "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
                         "startColumns": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
@@ -21,41 +21,7 @@
                     }
                 },
                 {
-                    "source": "/Users/outhorninvuth/.gradle/caches/8.13/transforms/17925b90f0ec87b97d1952023e75fe51/transformed/foundation-release/res/values-ru/values-ru.xml",
-                    "from": {
-                        "startLines": "2,3",
-                        "startColumns": "4,4",
-                        "startOffsets": "55,143",
-                        "endColumns": "87,90",
-                        "endOffsets": "138,229"
-                    },
-                    "to": {
-                        "startLines": "149,150",
-                        "startColumns": "4,4",
-                        "startOffsets": "16349,16437",
-                        "endColumns": "87,90",
-                        "endOffsets": "16432,16523"
-                    }
-                },
-                {
-                    "source": "/Users/outhorninvuth/.gradle/caches/8.13/transforms/c3e897149fb8caa18d1ce819c786a3c2/transformed/play-services-basement-18.1.0/res/values-ru/values.xml",
-                    "from": {
-                        "startLines": "4",
-                        "startColumns": "0",
-                        "startOffsets": "195",
-                        "endColumns": "152",
-                        "endOffsets": "347"
-                    },
-                    "to": {
-                        "startLines": "48",
-                        "startColumns": "4",
-                        "startOffsets": "5049",
-                        "endColumns": "156",
-                        "endOffsets": "5201"
-                    }
-                },
-                {
-                    "source": "/Users/outhorninvuth/.gradle/caches/8.13/transforms/0386c06382741257deceec838767e890/transformed/ui-release/res/values-ru/values-ru.xml",
+                    "source": "/Users/outhorninvuth/Documents/mobile_banking_app/build/reports/caches/8.13/transforms/0386c06382741257deceec838767e890/transformed/ui-release/res/values-ru/values-ru.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -72,41 +38,41 @@
                     }
                 },
                 {
-                    "source": "/Users/outhorninvuth/.gradle/caches/8.13/transforms/8a72b3731e7921432f0178056e75fbea/transformed/core-1.12.0/res/values-ru/values-ru.xml",
+                    "source": "/Users/outhorninvuth/Documents/mobile_banking_app/build/reports/caches/8.13/transforms/17925b90f0ec87b97d1952023e75fe51/transformed/foundation-release/res/values-ru/values-ru.xml",
                     "from": {
-                        "startLines": "2,3,4,5,6,7,8,9",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,153,255,356,457,562,665,782",
-                        "endColumns": "97,101,100,100,104,102,116,100",
-                        "endOffsets": "148,250,351,452,557,660,777,878"
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,143",
+                        "endColumns": "87,90",
+                        "endOffsets": "138,229"
                     },
                     "to": {
-                        "startLines": "31,32,33,34,35,36,37,145",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "3147,3245,3347,3448,3549,3654,3757,15971",
-                        "endColumns": "97,101,100,100,104,102,116,100",
-                        "endOffsets": "3240,3342,3443,3544,3649,3752,3869,16067"
+                        "startLines": "149,150",
+                        "startColumns": "4,4",
+                        "startOffsets": "16349,16437",
+                        "endColumns": "87,90",
+                        "endOffsets": "16432,16523"
                     }
                 },
                 {
-                    "source": "/Users/outhorninvuth/.gradle/caches/8.13/transforms/733743d2600d4fa968d679c129ac3aa7/transformed/appcompat-1.6.1/res/values-ru/values-ru.xml",
+                    "source": "/Users/outhorninvuth/Documents/mobile_banking_app/build/reports/caches/8.13/transforms/c3e897149fb8caa18d1ce819c786a3c2/transformed/play-services-basement-18.1.0/res/values-ru/values.xml",
                     "from": {
-                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "105,220,322,421,507,612,733,812,888,980,1074,1169,1262,1357,1451,1547,1642,1734,1826,1915,2021,2128,2226,2335,2442,2556,2722,2822",
-                        "endColumns": "114,101,98,85,104,120,78,75,91,93,94,92,94,93,95,94,91,91,88,105,106,97,108,106,113,165,99,81",
-                        "endOffsets": "215,317,416,502,607,728,807,883,975,1069,1164,1257,1352,1446,1542,1637,1729,1821,1910,2016,2123,2221,2330,2437,2551,2717,2817,2899"
+                        "startLines": "4",
+                        "startColumns": "0",
+                        "startOffsets": "195",
+                        "endColumns": "152",
+                        "endOffsets": "347"
                     },
                     "to": {
-                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,143",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "105,220,322,421,507,612,733,812,888,980,1074,1169,1262,1357,1451,1547,1642,1734,1826,1915,2021,2128,2226,2335,2442,2556,2722,15817",
-                        "endColumns": "114,101,98,85,104,120,78,75,91,93,94,92,94,93,95,94,91,91,88,105,106,97,108,106,113,165,99,81",
-                        "endOffsets": "215,317,416,502,607,728,807,883,975,1069,1164,1257,1352,1446,1542,1637,1729,1821,1910,2016,2123,2221,2330,2437,2551,2717,2817,15894"
+                        "startLines": "48",
+                        "startColumns": "4",
+                        "startOffsets": "5049",
+                        "endColumns": "156",
+                        "endOffsets": "5201"
                     }
                 },
                 {
-                    "source": "/Users/outhorninvuth/.gradle/caches/8.13/transforms/4c413c4bc7084e08f63533dce8af1eef/transformed/material3-release/res/values-ru/values-ru.xml",
+                    "source": "/Users/outhorninvuth/Documents/mobile_banking_app/build/reports/caches/8.13/transforms/4c413c4bc7084e08f63533dce8af1eef/transformed/material3-release/res/values-ru/values-ru.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -123,7 +89,7 @@
                     }
                 },
                 {
-                    "source": "/Users/outhorninvuth/.gradle/caches/8.13/transforms/dedf4d4f15e7a54194622cf5457d43bf/transformed/biometric-1.2.0-alpha05/res/values-ru/values-ru.xml",
+                    "source": "/Users/outhorninvuth/Documents/mobile_banking_app/build/reports/caches/8.13/transforms/dedf4d4f15e7a54194622cf5457d43bf/transformed/biometric-1.2.0-alpha05/res/values-ru/values-ru.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -137,6 +103,40 @@
                         "startOffsets": "2822,3011,6323,6528,6817,6993,7115,7233,7353,7484,7626,7765,7897,8040,8139,8326,8461,8602,8759,15673,16528,16629,16781,16880,17026,17136,17293",
                         "endColumns": "188,135,106,94,175,121,117,119,130,141,138,131,142,98,186,134,140,156,124,143,100,151,98,145,109,156,129",
                         "endOffsets": "3006,3142,6425,6618,6988,7110,7228,7348,7479,7621,7760,7892,8035,8134,8321,8456,8597,8754,8879,15812,16624,16776,16875,17021,17131,17288,17418"
+                    }
+                },
+                {
+                    "source": "/Users/outhorninvuth/Documents/mobile_banking_app/build/reports/caches/8.13/transforms/8a72b3731e7921432f0178056e75fbea/transformed/core-1.12.0/res/values-ru/values-ru.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,153,255,356,457,562,665,782",
+                        "endColumns": "97,101,100,100,104,102,116,100",
+                        "endOffsets": "148,250,351,452,557,660,777,878"
+                    },
+                    "to": {
+                        "startLines": "31,32,33,34,35,36,37,145",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "3147,3245,3347,3448,3549,3654,3757,15971",
+                        "endColumns": "97,101,100,100,104,102,116,100",
+                        "endOffsets": "3240,3342,3443,3544,3649,3752,3869,16067"
+                    }
+                },
+                {
+                    "source": "/Users/outhorninvuth/Documents/mobile_banking_app/build/reports/caches/8.13/transforms/733743d2600d4fa968d679c129ac3aa7/transformed/appcompat-1.6.1/res/values-ru/values-ru.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "105,220,322,421,507,612,733,812,888,980,1074,1169,1262,1357,1451,1547,1642,1734,1826,1915,2021,2128,2226,2335,2442,2556,2722,2822",
+                        "endColumns": "114,101,98,85,104,120,78,75,91,93,94,92,94,93,95,94,91,91,88,105,106,97,108,106,113,165,99,81",
+                        "endOffsets": "215,317,416,502,607,728,807,883,975,1069,1164,1257,1352,1446,1542,1637,1729,1821,1910,2016,2123,2221,2330,2437,2551,2717,2817,2899"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,143",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "105,220,322,421,507,612,733,812,888,980,1074,1169,1262,1357,1451,1547,1642,1734,1826,1915,2021,2128,2226,2335,2442,2556,2722,15817",
+                        "endColumns": "114,101,98,85,104,120,78,75,91,93,94,92,94,93,95,94,91,91,88,105,106,97,108,106,113,165,99,81",
+                        "endOffsets": "215,317,416,502,607,728,807,883,975,1069,1164,1257,1352,1446,1542,1637,1729,1821,1910,2016,2123,2221,2330,2437,2551,2717,2817,15894"
                     }
                 }
             ]

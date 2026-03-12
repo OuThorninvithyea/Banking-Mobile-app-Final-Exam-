@@ -1,9 +1,13 @@
 package com.hustle.bankapp.ui.dashboard
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -70,7 +74,19 @@ fun DashboardScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState(initial = DashboardUiState.Loading)
     var isBalanceVisible by remember { mutableStateOf(false) }
-    
+
+    // Refresh data every time this screen becomes visible
+    val lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                viewModel.refresh()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
     // Entrance animation trigger
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { visible = true }
@@ -198,15 +214,24 @@ fun DashboardScreen(
                                         verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier.padding(top = 8.dp)
                                     ) {
-                                        Text(
-                                            text = if (isBalanceVisible) state.balance.formatAsCurrency() else "*******",
-                                            color = TextPrimary,
-                                            fontSize = 44.sp,
-                                            fontWeight = FontWeight.Black,
-                                            fontFamily = RobotoMono,
-                                            letterSpacing = (-1).sp,
-                                            modifier = if (isBalanceVisible) Modifier else Modifier.blur(12.dp)
-                                        )
+                                        AnimatedContent(
+                                            targetState = isBalanceVisible,
+                                            transitionSpec = {
+                                                (fadeIn(tween(300)) + slideInVertically(tween(300)) { it / 2 })
+                                                    .togetherWith(fadeOut(tween(200)) + slideOutVertically(tween(200)) { -it / 2 })
+                                            },
+                                            label = "balance_toggle"
+                                        ) { visible ->
+                                            Text(
+                                                text = if (visible) state.balance.formatAsCurrency() else "*******",
+                                                color = TextPrimary,
+                                                fontSize = 44.sp,
+                                                fontWeight = FontWeight.Black,
+                                                fontFamily = RobotoMono,
+                                                letterSpacing = (-1).sp,
+                                                modifier = if (visible) Modifier else Modifier.blur(12.dp)
+                                            )
+                                        }
                                         Spacer(modifier = Modifier.width(12.dp))
                                         IconButton(onClick = { isBalanceVisible = !isBalanceVisible }) {
                                             Icon(
@@ -331,10 +356,13 @@ fun DashboardScreen(
                                 )
                             }
                         } else {
-                            items(state.recentTransactions.take(5), key = { it.id }) { transaction ->
+                            val visibleTransactions = state.recentTransactions.take(5)
+                            items(visibleTransactions.size) { index ->
+                                val transaction = visibleTransactions[index]
                                 AnimatedVisibility(
                                     visible = visible,
-                                    enter = fadeIn(tween(1000, delayMillis = 600))
+                                    enter = fadeIn(tween(600, delayMillis = 600 + index * 80)) +
+                                            slideInVertically(tween(600, delayMillis = 600 + index * 80)) { it / 3 }
                                 ) {
                                     Box(modifier = Modifier.padding(horizontal = 24.dp, vertical = 6.dp)) {
                                         TransactionItem(transaction = transaction)

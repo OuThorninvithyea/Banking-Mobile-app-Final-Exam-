@@ -22,6 +22,7 @@ type Transaction struct {
 	Type        TransactionType `gorm:"type:varchar(10);not null" json:"type"`
 	Amount      float64         `gorm:"not null" json:"amount"`
 	RecipientID *uuid.UUID      `gorm:"type:uuid" json:"recipient_id,omitempty"`
+	Category    string          `gorm:"type:varchar(50);default:'General'" json:"category"`
 	Timestamp   time.Time       `json:"timestamp"`
 	CreatedAt   time.Time       `json:"created_at"`
 }

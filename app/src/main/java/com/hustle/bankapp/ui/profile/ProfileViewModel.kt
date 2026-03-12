@@ -27,15 +27,20 @@ class ProfileViewModel(private val repository: BankRepository) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            repository.getUserProfile().collect { user ->
-                _uiState.update {
-                    it.copy(
-                        user = user,
-                        editName = user?.name ?: "",
-                        editEmail = user?.email ?: "",
-                        editContact = user?.contact ?: ""
-                    )
+            try {
+                repository.getUserProfile().collect { user ->
+                    _uiState.update {
+                        it.copy(
+                            user = user,
+                            editName = user?.name ?: "",
+                            editEmail = user?.email ?: "",
+                            editContact = user?.contact ?: ""
+                        )
+                    }
                 }
+            } catch (e: Exception) {
+                if (e is kotlin.coroutines.cancellation.CancellationException) throw e
+                _uiState.update { it.copy(error = e.message ?: "Failed to load profile") }
             }
         }
     }

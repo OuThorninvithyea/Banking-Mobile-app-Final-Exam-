@@ -64,8 +64,37 @@ fun ProfileScreen(
     ) { innerPadding ->
         val user = uiState.user
         if (user == null) {
-            Box(Modifier.padding(innerPadding).fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = BinanceGreen)
+            Column(
+                modifier = Modifier.padding(innerPadding).fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                if (uiState.error != null) {
+                    Text(
+                        text = uiState.error ?: "",
+                        color = ErrorRed,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 32.dp)
+                    )
+                    Spacer(Modifier.height(24.dp))
+                    Button(
+                        onClick = { viewModel.logout() },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 32.dp)
+                            .height(52.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = ErrorRed.copy(alpha = 0.15f),
+                            contentColor = ErrorRed
+                        )
+                    ) {
+                        Text("Log Out", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    }
+                } else {
+                    CircularProgressIndicator(color = BinanceGreen)
+                }
             }
         } else {
             Column(
