@@ -217,6 +217,17 @@ class MockBankRepositoryImpl : BankRepository {
             ?: Result.failure(Exception("Card not found"))
     }
 
+    override suspend fun linkCardToAccount(cardId: String, accountId: String): Result<Card> {
+        val accountName = _accountsFlow.value.find { it.id == accountId }?.accountName ?: "Primary Account"
+        val updated = _cardsFlow.value.map {
+            if (it.id == cardId) it.copy(linkedAccountId = accountId, linkedAccountName = accountName) else it
+        }
+        _cardsFlow.value = updated
+        return updated.find { it.id == cardId }
+            ?.let { Result.success(it) }
+            ?: Result.failure(Exception("Card not found"))
+    }
+
     // ── Accounts ───────────────────────────────────────────────────────
 
     private val _accountsFlow = MutableStateFlow<List<Account>>(
@@ -253,6 +264,28 @@ class MockBankRepositoryImpl : BankRepository {
         )
         _accountsFlow.value = _accountsFlow.value + newAccount
         return Result.success(newAccount)
+    }
+
+    override suspend fun editAccount(accountId: String, name: String?, type: String?): Result<Account> {
+        val updated = _accountsFlow.value.map {
+            if (it.id == accountId) it.copy(
+                accountName = name ?: it.accountName,
+                type = if (type != null) AccountType.valueOf(type) else it.type
+            ) else it
+        }
+        _accountsFlow.value = updated
+        return updated.find { it.id == accountId }
+            ?.let { Result.success(it) }
+            ?: Result.failure(Exception("Account not found"))
+    }
+
+    override suspend fun deleteAccount(accountId: String): Result<Unit> {
+        _accountsFlow.value = _accountsFlow.value.filter { it.id != accountId }
+        return Result.success(Unit)
+    }
+
+    override suspend fun transferBetweenAccounts(fromAccountId: String, toAccountId: String, amount: Double): Result<Unit> {
+        return Result.success(Unit)
     }
 
     // ── Favorites ──────────────────────────────────────────────────────

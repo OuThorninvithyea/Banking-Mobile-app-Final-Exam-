@@ -1,6 +1,9 @@
 package com.hustle.bankapp.ui.transfer
 
 import android.Manifest
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -15,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -100,8 +104,35 @@ private fun CameraPreviewWithScanner(onQrCodeScanned: (String) -> Unit) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val hasScanned = remember { AtomicBoolean(false) }
+    var galleryError by remember { mutableStateOf<String?>(null) }
 
-    // Scanning line animation
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            try {
+                val image = InputImage.fromFilePath(context, uri)
+                val scanner = BarcodeScanning.getClient()
+                scanner.process(image)
+                    .addOnSuccessListener { barcodes ->
+                        val qrValue = barcodes.firstOrNull { it.format == Barcode.FORMAT_QR_CODE }?.rawValue
+                        if (qrValue != null) {
+                            if (hasScanned.compareAndSet(false, true)) {
+                                onQrCodeScanned(qrValue)
+                            }
+                        } else {
+                            galleryError = "No QR code found in this image"
+                        }
+                    }
+                    .addOnFailureListener {
+                        galleryError = "Failed to scan image"
+                    }
+            } catch (_: Exception) {
+                galleryError = "Could not read image"
+            }
+        }
+    }
+
     val infiniteTransition = rememberInfiniteTransition(label = "scan")
     val scanLineY by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -114,7 +145,6 @@ private fun CameraPreviewWithScanner(onQrCodeScanned: (String) -> Unit) {
     )
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Live camera feed
         AndroidView(
             factory = { ctx ->
                 val previewView = PreviewView(ctx)
@@ -156,7 +186,6 @@ private fun CameraPreviewWithScanner(onQrCodeScanned: (String) -> Unit) {
             modifier = Modifier.fillMaxSize()
         )
 
-        // Overlay UI on top of camera
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -170,7 +199,6 @@ private fun CameraPreviewWithScanner(onQrCodeScanned: (String) -> Unit) {
                 modifier = Modifier.padding(bottom = 32.dp)
             )
 
-            // Viewfinder frame
             Box(
                 modifier = Modifier
                     .size(260.dp)
@@ -194,7 +222,8 @@ private fun CameraPreviewWithScanner(onQrCodeScanned: (String) -> Unit) {
                 )
             }
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(24.dp))
+
             Text(
                 text = "QR code will be detected automatically",
                 color = Color.White.copy(alpha = 0.5f),
@@ -202,6 +231,48 @@ private fun CameraPreviewWithScanner(onQrCodeScanned: (String) -> Unit) {
                 fontFamily = com.hustle.bankapp.theme.Inter,
                 textAlign = TextAlign.Center
             )
+
+            Spacer(Modifier.height(16.dp))
+
+            Text(
+                text = "or",
+                color = Color.White.copy(alpha = 0.4f),
+                fontSize = 12.sp
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    galleryError = null
+                    galleryLauncher.launch("image/*")
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = SurfaceDark.copy(alpha = 0.85f),
+                    contentColor = TextPrimary
+                ),
+                shape = RoundedCornerShape(16.dp),
+                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
+            ) {
+                Icon(
+                    Icons.Filled.PhotoLibrary,
+                    contentDescription = null,
+                    tint = BinanceGreen,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text("Pick from Gallery", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+            }
+
+            galleryError?.let { error ->
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = error,
+                    color = ErrorRed,
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }

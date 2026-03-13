@@ -66,6 +66,7 @@ fun CardsScreen(
     var showBlockDialog by remember { mutableStateOf(false) }
     var showReplaceDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
+    var showLinkDialog by remember { mutableStateOf(false) }
 
     var limitInput by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf("Virtual") }
@@ -202,6 +203,61 @@ fun CardsScreen(
         )
     }
 
+    if (showLinkDialog && activeCard != null) {
+        AlertDialog(
+            onDismissRequest = { showLinkDialog = false },
+            containerColor = SurfaceDark,
+            title = { Text("Link to Account", color = TextPrimary) },
+            text = {
+                Column {
+                    if (activeCard.linkedAccountName != null) {
+                        Text(
+                            "Currently linked to: ${activeCard.linkedAccountName}",
+                            color = BinanceGreen,
+                            fontSize = 13.sp
+                        )
+                        Spacer(Modifier.height(12.dp))
+                    }
+                    if (uiState.availableAccounts.isEmpty()) {
+                        Text("No accounts available", color = TextSecondary, fontSize = 14.sp)
+                    } else {
+                        Text("Select an account:", color = TextSecondary, fontSize = 13.sp)
+                        Spacer(Modifier.height(8.dp))
+                        uiState.availableAccounts.forEach { account ->
+                            val isLinked = activeCard.linkedAccountId == account.id
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(if (isLinked) BinanceGreen.copy(alpha = 0.1f) else Color.Transparent)
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                RadioButton(
+                                    selected = isLinked,
+                                    onClick = {
+                                        viewModel.linkCardToAccount(activeCard.id, account.id)
+                                        showLinkDialog = false
+                                    },
+                                    colors = RadioButtonDefaults.colors(selectedColor = BinanceGreen)
+                                )
+                                Column {
+                                    Text(account.accountName, color = TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                                    Text(account.accountNumber, color = TextSecondary, fontSize = 11.sp)
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showLinkDialog = false }) {
+                    Text("Close", color = TextSecondary)
+                }
+            }
+        )
+    }
+
     // ── Screen ───────────────────────────────────────────────────────────
 
     Box(
@@ -326,23 +382,31 @@ fun CardsScreen(
                     visible = visible,
                     enter = fadeIn(tween(700, delayMillis = 200)) + slideInVertically(tween(700, delayMillis = 200)) { 40 }
                 ) {
-                    Row(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 24.dp, vertical = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                            CardDetailChip(
+                                label = "Card Limit",
+                                value = activeCard?.limit?.formatAsCurrency() ?: "—",
+                                icon = Icons.Filled.CreditScore,
+                                modifier = Modifier.weight(1f)
+                            )
+                            CardDetailChip(
+                                label = "Status",
+                                value = if (activeCard?.isFrozen == true) "Frozen" else if (activeCard != null) "Active" else "—",
+                                icon = if (activeCard?.isFrozen == true) Icons.Filled.AcUnit else Icons.Filled.CheckCircle,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
                         CardDetailChip(
-                            label = "Card Limit",
-                            value = activeCard?.limit?.formatAsCurrency() ?: "—",
-                            icon = Icons.Filled.CreditScore,
-                            modifier = Modifier.weight(1f)
-                        )
-                        CardDetailChip(
-                            label = "Status",
-                            value = if (activeCard?.isFrozen == true) "Frozen" else if (activeCard != null) "Active" else "—",
-                            icon = if (activeCard?.isFrozen == true) Icons.Filled.AcUnit else Icons.Filled.CheckCircle,
-                            modifier = Modifier.weight(1f)
+                            label = "Linked Account",
+                            value = activeCard?.linkedAccountName ?: "Not linked",
+                            icon = Icons.Filled.AccountBalance,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
@@ -364,7 +428,7 @@ fun CardsScreen(
                         )
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             CardAction(
                                 icon = Icons.Filled.AcUnit,
@@ -390,6 +454,12 @@ fun CardsScreen(
                                 label = "Edit",
                                 enabled = activeCard != null,
                                 onClick = { showEditDialog = true }
+                            )
+                            CardAction(
+                                icon = Icons.Filled.Link,
+                                label = "Link",
+                                enabled = activeCard != null,
+                                onClick = { showLinkDialog = true }
                             )
                             CardAction(
                                 icon = Icons.Filled.Autorenew,
@@ -478,6 +548,14 @@ private fun PrimaryCard(card: Card, modifier: Modifier = Modifier) {
             }
 
             Text(maskedNumber, color = TextPrimary, fontSize = 18.sp, fontFamily = RobotoMono, fontWeight = FontWeight.Medium, letterSpacing = 3.sp)
+
+            if (card.linkedAccountName != null) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Filled.Link, contentDescription = null, tint = BinanceGreen.copy(alpha = 0.7f), modifier = Modifier.size(12.dp))
+                    Spacer(Modifier.width(4.dp))
+                    Text(card.linkedAccountName, color = BinanceGreen.copy(alpha = 0.9f), fontSize = 11.sp, fontWeight = FontWeight.Medium)
+                }
+            }
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Bottom) {
                 Column {

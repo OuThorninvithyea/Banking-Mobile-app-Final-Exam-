@@ -20,10 +20,14 @@ interface BankRepository {
     suspend fun toggleFreezeCard(cardId: String): Result<Card>
     suspend fun updateCardLimit(cardId: String, limit: Double): Result<Card>
     suspend fun updateCardInfo(cardId: String, type: String): Result<Card>
+    suspend fun linkCardToAccount(cardId: String, accountId: String): Result<Card>
 
     // Accounts
     fun getAccounts(): Flow<List<Account>>
     suspend fun createAccount(name: String, type: AccountType): Result<Account>
+    suspend fun editAccount(accountId: String, name: String?, type: String?): Result<Account>
+    suspend fun deleteAccount(accountId: String): Result<Unit>
+    suspend fun transferBetweenAccounts(fromAccountId: String, toAccountId: String, amount: Double): Result<Unit>
 
     // Favorites (Contacts)
     fun getFavorites(): Flow<List<Contact>>

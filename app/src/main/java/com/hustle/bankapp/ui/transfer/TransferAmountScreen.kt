@@ -43,7 +43,8 @@ fun TransferAmountScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var showAccountPicker by remember { mutableStateOf(false) }
+    var showSourcePicker by remember { mutableStateOf(false) }
+    var showDestPicker by remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
@@ -52,9 +53,9 @@ fun TransferAmountScreen(
         }
     }
 
-    if (showAccountPicker) {
+    if (showSourcePicker) {
         ModalBottomSheet(
-            onDismissRequest = { showAccountPicker = false },
+            onDismissRequest = { showSourcePicker = false },
             containerColor = SurfaceDark,
             tonalElevation = 0.dp
         ) {
@@ -63,7 +64,24 @@ fun TransferAmountScreen(
                 selectedAccount = uiState.selectedSourceAccount,
                 onAccountSelected = { account ->
                     viewModel.selectSourceAccount(account)
-                    showAccountPicker = false
+                    showSourcePicker = false
+                }
+            )
+        }
+    }
+
+    if (showDestPicker) {
+        ModalBottomSheet(
+            onDismissRequest = { showDestPicker = false },
+            containerColor = SurfaceDark,
+            tonalElevation = 0.dp
+        ) {
+            AccountPickerSheet(
+                accounts = uiState.availableAccounts.filter { it.id != uiState.selectedSourceAccount?.id },
+                selectedAccount = uiState.selectedDestAccount,
+                onAccountSelected = { account ->
+                    viewModel.selectDestAccount(account)
+                    showDestPicker = false
                 }
             )
         }
@@ -142,12 +160,43 @@ fun TransferAmountScreen(
                 }
             }
 
+            // Transfer type toggle
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .glassmorphism(cornerRadius = 16.dp, alpha = 0.3f)
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                listOf(false to "To User", true to "Own Accounts").forEach { (isOwn, label) ->
+                    val selected = uiState.isOwnAccountTransfer == isOwn
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(if (selected) BinanceGreen.copy(alpha = 0.2f) else Color.Transparent)
+                            .clickable { viewModel.toggleOwnAccountTransfer(isOwn) }
+                            .padding(vertical = 10.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            label,
+                            color = if (selected) BinanceGreen else TextSecondary,
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
             // Source account selector
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .glassmorphism(cornerRadius = 20.dp, alpha = 0.3f)
-                    .clickable { showAccountPicker = true }
+                    .clickable { showSourcePicker = true }
                     .padding(16.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -182,18 +231,58 @@ fun TransferAmountScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Recipient field
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .glassmorphism(cornerRadius = 24.dp, alpha = 0.3f)
-                    .padding(16.dp)
-            ) {
-                OutlinedInputField(
-                    value = uiState.recipientId,
-                    onValueChange = { viewModel.updateRecipientId(it) },
-                    label = "Recipient Email or Account ID"
-                )
+            if (uiState.isOwnAccountTransfer) {
+                // Destination account selector
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .glassmorphism(cornerRadius = 20.dp, alpha = 0.3f)
+                        .clickable { showDestPicker = true }
+                        .padding(16.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Default.AccountBalanceWallet,
+                            contentDescription = null,
+                            tint = Color(0xFFF5A623),
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "To: ${uiState.selectedDestAccount?.accountName ?: "Select Destination"}",
+                                color = TextPrimary,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Text(
+                                text = "Balance: ${uiState.selectedDestAccount?.balance?.formatAsCurrency() ?: "$0.00"}",
+                                color = TextSecondary,
+                                fontSize = 12.sp
+                            )
+                        }
+                        Icon(
+                            Icons.Default.KeyboardArrowDown,
+                            contentDescription = "Select destination",
+                            tint = TextSecondary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            } else {
+                // Recipient field for user-to-user transfer
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .glassmorphism(cornerRadius = 24.dp, alpha = 0.3f)
+                        .padding(16.dp)
+                ) {
+                    OutlinedInputField(
+                        value = uiState.recipientId,
+                        onValueChange = { viewModel.updateRecipientId(it) },
+                        label = "Recipient Email or Account ID"
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(20.dp))

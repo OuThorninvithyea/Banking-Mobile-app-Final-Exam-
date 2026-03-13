@@ -34,8 +34,8 @@ func main() {
 
 	authHandler := handlers.NewAuthHandler(authService, userRepo)
 	txHandler := handlers.NewTransactionHandler(txService)
-	cardHandler := handlers.NewCardHandler(cardRepo)
-	accountHandler := handlers.NewAccountHandler(accountRepo)
+	cardHandler := handlers.NewCardHandlerFull(cardRepo, accountRepo, userRepo)
+	accountHandler := handlers.NewAccountHandler(accountRepo, userRepo)
 	favoriteHandler := handlers.NewFavoriteHandler(favoriteRepo)
 
 	// Gin engine
@@ -69,10 +69,14 @@ func main() {
 		protected.PUT("/cards/:id/freeze", cardHandler.ToggleFreezeCard)
 		protected.PUT("/cards/:id/limit", cardHandler.UpdateCardLimit)
 		protected.PUT("/cards/:id/edit", cardHandler.UpdateCardInfo)
+		protected.PUT("/cards/:id/link", cardHandler.LinkCardToAccount)
 
 		// Accounts
 		protected.GET("/accounts", accountHandler.GetAccounts)
 		protected.POST("/accounts", accountHandler.CreateAccount)
+		protected.PUT("/accounts/:id", accountHandler.EditAccount)
+		protected.DELETE("/accounts/:id", accountHandler.DeleteAccount)
+		protected.POST("/accounts/transfer", accountHandler.TransferBetweenAccounts)
 
 		// Favorites
 		protected.GET("/favorites", favoriteHandler.GetFavorites)

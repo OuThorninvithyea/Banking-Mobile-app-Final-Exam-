@@ -14,11 +14,21 @@ import (
 )
 
 type CardHandler struct {
-	cardRepo repository.CardRepository
+	cardRepo    repository.CardRepository
+	accountRepo repository.AccountRepository
+	userRepo    repository.UserRepository
 }
 
-func NewCardHandler(cardRepo repository.CardRepository) *CardHandler {
-	return &CardHandler{cardRepo: cardRepo}
+func NewCardHandler(cardRepo repository.CardRepository, accountRepo ...repository.AccountRepository) *CardHandler {
+	h := &CardHandler{cardRepo: cardRepo}
+	if len(accountRepo) > 0 {
+		h.accountRepo = accountRepo[0]
+	}
+	return h
+}
+
+func NewCardHandlerFull(cardRepo repository.CardRepository, accountRepo repository.AccountRepository, userRepo repository.UserRepository) *CardHandler {
+	return &CardHandler{cardRepo: cardRepo, accountRepo: accountRepo, userRepo: userRepo}
 }
 
 type updateLimitRequest struct {
@@ -27,6 +37,10 @@ type updateLimitRequest struct {
 
 type updateCardInfoRequest struct {
 	Type string `json:"type" binding:"required"`
+}
+
+type linkAccountRequest struct {
+	AccountID string `json:"account_id" binding:"required"`
 }
 
 func (h *CardHandler) CreateCard(c *gin.Context) {
@@ -62,6 +76,19 @@ func (h *CardHandler) GetCards(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch cards"})
 		return
+	}
+
+	for i := range cards {
+		if cards[i].LinkedAccountID != nil {
+			if *cards[i].LinkedAccountID == userID {
+				cards[i].LinkedAccountName = "Primary Account"
+			} else if h.accountRepo != nil {
+				acct, err := h.accountRepo.FindByID(*cards[i].LinkedAccountID)
+				if err == nil {
+					cards[i].LinkedAccountName = acct.AccountName
+				}
+			}
+		}
 	}
 
 	c.JSON(http.StatusOK, cards)
@@ -163,5 +190,68 @@ func (h *CardHandler) UpdateCardInfo(c *gin.Context) {
 		return
 	}
 
+	c.JSON(http.StatusOK, card)
+}
+
+func (h *CardHandler) LinkCardToAccount(c *gin.Context) {
+	userID := c.MustGet(middleware.UserIDKey).(uuid.UUID)
+
+	cardID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid card id"})
+		return
+	}
+
+	var req linkAccountRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	card, err := h.cardRepo.FindByID(cardID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "card not found"})
+		return
+	}
+
+	if card.UserID != userID {
+		c.JSON(http.StatusForbidden, gin.H{"error": "not your card"})
+		return
+	}
+
+	accountID, err := uuid.Parse(req.AccountID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid account id"})
+		return
+	}
+
+	accountName := ""
+
+	if accountID == userID {
+		accountName = "Primary Account"
+	} else {
+		if h.accountRepo == nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "account linking not configured"})
+			return
+		}
+		acct, err := h.accountRepo.FindByID(accountID)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "account not found"})
+			return
+		}
+		if acct.UserID != userID {
+			c.JSON(http.StatusForbidden, gin.H{"error": "not your account"})
+			return
+		}
+		accountName = acct.AccountName
+	}
+
+	card.LinkedAccountID = &accountID
+	if err := h.cardRepo.Update(card); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to link card to account"})
+		return
+	}
+
+	card.LinkedAccountName = accountName
 	c.JSON(http.StatusOK, card)
 }

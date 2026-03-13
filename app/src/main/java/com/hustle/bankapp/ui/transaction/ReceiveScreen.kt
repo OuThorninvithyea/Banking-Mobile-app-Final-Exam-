@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
+import androidx.compose.foundation.BorderStroke
 import com.hustle.bankapp.data.BankRepository
 import com.hustle.bankapp.theme.*
 import com.hustle.bankapp.ui.components.glassmorphism
@@ -34,7 +35,6 @@ import com.hustle.bankapp.ui.dashboard.formatAsCurrency
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 
 private fun generateQrBitmap(content: String, size: Int = 512): Bitmap {
     val hints = mapOf(EncodeHintType.MARGIN to 1)
@@ -50,7 +50,7 @@ private fun generateQrBitmap(content: String, size: Int = 512): Bitmap {
     return bitmap
 }
 
-private enum class ReceivePhase { AMOUNT_ENTRY, QR_DISPLAY }
+private enum class ReceivePhase { QR_DISPLAY, SET_AMOUNT }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,23 +59,31 @@ fun ReceiveScreen(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var phase by remember { mutableStateOf(ReceivePhase.AMOUNT_ENTRY) }
+    var phase by remember { mutableStateOf(ReceivePhase.QR_DISPLAY) }
     var amountString by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
-    var error by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
 
     var userId by remember { mutableStateOf("") }
     var accountNumber by remember { mutableStateOf("") }
-    var depositedAmount by remember { mutableDoubleStateOf(0.0) }
+    var fixedAmount by remember { mutableDoubleStateOf(0.0) }
 
-    val scope = rememberCoroutineScope()
     val amountAsDouble = amountString.toDoubleOrNull() ?: 0.0
+
+    LaunchedEffect(Unit) {
+        try {
+            val profile = repository.getUserProfile().catch { emit(null) }.first()
+            userId = profile?.id ?: ""
+            accountNumber = profile?.accountNumber ?: ""
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+        }
+        isLoading = false
+    }
 
     fun updateAmount(input: String) {
         if (input == "DELETE") {
             if (amountString.isNotEmpty()) {
                 amountString = amountString.dropLast(1)
-                error = null
             }
             return
         }
@@ -83,7 +91,6 @@ fun ReceiveScreen(
         val newStr = if (amountString == "0" && input != ".") input else amountString + input
         if (newStr.substringAfter(".", "").length > 2) return
         amountString = newStr
-        error = null
     }
 
     Scaffold(
@@ -93,14 +100,14 @@ fun ReceiveScreen(
             TopAppBar(
                 title = {
                     Text(
-                        if (phase == ReceivePhase.AMOUNT_ENTRY) "Receive Money" else "Your QR Code",
+                        if (phase == ReceivePhase.QR_DISPLAY) "Receive Money" else "Set Amount",
                         color = BinanceGreen,
                         fontWeight = FontWeight.Bold
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        if (phase == ReceivePhase.QR_DISPLAY) phase = ReceivePhase.AMOUNT_ENTRY
+                        if (phase == ReceivePhase.SET_AMOUNT) phase = ReceivePhase.QR_DISPLAY
                         else onNavigateBack()
                     }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
@@ -111,7 +118,127 @@ fun ReceiveScreen(
         }
     ) { innerPadding ->
         when (phase) {
-            ReceivePhase.AMOUNT_ENTRY -> {
+            ReceivePhase.QR_DISPLAY -> {
+                if (isLoading) {
+                    Box(
+                        modifier = Modifier.fillMaxSize().padding(innerPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = BinanceGreen)
+                    }
+                } else {
+                    val amountParam = if (fixedAmount > 0) "&amount=$fixedAmount" else ""
+                    val qrContent = "hustlebank://pay?id=$userId&account=$accountNumber$amountParam"
+                    val qrBitmap = remember(qrContent) { generateQrBitmap(qrContent) }
+
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                            .padding(horizontal = 24.dp, vertical = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        AnimatedVisibility(
+                            visible = true,
+                            enter = scaleIn(spring(dampingRatio = Spring.DampingRatioMediumBouncy)) + fadeIn()
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                if (fixedAmount > 0) {
+                                    Text("Requesting", color = TextSecondary, fontSize = 14.sp)
+                                    Text(
+                                        fixedAmount.formatAsCurrency(),
+                                        color = BinanceGreen,
+                                        fontSize = 32.sp,
+                                        fontWeight = FontWeight.Black,
+                                        fontFamily = RobotoMono
+                                    )
+                                } else {
+                                    Text("Scan to pay me", color = TextSecondary, fontSize = 14.sp)
+                                    Text(
+                                        "Any amount",
+                                        color = Color(0xFFF5A623),
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .glassmorphism(cornerRadius = 24.dp, alpha = 0.3f)
+                                .padding(24.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(240.dp)
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(Color.White)
+                                        .padding(8.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Image(
+                                        bitmap = qrBitmap.asImageBitmap(),
+                                        contentDescription = "QR Code",
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(16.dp))
+                                if (accountNumber.isNotEmpty()) {
+                                    Text("Account", color = TextSecondary, fontSize = 12.sp)
+                                    Text(
+                                        accountNumber,
+                                        color = TextPrimary,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontFamily = RobotoMono
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        OutlinedButton(
+                            onClick = { phase = ReceivePhase.SET_AMOUNT },
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = BinanceGreen),
+                            border = BorderStroke(1.dp, BinanceGreen.copy(alpha = 0.5f)),
+                            modifier = Modifier.fillMaxWidth().height(56.dp),
+                            shape = RoundedCornerShape(20.dp)
+                        ) {
+                            Text(
+                                if (fixedAmount > 0) "Change Amount" else "Set Amount",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Button(
+                            onClick = onNavigateBack,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = BinanceGreen,
+                                contentColor = BackgroundBlack
+                            ),
+                            modifier = Modifier.fillMaxWidth().height(56.dp),
+                            shape = RoundedCornerShape(20.dp)
+                        ) {
+                            Text("Done", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+            }
+
+            ReceivePhase.SET_AMOUNT -> {
                 Column(
                     modifier = Modifier
                         .padding(innerPadding)
@@ -119,23 +246,6 @@ fun ReceiveScreen(
                         .padding(horizontal = 24.dp, vertical = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if (error != null) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .glassmorphism(alpha = 0.2f, borderColor = ErrorRed.copy(alpha = 0.5f))
-                                .padding(bottom = 16.dp)
-                        ) {
-                            Text(
-                                text = error!!,
-                                color = ErrorRed,
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.padding(16.dp),
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-
                     Spacer(modifier = Modifier.weight(0.5f))
 
                     Box(
@@ -167,173 +277,30 @@ fun ReceiveScreen(
 
                     Button(
                         onClick = {
-                            if (amountAsDouble <= 0) {
-                                error = "Amount must be greater than \$0.00."
-                                return@Button
-                            }
-                            isLoading = true
-                            error = null
-
-                            scope.launch {
-                                try {
-                                    val profile = repository.getUserProfile()
-                                        .catch { emit(null) }
-                                        .first()
-
-                                    userId = profile?.id ?: ""
-                                    accountNumber = profile?.accountNumber ?: ""
-                                    depositedAmount = amountAsDouble
-                                    isLoading = false
-                                    phase = ReceivePhase.QR_DISPLAY
-                                } catch (e: Exception) {
-                                    if (e is CancellationException) throw e
-                                    isLoading = false
-                                    error = e.message ?: "Failed to load profile"
-                                }
-                            }
+                            fixedAmount = if (amountAsDouble <= 0) 0.0 else amountAsDouble
+                            phase = ReceivePhase.QR_DISPLAY
                         },
-                        enabled = !isLoading,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = BinanceGreen,
-                            contentColor = BackgroundBlack,
-                            disabledContainerColor = SurfaceDark,
-                            disabledContentColor = TextSecondary
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(64.dp),
-                        shape = RoundedCornerShape(20.dp)
-                    ) {
-                        if (isLoading) {
-                            CircularProgressIndicator(color = BackgroundBlack, modifier = Modifier.size(24.dp))
-                        } else {
-                            Text("Generate QR Code", fontWeight = FontWeight.Bold, fontSize = 18.sp, letterSpacing = 1.sp)
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-            }
-
-            ReceivePhase.QR_DISPLAY -> {
-                val qrContent = "hustlebank://pay?id=$userId&account=$accountNumber&amount=$depositedAmount"
-                val qrBitmap = remember(qrContent) { generateQrBitmap(qrContent) }
-
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    AnimatedVisibility(
-                        visible = true,
-                        enter = scaleIn(spring(dampingRatio = Spring.DampingRatioMediumBouncy)) + fadeIn()
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                "Requesting Payment",
-                                color = TextPrimary,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 20.sp
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                depositedAmount.formatAsCurrency(),
-                                color = BinanceGreen,
-                                fontSize = 32.sp,
-                                fontWeight = FontWeight.Black,
-                                fontFamily = RobotoMono
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                "Waiting for sender to scan & transfer",
-                                color = TextSecondary,
-                                fontSize = 13.sp
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .glassmorphism(cornerRadius = 24.dp, alpha = 0.3f)
-                            .padding(24.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                "Scan to send me money",
-                                color = TextSecondary,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Medium
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Box(
-                                modifier = Modifier
-                                    .size(240.dp)
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .background(Color.White)
-                                    .padding(8.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Image(
-                                    bitmap = qrBitmap.asImageBitmap(),
-                                    contentDescription = "QR Code",
-                                    modifier = Modifier.fillMaxSize()
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            if (accountNumber.isNotEmpty()) {
-                                Text(
-                                    "Account",
-                                    color = TextSecondary,
-                                    fontSize = 12.sp
-                                )
-                                Text(
-                                    accountNumber,
-                                    color = TextPrimary,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontFamily = RobotoMono
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                            }
-
-                            Text(
-                                "Amount",
-                                color = TextSecondary,
-                                fontSize = 12.sp
-                            )
-                            Text(
-                                depositedAmount.formatAsCurrency(),
-                                color = BinanceGreen,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = RobotoMono
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Button(
-                        onClick = onNavigateBack,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = BinanceGreen,
                             contentColor = BackgroundBlack
                         ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
+                        modifier = Modifier.fillMaxWidth().height(64.dp),
                         shape = RoundedCornerShape(20.dp)
                     ) {
-                        Text("Done", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text("Update QR Code", fontWeight = FontWeight.Bold, fontSize = 18.sp, letterSpacing = 1.sp)
                     }
+
+                    if (fixedAmount > 0) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        TextButton(onClick = {
+                            fixedAmount = 0.0
+                            amountString = ""
+                            phase = ReceivePhase.QR_DISPLAY
+                        }) {
+                            Text("Remove amount (accept any)", color = ErrorRed, fontSize = 14.sp)
+                        }
+                    }
+
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }

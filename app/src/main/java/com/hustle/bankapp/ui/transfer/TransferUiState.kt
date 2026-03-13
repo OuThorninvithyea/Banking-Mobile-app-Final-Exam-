@@ -9,7 +9,9 @@ data class TransferUiState(
     val error: String? = null,
     val isSuccess: Boolean = false,
     val availableAccounts: List<Account> = emptyList(),
-    val selectedSourceAccount: Account? = null
+    val selectedSourceAccount: Account? = null,
+    val selectedDestAccount: Account? = null,
+    val isOwnAccountTransfer: Boolean = false
 ) {
     val amountAsDouble: Double
         get() = amountString.toDoubleOrNull() ?: 0.0

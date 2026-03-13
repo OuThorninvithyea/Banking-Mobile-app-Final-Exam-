@@ -9,5 +9,7 @@ data class Card(
     val cvv: String,
     @SerializedName("is_frozen") val isFrozen: Boolean,
     val type: String,
-    val limit: Double
+    val limit: Double,
+    @SerializedName("linked_account_id") val linkedAccountId: String? = null,
+    @SerializedName("linked_account_name") val linkedAccountName: String? = null
 )

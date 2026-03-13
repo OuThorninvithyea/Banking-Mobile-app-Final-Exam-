@@ -315,7 +315,6 @@ fun DashboardContent(
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Filled.MailOutline, "Messages", tint = TextPrimary, modifier = Modifier.size(22.dp))
                         Box {
                             Icon(
                                 Icons.Filled.NotificationsNone,
@@ -418,7 +417,7 @@ fun DashboardContent(
                             Icons.Filled.QrCodeScanner,
                             "QR Code",
                             tint = TextPrimary,
-                            modifier = Modifier.size(22.dp).clickable { onNavigateToQrScanner() }
+                            modifier = Modifier.size(22.dp).clickable { onNavigateToReceive() }
                         )
                     }
                 }

@@ -49,9 +49,24 @@ data class CreateAccountRequest(
     val type: String
 )
 
+data class EditAccountRequest(
+    val name: String? = null,
+    val type: String? = null
+)
+
+data class AccountTransferRequest(
+    @SerializedName("from_account_id") val fromAccountId: String,
+    @SerializedName("to_account_id") val toAccountId: String,
+    val amount: Double
+)
+
 data class AddFavoriteRequest(
     val name: String,
     @SerializedName("account_number") val accountNumber: String
+)
+
+data class LinkAccountRequest(
+    @SerializedName("account_id") val accountId: String
 )
 
 // ── Response DTOs ─────────────────────────────────────────────────────
@@ -123,12 +138,24 @@ interface BankApiService {
     @PUT("api/cards/{id}/edit")
     suspend fun updateCardInfo(@Path("id") cardId: String, @Body request: EditCardRequest): Response<Card>
 
+    @PUT("api/cards/{id}/link")
+    suspend fun linkCardToAccount(@Path("id") cardId: String, @Body request: LinkAccountRequest): Response<Card>
+
     // Accounts
     @GET("api/accounts")
     suspend fun getAccounts(): Response<List<com.hustle.bankapp.data.Account>>
 
     @POST("api/accounts")
     suspend fun createAccount(@Body request: CreateAccountRequest): Response<com.hustle.bankapp.data.Account>
+
+    @PUT("api/accounts/{id}")
+    suspend fun editAccount(@Path("id") accountId: String, @Body request: EditAccountRequest): Response<com.hustle.bankapp.data.Account>
+
+    @retrofit2.http.DELETE("api/accounts/{id}")
+    suspend fun deleteAccount(@Path("id") accountId: String): Response<MessageResponse>
+
+    @POST("api/accounts/transfer")
+    suspend fun transferBetweenAccounts(@Body request: AccountTransferRequest): Response<MessageResponse>
 
     // Favorites
     @GET("api/favorites")

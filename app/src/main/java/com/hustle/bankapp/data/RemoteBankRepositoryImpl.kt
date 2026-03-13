@@ -263,6 +263,23 @@ class RemoteBankRepositoryImpl(
         }
     }
 
+    override suspend fun linkCardToAccount(cardId: String, accountId: String): Result<Card> {
+        return try {
+            val response = api.linkCardToAccount(cardId, LinkAccountRequest(accountId))
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null) Result.success(body)
+                else Result.failure(Exception("Server returned empty data"))
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                Result.failure(Exception("Failed to link card: $errorMsg"))
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
+        }
+    }
+
     // ── Accounts ──────────────────────────────────────────────────────
 
     override fun getAccounts(): Flow<List<Account>> = flow {
@@ -291,6 +308,53 @@ class RemoteBankRepositoryImpl(
             } else {
                 val errorMsg = response.errorBody()?.string() ?: response.message()
                 Result.failure(Exception("Failed to create account: $errorMsg"))
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
+        }
+    }
+
+    override suspend fun editAccount(accountId: String, name: String?, type: String?): Result<Account> {
+        return try {
+            val response = api.editAccount(accountId, EditAccountRequest(name, type))
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null) Result.success(body)
+                else Result.failure(Exception("Server returned empty data"))
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                Result.failure(Exception("Failed to edit account: $errorMsg"))
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
+        }
+    }
+
+    override suspend fun deleteAccount(accountId: String): Result<Unit> {
+        return try {
+            val response = api.deleteAccount(accountId)
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                Result.failure(Exception("Failed to delete account: $errorMsg"))
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
+        }
+    }
+
+    override suspend fun transferBetweenAccounts(fromAccountId: String, toAccountId: String, amount: Double): Result<Unit> {
+        return try {
+            val response = api.transferBetweenAccounts(AccountTransferRequest(fromAccountId, toAccountId, amount))
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
             if (e is CancellationException) throw e
