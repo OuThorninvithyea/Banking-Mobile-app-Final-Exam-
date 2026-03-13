@@ -100,6 +100,7 @@ fun DashboardScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState(initial = DashboardUiState.Loading)
     var isBalanceVisible by remember { mutableStateOf(false) }
+    val incomingEvent by viewModel.incomingMoneyEvent.collectAsState()
 
     // Refresh data every time this screen becomes visible
     val lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
@@ -116,6 +117,75 @@ fun DashboardScreen(
     // Entrance animation trigger
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { visible = true }
+
+    // Incoming money popup
+    if (incomingEvent != null) {
+        AlertDialog(
+            onDismissRequest = { viewModel.dismissIncomingMoney() },
+            containerColor = SurfaceDark,
+            iconContentColor = BinanceGreen,
+            icon = {
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(CircleShape)
+                        .background(BinanceGreen.copy(alpha = 0.15f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Filled.ArrowDownward,
+                        contentDescription = null,
+                        tint = BinanceGreen,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+            },
+            title = {
+                Text(
+                    "Money Received!",
+                    color = BinanceGreen,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            text = {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = incomingEvent!!.amount.formatAsCurrency(),
+                        color = TextPrimary,
+                        fontSize = 36.sp,
+                        fontWeight = FontWeight.Black,
+                        fontFamily = RobotoMono,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        "has been deposited to your account",
+                        color = TextSecondary,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = { viewModel.dismissIncomingMoney() },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = BinanceGreen,
+                        contentColor = BackgroundBlack
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Got it", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                }
+            }
+        )
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),

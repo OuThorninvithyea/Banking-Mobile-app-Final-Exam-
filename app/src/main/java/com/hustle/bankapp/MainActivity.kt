@@ -246,7 +246,8 @@ class MainActivity : FragmentActivity() {
                             QRScannerScreen(
                                 onNavigateBack = { navController.popBackStack() },
                                 onQrCodeScanned = { scannedValue ->
-                                    navController.navigate("transfer_amount?recipient=$scannedValue") {
+                                    val encoded = java.net.URLEncoder.encode(scannedValue, "UTF-8")
+                                    navController.navigate("transfer_amount?recipient=$encoded") {
                                         popUpTo("qr_scanner") { inclusive = true }
                                     }
                                 }

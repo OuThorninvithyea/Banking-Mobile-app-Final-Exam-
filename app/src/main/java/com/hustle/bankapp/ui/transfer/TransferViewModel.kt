@@ -1,8 +1,10 @@
 package com.hustle.bankapp.ui.transfer
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hustle.bankapp.data.Account
+import com.hustle.bankapp.data.AccountType
 import com.hustle.bankapp.data.BankRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,24 +19,75 @@ class TransferViewModel(
     initialRecipient: String = ""
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(TransferUiState(recipientId = initialRecipient))
-    val uiState: StateFlow<TransferUiState> = _uiState.asStateFlow()
+    private val _uiState: MutableStateFlow<TransferUiState>
+    val uiState: StateFlow<TransferUiState>
 
     init {
+        val parsed = parseQrRecipient(initialRecipient)
+        _uiState = MutableStateFlow(
+            TransferUiState(
+                recipientId = parsed.recipientId,
+                amountString = parsed.amount
+            )
+        )
+        uiState = _uiState.asStateFlow()
+
+        loadAccounts()
+    }
+
+    private data class ParsedQr(val recipientId: String, val amount: String)
+
+    private fun parseQrRecipient(raw: String): ParsedQr {
+        if (raw.startsWith("hustlebank://")) {
+            try {
+                val uri = Uri.parse(raw)
+                val id = uri.getQueryParameter("id").orEmpty()
+                val amount = uri.getQueryParameter("amount").orEmpty()
+                return ParsedQr(recipientId = id, amount = amount)
+            } catch (_: Exception) { }
+        }
+        return ParsedQr(recipientId = raw, amount = "")
+    }
+
+    private fun loadAccounts() {
         viewModelScope.launch {
             repository.getAccounts()
-                .catch { e ->
-                    _uiState.update { it.copy(error = e.message ?: "Failed to load accounts") }
-                }
+                .catch { _ -> emit(emptyList()) }
                 .collect { accounts ->
-                    _uiState.update { state ->
-                        state.copy(
-                            availableAccounts = accounts,
-                            selectedSourceAccount = state.selectedSourceAccount ?: accounts.firstOrNull()
-                        )
+                    if (accounts.isNotEmpty()) {
+                        _uiState.update { state ->
+                            state.copy(
+                                availableAccounts = accounts,
+                                selectedSourceAccount = state.selectedSourceAccount ?: accounts.firstOrNull()
+                            )
+                        }
+                    } else {
+                        buildPrimaryAccountFallback()
                     }
                 }
         }
+    }
+
+    private suspend fun buildPrimaryAccountFallback() {
+        try {
+            val profile = repository.getUserProfile().catch { emit(null) }.first()
+            val balance = try { repository.getBalance().first() } catch (_: Exception) { 0.0 }
+            if (profile != null) {
+                val primary = Account(
+                    id = profile.id,
+                    accountNumber = profile.accountNumber,
+                    accountName = "Primary Account",
+                    balance = balance,
+                    type = AccountType.CURRENT
+                )
+                _uiState.update { state ->
+                    state.copy(
+                        availableAccounts = listOf(primary),
+                        selectedSourceAccount = state.selectedSourceAccount ?: primary
+                    )
+                }
+            }
+        } catch (_: Exception) { }
     }
 
     fun selectSourceAccount(account: Account) {

@@ -6,20 +6,37 @@ import com.hustle.bankapp.data.BankRepository
 import com.hustle.bankapp.data.Transaction
 import com.hustle.bankapp.data.TransactionType
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 
+data class IncomingMoneyEvent(
+    val amount: Double,
+    val transactionId: String
+)
+
 class DashboardViewModel(
     private val repository: BankRepository
 ) : ViewModel() {
 
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
-    private val USE_MOCK_DATA = false // Set to false to use real API
+    private val USE_MOCK_DATA = false
+
+    private val knownTransactionIds = mutableSetOf<String>()
+    private var isFirstLoad = true
+
+    private val _incomingMoneyEvent = MutableStateFlow<IncomingMoneyEvent?>(null)
+    val incomingMoneyEvent: StateFlow<IncomingMoneyEvent?> = _incomingMoneyEvent.asStateFlow()
+
+    fun dismissIncomingMoney() {
+        _incomingMoneyEvent.value = null
+    }
 
     val uiState: StateFlow<DashboardUiState> = refreshTrigger
         .flatMapLatest {
@@ -42,6 +59,8 @@ class DashboardViewModel(
                     repository.getTransactions(),
                     repository.getUserProfile()
                 ) { balance, transactions, user ->
+                    detectNewIncoming(transactions)
+
                     val chartData = listOf(
                         (balance * 0.95f).toFloat(),
                         (balance * 0.92f).toFloat(),
@@ -67,6 +86,26 @@ class DashboardViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = DashboardUiState.Loading as DashboardUiState
         )
+
+    private fun detectNewIncoming(transactions: List<Transaction>) {
+        val currentIds = transactions.map { it.id }.toSet()
+        if (isFirstLoad) {
+            knownTransactionIds.addAll(currentIds)
+            isFirstLoad = false
+            return
+        }
+        val newDeposits = transactions.filter { tx ->
+            tx.id !in knownTransactionIds && tx.type == TransactionType.DEPOSIT
+        }
+        knownTransactionIds.addAll(currentIds)
+        if (newDeposits.isNotEmpty()) {
+            val total = newDeposits.sumOf { it.amount }
+            _incomingMoneyEvent.value = IncomingMoneyEvent(
+                amount = total,
+                transactionId = newDeposits.first().id
+            )
+        }
+    }
 
     fun refresh() {
         refreshTrigger.tryEmit(Unit)

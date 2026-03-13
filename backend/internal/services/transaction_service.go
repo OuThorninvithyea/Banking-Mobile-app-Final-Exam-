@@ -116,13 +116,24 @@ func (s *transactionService) Transfer(senderID uuid.UUID, recipientID uuid.UUID,
 		return fmt.Errorf("failed to credit recipient: %w", err)
 	}
 
-	tx := &models.Transaction{
+	senderTx := &models.Transaction{
 		UserID:      senderID,
 		Type:        models.TransactionTransfer,
 		Amount:      amount,
 		RecipientID: &recipientID,
 	}
-	return s.txRepo.Create(tx)
+	if err := s.txRepo.Create(senderTx); err != nil {
+		return fmt.Errorf("failed to record sender transaction: %w", err)
+	}
+
+	recipientTx := &models.Transaction{
+		UserID:      recipientID,
+		Type:        models.TransactionDeposit,
+		Amount:      amount,
+		RecipientID: &senderID,
+		Category:    "Transfer Received",
+	}
+	return s.txRepo.Create(recipientTx)
 }
 
 func (s *transactionService) GetHistory(userID uuid.UUID) ([]models.Transaction, error) {
