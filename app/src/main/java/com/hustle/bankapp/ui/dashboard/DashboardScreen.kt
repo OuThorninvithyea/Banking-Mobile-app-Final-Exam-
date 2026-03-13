@@ -35,6 +35,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,6 +49,22 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+private data class NotificationData(
+    val title: String,
+    val subtitle: String,
+    val time: String,
+    val isRead: Boolean = false
+)
+
+private fun sampleNotifications() = listOf(
+    NotificationData("Transfer Received", "You received \$250.00 from Mom", "2 min ago"),
+    NotificationData("Card Frozen", "Your virtual card ending 4821 has been frozen", "15 min ago"),
+    NotificationData("Deposit Successful", "Your deposit of \$500.00 was processed", "1 hr ago"),
+    NotificationData("Security Alert", "New login detected from Android device", "3 hrs ago"),
+    NotificationData("Promo", "Get 2% cashback on all transfers this week!", "5 hrs ago", isRead = true),
+    NotificationData("Account Created", "Your Savings account is now active", "1 day ago", isRead = true)
+)
 
 fun Double.formatAsCurrency(): String {
     val format = NumberFormat.getCurrencyInstance(Locale.US)
@@ -77,6 +95,7 @@ fun DashboardScreen(
     onNavigateToAccounts: () -> Unit = {},
     onNavigateToCards: () -> Unit = {},
     onNavigateToFavorites: () -> Unit = {},
+    onNavigateToReceive: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState(initial = DashboardUiState.Loading)
@@ -149,7 +168,8 @@ fun DashboardScreen(
                         onNavigateToWithdraw = onNavigateToWithdraw,
                         onNavigateToCards = onNavigateToCards,
                         onNavigateToAccounts = onNavigateToAccounts,
-                        onNavigateToFavorites = onNavigateToFavorites
+                        onNavigateToFavorites = onNavigateToFavorites,
+                        onNavigateToReceive = onNavigateToReceive
                     )
                 }
             }
@@ -171,8 +191,11 @@ fun DashboardContent(
     onNavigateToWithdraw: () -> Unit,
     onNavigateToCards: () -> Unit = {},
     onNavigateToAccounts: () -> Unit = {},
-    onNavigateToFavorites: () -> Unit = {}
+    onNavigateToFavorites: () -> Unit = {},
+    onNavigateToReceive: () -> Unit = {}
 ) {
+    var showNotifications by remember { mutableStateOf(false) }
+    val notifications = remember { mutableStateListOf(*sampleNotifications().toTypedArray()) }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = 100.dp)
@@ -224,15 +247,102 @@ fun DashboardContent(
                     ) {
                         Icon(Icons.Filled.MailOutline, "Messages", tint = TextPrimary, modifier = Modifier.size(22.dp))
                         Box {
-                            Icon(Icons.Filled.NotificationsNone, "Alerts", tint = TextPrimary, modifier = Modifier.size(22.dp))
-                            Box(
+                            Icon(
+                                Icons.Filled.NotificationsNone,
+                                "Alerts",
+                                tint = TextPrimary,
                                 modifier = Modifier
-                                    .size(7.dp)
-                                    .clip(CircleShape)
-                                    .background(ErrorRed)
-                                    .align(Alignment.TopEnd)
-                                    .offset(x = 1.dp, y = (-1).dp)
+                                    .size(22.dp)
+                                    .clickable { showNotifications = true }
                             )
+                            val unreadCount = notifications.count { !it.isRead }
+                            if (unreadCount > 0) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .clip(CircleShape)
+                                        .background(ErrorRed)
+                                        .align(Alignment.TopEnd)
+                                        .offset(x = 4.dp, y = (-4).dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "$unreadCount",
+                                        color = Color.White,
+                                        fontSize = 9.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                            DropdownMenu(
+                                expanded = showNotifications,
+                                onDismissRequest = { showNotifications = false },
+                                modifier = Modifier
+                                    .width(320.dp)
+                                    .background(SurfaceDark),
+                                offset = DpOffset(0.dp, 4.dp)
+                            ) {
+                                Text(
+                                    "Notifications",
+                                    color = TextPrimary,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+                                )
+                                HorizontalDivider(color = Color.White.copy(alpha = 0.08f))
+                                notifications.forEachIndexed { index, notif ->
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            notifications[index] = notif.copy(isRead = true)
+                                            showNotifications = false
+                                        },
+                                        text = {
+                                            Row(
+                                                verticalAlignment = Alignment.Top,
+                                                modifier = Modifier.padding(vertical = 4.dp)
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .padding(top = 6.dp)
+                                                        .size(8.dp)
+                                                        .clip(CircleShape)
+                                                        .background(
+                                                            if (notif.isRead) TextSecondary.copy(alpha = 0.3f)
+                                                            else BinanceGreen
+                                                        )
+                                                )
+                                                Spacer(modifier = Modifier.width(10.dp))
+                                                Column(modifier = Modifier.weight(1f)) {
+                                                    Text(
+                                                        notif.title,
+                                                        color = if (notif.isRead) TextSecondary else TextPrimary,
+                                                        fontWeight = FontWeight.SemiBold,
+                                                        fontSize = 13.sp,
+                                                        maxLines = 1,
+                                                        overflow = TextOverflow.Ellipsis
+                                                    )
+                                                    Text(
+                                                        notif.subtitle,
+                                                        color = TextSecondary,
+                                                        fontSize = 12.sp,
+                                                        maxLines = 2,
+                                                        overflow = TextOverflow.Ellipsis
+                                                    )
+                                                }
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                Text(
+                                                    notif.time,
+                                                    color = TextSecondary.copy(alpha = 0.7f),
+                                                    fontSize = 10.sp
+                                                )
+                                            }
+                                        }
+                                    )
+                                    if (index < notifications.lastIndex) {
+                                        HorizontalDivider(color = Color.White.copy(alpha = 0.05f))
+                                    }
+                                }
+                            }
                         }
                         Icon(
                             Icons.Filled.QrCodeScanner,
@@ -355,7 +465,7 @@ fun DashboardContent(
                             HeroActionButton(
                                 icon = Icons.Filled.ArrowDownward,
                                 label = "Receive",
-                                onClick = onNavigateToDeposit,
+                                onClick = onNavigateToReceive,
                                 modifier = Modifier.weight(1f)
                             )
                             HeroActionButton(
@@ -763,7 +873,8 @@ fun DashboardPreview() {
                     onNavigateToHistory = {},
                     onNavigateToWithdraw = {},
                     onNavigateToAccounts = {},
-                    onNavigateToFavorites = {}
+                    onNavigateToFavorites = {},
+                    onNavigateToReceive = {}
                 )
             }
         }

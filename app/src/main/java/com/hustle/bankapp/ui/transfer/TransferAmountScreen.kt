@@ -5,8 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountBalanceWallet
@@ -67,8 +69,10 @@ fun TransferAmountScreen(
         }
     }
 
+    val scrollState = rememberScrollState()
+
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().imePadding(),
         containerColor = BackgroundBlack,
         topBar = {
             TopAppBar(
@@ -80,13 +84,44 @@ fun TransferAmountScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = BackgroundBlack)
             )
+        },
+        bottomBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(BackgroundBlack)
+                    .navigationBarsPadding()
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
+            ) {
+                Button(
+                    onClick = { viewModel.submitTransfer() },
+                    enabled = !uiState.isLoading,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = BinanceGreen,
+                        contentColor = BackgroundBlack,
+                        disabledContainerColor = SurfaceDark,
+                        disabledContentColor = TextSecondary
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    if (uiState.isLoading) {
+                        CircularProgressIndicator(color = BackgroundBlack, modifier = Modifier.size(24.dp))
+                    } else {
+                        Text("Confirm Transfer", fontWeight = FontWeight.Bold, fontSize = 16.sp, letterSpacing = 0.5.sp)
+                    }
+                }
+            }
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(24.dp),
+                .verticalScroll(scrollState)
+                .padding(horizontal = 24.dp, vertical = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
@@ -95,13 +130,13 @@ fun TransferAmountScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .glassmorphism(alpha = 0.2f, borderColor = ErrorRed.copy(alpha = 0.5f))
-                        .padding(bottom = 16.dp)
+                        .padding(bottom = 12.dp)
                 ) {
                     Text(
                         text = uiState.error!!,
                         color = ErrorRed,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(16.dp),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(12.dp),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -152,7 +187,7 @@ fun TransferAmountScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .glassmorphism(cornerRadius = 24.dp, alpha = 0.3f)
-                    .padding(20.dp)
+                    .padding(16.dp)
             ) {
                 OutlinedInputField(
                     value = uiState.recipientId,
@@ -161,54 +196,31 @@ fun TransferAmountScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.weight(0.5f))
+            Spacer(modifier = Modifier.height(20.dp))
 
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .padding(vertical = 4.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "$${if (uiState.amountString.isEmpty()) "0.00" else uiState.amountString}",
                     color = if (uiState.amountString.isEmpty()) TextSecondary else BinanceGreen,
-                    style = MaterialTheme.typography.displayLarge.copy(fontSize = 64.sp),
+                    style = MaterialTheme.typography.displayLarge.copy(fontSize = 48.sp),
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
                     fontFamily = RobotoMono
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(20.dp))
 
             CustomNumberPad(
                 onNumberClick = { viewModel.updateAmount(it.toString()) },
                 onDecimalClick = { viewModel.updateAmount(".") },
                 onDeleteClick = { viewModel.updateAmount("DELETE") }
             )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = { viewModel.submitTransfer() },
-                enabled = !uiState.isLoading,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = BinanceGreen,
-                    contentColor = BackgroundBlack,
-                    disabledContainerColor = SurfaceDark,
-                    disabledContentColor = TextSecondary
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp),
-                shape = RoundedCornerShape(20.dp)
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(color = BackgroundBlack, modifier = Modifier.size(24.dp))
-                } else {
-                    Text("Confirm Transfer", fontWeight = FontWeight.Bold, fontSize = 18.sp, letterSpacing = 1.sp)
-                }
-            }
             
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -265,7 +277,7 @@ fun NumberPadKey(
     
     Box(
         modifier = modifier
-            .size(76.dp)
+            .size(68.dp)
             .clip(CircleShape)
             .background(if (isActionKey) SurfaceDark else Color.Transparent)
             .clickable(onClick = onClick),

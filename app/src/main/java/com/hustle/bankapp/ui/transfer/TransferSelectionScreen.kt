@@ -235,7 +235,7 @@ private fun TransferServiceCard(
 ) {
     GlassCard(
         modifier = modifier
-            .height(140.dp)
+            .heightIn(min = 140.dp)
             .clickable(onClick = onClick),
         cornerRadius = 16.dp
     ) {
@@ -261,7 +261,7 @@ private fun TransferServiceCard(
 @Composable
 private fun InternationalServiceItem(title: String, icon: ImageVector) {
     GlassCard(
-        modifier = Modifier.fillMaxWidth().height(60.dp),
+        modifier = Modifier.fillMaxWidth().heightIn(min = 60.dp),
         cornerRadius = 12.dp
     ) {
         Row(

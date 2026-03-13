@@ -39,6 +39,7 @@ import com.hustle.bankapp.ui.profile.ProfileScreen
 import com.hustle.bankapp.ui.profile.ProfileViewModel
 import com.hustle.bankapp.ui.transaction.DepositWithdrawScreen
 import com.hustle.bankapp.ui.transaction.DepositWithdrawViewModel
+import com.hustle.bankapp.ui.transaction.ReceiveScreen
 import com.hustle.bankapp.ui.cards.CardsScreen
 import com.hustle.bankapp.ui.cards.CardsViewModel
 import com.hustle.bankapp.ui.transfer.QRScannerScreen
@@ -178,7 +179,8 @@ class MainActivity : FragmentActivity() {
                                 onNavigateToCards = { navController.navigate("cards") },
                                 onNavigateToAccounts = { navController.navigate("accounts") },
                                 onNavigateToFavorites = { navController.navigate("favorites") },
-                                onNavigateToTransfer = { navController.navigate("transfer_selection") }
+                                onNavigateToTransfer = { navController.navigate("transfer_selection") },
+                                onNavigateToReceive = { navController.navigate("receive") }
                             )
                         }
 
@@ -263,6 +265,14 @@ class MainActivity : FragmentActivity() {
                             )
                             DepositWithdrawScreen(
                                 viewModel = vm,
+                                onNavigateBack = { navController.popBackStack() }
+                            )
+                        }
+
+                        // ── Receive (Deposit + QR Code) ──────────────────────────
+                        composable("receive") {
+                            ReceiveScreen(
+                                repository = repository,
                                 onNavigateBack = { navController.popBackStack() }
                             )
                         }

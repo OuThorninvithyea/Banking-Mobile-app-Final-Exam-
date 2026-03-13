@@ -99,14 +99,13 @@ class TransferViewModel(
                 }
 
                 val senderId = currentState.selectedSourceAccount?.id ?: ""
-                val result = repository.processTransfer(amount, recipientId, senderId)
-
-                result.onSuccess {
-                    _uiState.update { it.copy(isLoading = false, isSuccess = true) }
-                }
-                result.onFailure { exception ->
-                    _uiState.update { it.copy(isLoading = false, error = exception.message) }
-                }
+                repository.processTransfer(amount, recipientId, senderId)
+                    .onSuccess {
+                        _uiState.update { it.copy(isLoading = false, isSuccess = true) }
+                    }
+                    .onFailure { exception ->
+                        _uiState.update { it.copy(isLoading = false, error = exception.message) }
+                    }
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false, error = "Network error: ${e.message}") }
             }

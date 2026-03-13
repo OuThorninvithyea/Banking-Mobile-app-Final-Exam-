@@ -116,7 +116,7 @@ private fun AccountsContent(state: AccountsUiState.Success) {
 @Composable
 private fun TotalBalanceCard(balance: Double) {
     GlassCard(
-        modifier = Modifier.fillMaxWidth().height(140.dp)
+        modifier = Modifier.fillMaxWidth().heightIn(min = 140.dp)
     ) {
         Column(
             modifier = Modifier.fillMaxSize().padding(20.dp),
@@ -137,7 +137,7 @@ private fun TotalBalanceCard(balance: Double) {
 @Composable
 private fun AccountItem(account: Account) {
     GlassCard(
-        modifier = Modifier.fillMaxWidth().height(100.dp)
+        modifier = Modifier.fillMaxWidth().heightIn(min = 100.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxSize().padding(16.dp),

@@ -68,12 +68,9 @@ class DepositWithdrawViewModel(
                 else -> Result.failure(Exception("Unsupported transaction type."))
             }
 
-            result.onSuccess {
-                _uiState.update { it.copy(isLoading = false, isSuccess = true) }
-            }
-            result.onFailure { ex ->
-                _uiState.update { it.copy(isLoading = false, error = ex.message) }
-            }
+            result
+                .onSuccess { _uiState.update { it.copy(isLoading = false, isSuccess = true) } }
+                .onFailure { ex -> _uiState.update { it.copy(isLoading = false, error = ex.message) } }
         }
     }
 

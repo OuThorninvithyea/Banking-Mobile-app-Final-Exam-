@@ -71,7 +71,7 @@ fun ProfileScreen(
             ) {
                 if (uiState.error != null) {
                     Text(
-                        text = uiState.error ?: "",
+                        text = uiState.error.orEmpty(),
                         color = ErrorRed,
                         fontSize = 14.sp,
                         textAlign = TextAlign.Center,
@@ -152,7 +152,7 @@ fun ProfileScreen(
                             // Error
                             AnimatedVisibility(visible = uiState.error != null) {
                                 Text(
-                                    text = uiState.error ?: "",
+                                    text = uiState.error.orEmpty(),
                                     color = ErrorRed,
                                     fontSize = 13.sp,
                                     modifier = Modifier.padding(top = 8.dp),

@@ -139,7 +139,7 @@ private fun FavoriteItem(
     onDelete: () -> Unit
 ) {
     GlassCard(
-        modifier = Modifier.fillMaxWidth().height(80.dp)
+        modifier = Modifier.fillMaxWidth().heightIn(min = 80.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),

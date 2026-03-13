@@ -126,7 +126,7 @@ fun LoginScreen(
 
                     AnimatedVisibility(visible = uiState.error != null) {
                         Text(
-                            text = uiState.error ?: "",
+                            text = uiState.error.orEmpty(),
                             color = ErrorRed,
                             fontSize = 13.sp,
                             modifier = Modifier.padding(top = 12.dp, bottom = 4.dp),
