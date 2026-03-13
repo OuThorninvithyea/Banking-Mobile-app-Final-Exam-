@@ -1,5 +1,7 @@
 package com.hustle.bankapp.data
 
+import com.google.gson.annotations.SerializedName
+
 enum class AccountType {
     CURRENT,
     SAVINGS,
@@ -9,8 +11,8 @@ enum class AccountType {
 
 data class Account(
     val id: String,
-    val accountNumber: String,
-    val accountName: String,
+    @SerializedName("account_number") val accountNumber: String,
+    @SerializedName("account_name") val accountName: String,
     val balance: Double,
     val type: AccountType,
     val currency: String = "USD"

@@ -26,6 +26,8 @@ func main() {
 	userRepo := repository.NewUserRepository(config.DB)
 	txRepo := repository.NewTransactionRepository(config.DB)
 	cardRepo := repository.NewCardRepository(config.DB)
+	accountRepo := repository.NewAccountRepository(config.DB)
+	favoriteRepo := repository.NewFavoriteRepository(config.DB)
 
 	authService := services.NewAuthService(userRepo)
 	txService := services.NewTransactionService(userRepo, txRepo)
@@ -33,6 +35,8 @@ func main() {
 	authHandler := handlers.NewAuthHandler(authService, userRepo)
 	txHandler := handlers.NewTransactionHandler(txService)
 	cardHandler := handlers.NewCardHandler(cardRepo)
+	accountHandler := handlers.NewAccountHandler(accountRepo)
+	favoriteHandler := handlers.NewFavoriteHandler(favoriteRepo)
 
 	// Gin engine
 	r := gin.Default()
@@ -65,6 +69,15 @@ func main() {
 		protected.PUT("/cards/:id/freeze", cardHandler.ToggleFreezeCard)
 		protected.PUT("/cards/:id/limit", cardHandler.UpdateCardLimit)
 		protected.PUT("/cards/:id/edit", cardHandler.UpdateCardInfo)
+
+		// Accounts
+		protected.GET("/accounts", accountHandler.GetAccounts)
+		protected.POST("/accounts", accountHandler.CreateAccount)
+
+		// Favorites
+		protected.GET("/favorites", favoriteHandler.GetFavorites)
+		protected.POST("/favorites", favoriteHandler.AddFavorite)
+		protected.DELETE("/favorites/:id", favoriteHandler.RemoveFavorite)
 	}
 
 	port := os.Getenv("PORT")

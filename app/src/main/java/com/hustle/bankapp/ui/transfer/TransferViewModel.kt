@@ -7,6 +7,7 @@ import com.hustle.bankapp.data.BankRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -21,14 +22,18 @@ class TransferViewModel(
 
     init {
         viewModelScope.launch {
-            repository.getAccounts().collect { accounts ->
-                _uiState.update { state ->
-                    state.copy(
-                        availableAccounts = accounts,
-                        selectedSourceAccount = state.selectedSourceAccount ?: accounts.firstOrNull()
-                    )
+            repository.getAccounts()
+                .catch { e ->
+                    _uiState.update { it.copy(error = e.message ?: "Failed to load accounts") }
                 }
-            }
+                .collect { accounts ->
+                    _uiState.update { state ->
+                        state.copy(
+                            availableAccounts = accounts,
+                            selectedSourceAccount = state.selectedSourceAccount ?: accounts.firstOrNull()
+                        )
+                    }
+                }
         }
     }
 
@@ -81,25 +86,29 @@ class TransferViewModel(
         _uiState.update { it.copy(isLoading = true, error = null) }
 
         viewModelScope.launch {
-            val currentBalance = repository.getBalance().first()
-            if (amount > currentBalance) {
-                _uiState.update { 
-                    it.copy(
-                        isLoading = false, 
-                        error = "Insufficient funds. Available balance: $$currentBalance"
-                    ) 
+            try {
+                val currentBalance = repository.getBalance().first()
+                if (amount > currentBalance) {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = "Insufficient funds. Available balance: $$currentBalance"
+                        )
+                    }
+                    return@launch
                 }
-                return@launch
-            }
 
-            val senderId = currentState.selectedSourceAccount?.id ?: ""
-            val result = repository.processTransfer(amount, recipientId, senderId)
-            
-            result.onSuccess {
-                _uiState.update { it.copy(isLoading = false, isSuccess = true) }
-            }
-            result.onFailure { exception ->
-                _uiState.update { it.copy(isLoading = false, error = exception.message) }
+                val senderId = currentState.selectedSourceAccount?.id ?: ""
+                val result = repository.processTransfer(amount, recipientId, senderId)
+
+                result.onSuccess {
+                    _uiState.update { it.copy(isLoading = false, isSuccess = true) }
+                }
+                result.onFailure { exception ->
+                    _uiState.update { it.copy(isLoading = false, error = exception.message) }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, error = "Network error: ${e.message}") }
             }
         }
     }

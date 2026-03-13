@@ -78,65 +78,65 @@ data class MessageResponse(
 interface BankApiService {
 
     // Auth
-    @POST("/api/auth/register")
+    @POST("api/auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<AuthResponse>
 
-    @POST("/api/auth/login")
+    @POST("api/auth/login")
     suspend fun login(@Body request: LoginRequest): Response<AuthResponse>
 
     // User
-    @GET("/api/user/balance")
+    @GET("api/user/balance")
     suspend fun getBalance(): Response<BalanceResponse>
 
-    @GET("/api/user/profile")
+    @GET("api/user/profile")
     suspend fun getUserProfile(): Response<User>
 
-    @POST("/api/user/profile")
+    @POST("api/user/profile")
     suspend fun updateProfile(@Body request: UpdateProfileRequest): Response<MessageResponse>
 
     // Transactions
-    @POST("/api/transactions/transfer")
+    @POST("api/transactions/transfer")
     suspend fun transfer(@Body request: TransferRequest): Response<MessageResponse>
 
-    @POST("/api/transactions/deposit")
+    @POST("api/transactions/deposit")
     suspend fun deposit(@Body request: DepositRequest): Response<MessageResponse>
 
-    @POST("/api/transactions/withdraw")
+    @POST("api/transactions/withdraw")
     suspend fun withdraw(@Body request: WithdrawRequest): Response<MessageResponse>
 
-    @GET("/api/transactions/history")
+    @GET("api/transactions/history")
     suspend fun getTransactionHistory(): Response<TransactionListResponse>
 
     // Cards
-    @GET("/api/cards")
+    @GET("api/cards")
     suspend fun getCards(): Response<List<Card>>
 
-    @POST("/api/cards")
+    @POST("api/cards")
     suspend fun createCard(): Response<Card>
 
-    @PUT("/api/cards/{id}/freeze")
+    @PUT("api/cards/{id}/freeze")
     suspend fun toggleFreezeCard(@Path("id") cardId: String): Response<Card>
 
-    @PUT("/api/cards/{id}/limit")
+    @PUT("api/cards/{id}/limit")
     suspend fun updateCardLimit(@Path("id") cardId: String, @Body request: LimitRequest): Response<Card>
 
-    @PUT("/api/cards/{id}/edit")
+    @PUT("api/cards/{id}/edit")
     suspend fun updateCardInfo(@Path("id") cardId: String, @Body request: EditCardRequest): Response<Card>
 
     // Accounts
-    @GET("/api/accounts")
+    @GET("api/accounts")
     suspend fun getAccounts(): Response<List<com.hustle.bankapp.data.Account>>
 
-    @POST("/api/accounts")
+    @POST("api/accounts")
     suspend fun createAccount(@Body request: CreateAccountRequest): Response<com.hustle.bankapp.data.Account>
 
     // Favorites
-    @GET("/api/favorites")
+    @GET("api/favorites")
     suspend fun getFavorites(): Response<List<com.hustle.bankapp.data.Contact>>
 
-    @POST("/api/favorites")
+    @POST("api/favorites")
     suspend fun addFavorite(@Body request: AddFavoriteRequest): Response<com.hustle.bankapp.data.Contact>
 
-    @retrofit2.http.DELETE("/api/favorites/{id}")
+    @retrofit2.http.DELETE("api/favorites/{id}")
     suspend fun removeFavorite(@Path("id") contactId: String): Response<MessageResponse>
 }

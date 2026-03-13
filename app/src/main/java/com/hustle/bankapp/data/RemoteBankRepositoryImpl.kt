@@ -24,10 +24,12 @@ class RemoteBankRepositoryImpl(
             if (response.isSuccessful) {
                 emit(response.body()?.balance ?: 0.0)
             } else {
-                throw Exception("Failed to fetch balance: ${response.message()}")
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                throw Exception("API Error: $errorMsg")
             }
         } catch (e: Exception) {
             if (e is CancellationException) throw e
+            if (e.message?.startsWith("API Error") == true) throw e
             throw Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}")
         }
     }
@@ -38,10 +40,12 @@ class RemoteBankRepositoryImpl(
             if (response.isSuccessful) {
                 emit(response.body()?.transactions ?: emptyList())
             } else {
-                throw Exception("Failed to fetch transactions: ${response.message()}")
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                throw Exception("API Error: $errorMsg")
             }
         } catch (e: Exception) {
             if (e is CancellationException) throw e
+            if (e.message?.startsWith("API Error") == true) throw e
             throw Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}")
         }
     }
@@ -52,10 +56,12 @@ class RemoteBankRepositoryImpl(
             if (response.isSuccessful) {
                 emit(response.body())
             } else {
-                throw Exception("Failed to fetch profile: ${response.message()}")
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                throw Exception("API Error: $errorMsg")
             }
         } catch (e: Exception) {
             if (e is CancellationException) throw e
+            if (e.message?.startsWith("API Error") == true) throw e
             throw Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}")
         }
     }
@@ -193,7 +199,9 @@ class RemoteBankRepositoryImpl(
         return try {
             val response = api.createCard()
             if (response.isSuccessful) {
-                Result.success(response.body()!!)
+                val body = response.body()
+                if (body != null) Result.success(body)
+                else Result.failure(Exception("Server returned empty data"))
             } else {
                 val errorMsg = response.errorBody()?.string() ?: response.message()
                 Result.failure(Exception("Failed to create card: $errorMsg"))
@@ -208,7 +216,9 @@ class RemoteBankRepositoryImpl(
         return try {
             val response = api.toggleFreezeCard(cardId)
             if (response.isSuccessful) {
-                Result.success(response.body()!!)
+                val body = response.body()
+                if (body != null) Result.success(body)
+                else Result.failure(Exception("Server returned empty data"))
             } else {
                 val errorMsg = response.errorBody()?.string() ?: response.message()
                 Result.failure(Exception("Failed to toggle freeze: $errorMsg"))
@@ -223,7 +233,9 @@ class RemoteBankRepositoryImpl(
         return try {
             val response = api.updateCardLimit(cardId, LimitRequest(limit))
             if (response.isSuccessful) {
-                Result.success(response.body()!!)
+                val body = response.body()
+                if (body != null) Result.success(body)
+                else Result.failure(Exception("Server returned empty data"))
             } else {
                 val errorMsg = response.errorBody()?.string() ?: response.message()
                 Result.failure(Exception("Failed to update limit: $errorMsg"))
@@ -238,7 +250,9 @@ class RemoteBankRepositoryImpl(
         return try {
             val response = api.updateCardInfo(cardId, EditCardRequest(type))
             if (response.isSuccessful) {
-                Result.success(response.body()!!)
+                val body = response.body()
+                if (body != null) Result.success(body)
+                else Result.failure(Exception("Server returned empty data"))
             } else {
                 val errorMsg = response.errorBody()?.string() ?: response.message()
                 Result.failure(Exception("Failed to update card info: $errorMsg"))
@@ -257,10 +271,12 @@ class RemoteBankRepositoryImpl(
             if (response.isSuccessful) {
                 emit(response.body() ?: emptyList())
             } else {
-                throw Exception("Failed to fetch accounts: ${response.message()}")
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                throw Exception("API Error: $errorMsg")
             }
         } catch (e: Exception) {
             if (e is CancellationException) throw e
+            if (e.message?.startsWith("API Error") == true) throw e
             throw Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}")
         }
     }
@@ -269,7 +285,9 @@ class RemoteBankRepositoryImpl(
         return try {
             val response = api.createAccount(CreateAccountRequest(name, type.name))
             if (response.isSuccessful) {
-                Result.success(response.body()!!)
+                val body = response.body()
+                if (body != null) Result.success(body)
+                else Result.failure(Exception("Server returned empty data"))
             } else {
                 val errorMsg = response.errorBody()?.string() ?: response.message()
                 Result.failure(Exception("Failed to create account: $errorMsg"))
@@ -288,10 +306,12 @@ class RemoteBankRepositoryImpl(
             if (response.isSuccessful) {
                 emit(response.body() ?: emptyList())
             } else {
-                throw Exception("Failed to fetch favorites: ${response.message()}")
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                throw Exception("API Error: $errorMsg")
             }
         } catch (e: Exception) {
             if (e is CancellationException) throw e
+            if (e.message?.startsWith("API Error") == true) throw e
             throw Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}")
         }
     }
@@ -300,7 +320,9 @@ class RemoteBankRepositoryImpl(
         return try {
             val response = api.addFavorite(AddFavoriteRequest(name, accountNumber))
             if (response.isSuccessful) {
-                Result.success(response.body()!!)
+                val body = response.body()
+                if (body != null) Result.success(body)
+                else Result.failure(Exception("Server returned empty data"))
             } else {
                 val errorMsg = response.errorBody()?.string() ?: response.message()
                 Result.failure(Exception("Failed to add favorite: $errorMsg"))

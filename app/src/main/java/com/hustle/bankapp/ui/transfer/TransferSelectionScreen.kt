@@ -115,8 +115,14 @@ private fun FavoritesHorizontalList(
                     FavoriteCircleItem(contact) { onSelect(contact.accountNumber) }
                 }
             }
+            is TransferSelectionUiState.Error -> {
+                Text(
+                    text = "Error loading favorites: ${state.message}",
+                    color = ErrorRed,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
             else -> {
-                // Loading/Error placeholders
                 repeat(4) {
                     Box(
                         modifier = Modifier

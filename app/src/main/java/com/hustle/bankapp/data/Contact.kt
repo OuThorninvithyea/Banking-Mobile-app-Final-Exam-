@@ -1,9 +1,11 @@
 package com.hustle.bankapp.data
 
+import com.google.gson.annotations.SerializedName
+
 data class Contact(
     val id: String,
     val name: String,
-    val accountNumber: String,
-    val bankName: String = "HustleBank",
-    val profileImage: String? = null
+    @SerializedName("account_number") val accountNumber: String,
+    @SerializedName("bank_name") val bankName: String = "HustleBank",
+    @SerializedName("profile_image") val profileImage: String? = null
 )

@@ -1,5 +1,7 @@
 package com.hustle.bankapp.data
 
+import com.google.gson.annotations.SerializedName
+
 enum class TransactionType {
     DEPOSIT,
     WITHDRAW,
@@ -11,5 +13,6 @@ data class Transaction(
     val type: TransactionType,
     val amount: Double,
     val timestamp: String,
-    val recipientId: String? = null
+    @SerializedName("recipient_id") val recipientId: String? = null,
+    val category: String = "General"
 )
