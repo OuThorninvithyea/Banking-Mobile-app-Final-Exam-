@@ -82,9 +82,9 @@ class RemoteBankRepositoryImpl(
 
     // ── Transfer ──────────────────────────────────────────────────────
 
-    override suspend fun processTransfer(amount: Double, recipientId: String): Result<Unit> {
+    override suspend fun processTransfer(amount: Double, recipientId: String, senderAccountId: String): Result<Unit> {
         return try {
-            val response = api.transfer(TransferRequest(amount, recipientId))
+            val response = api.transfer(TransferRequest(amount, recipientId, senderAccountId))
             if (response.isSuccessful) {
                 Result.success(Unit)
             } else {
@@ -242,6 +242,83 @@ class RemoteBankRepositoryImpl(
             } else {
                 val errorMsg = response.errorBody()?.string() ?: response.message()
                 Result.failure(Exception("Failed to update card info: $errorMsg"))
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
+        }
+    }
+
+    // ── Accounts ──────────────────────────────────────────────────────
+
+    override fun getAccounts(): Flow<List<Account>> = flow {
+        try {
+            val response = api.getAccounts()
+            if (response.isSuccessful) {
+                emit(response.body() ?: emptyList())
+            } else {
+                throw Exception("Failed to fetch accounts: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            throw Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}")
+        }
+    }
+
+    override suspend fun createAccount(name: String, type: com.hustle.bankapp.data.AccountType): Result<Account> {
+        return try {
+            val response = api.createAccount(CreateAccountRequest(name, type.name))
+            if (response.isSuccessful) {
+                Result.success(response.body()!!)
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                Result.failure(Exception("Failed to create account: $errorMsg"))
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
+        }
+    }
+
+    // ── Favorites ──────────────────────────────────────────────────────
+
+    override fun getFavorites(): Flow<List<Contact>> = flow {
+        try {
+            val response = api.getFavorites()
+            if (response.isSuccessful) {
+                emit(response.body() ?: emptyList())
+            } else {
+                throw Exception("Failed to fetch favorites: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            throw Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}")
+        }
+    }
+
+    override suspend fun addFavorite(name: String, accountNumber: String): Result<Contact> {
+        return try {
+            val response = api.addFavorite(AddFavoriteRequest(name, accountNumber))
+            if (response.isSuccessful) {
+                Result.success(response.body()!!)
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                Result.failure(Exception("Failed to add favorite: $errorMsg"))
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            Result.failure(Exception("Network error: ${e.localizedMessage ?: "Unable to reach server"}"))
+        }
+    }
+
+    override suspend fun removeFavorite(contactId: String): Result<Unit> {
+        return try {
+            val response = api.removeFavorite(contactId)
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: response.message()
+                Result.failure(Exception("Failed to remove favorite: $errorMsg"))
             }
         } catch (e: Exception) {
             if (e is CancellationException) throw e

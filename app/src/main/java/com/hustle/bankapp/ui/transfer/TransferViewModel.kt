@@ -2,6 +2,7 @@ package com.hustle.bankapp.ui.transfer
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hustle.bankapp.data.Account
 import com.hustle.bankapp.data.BankRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +18,23 @@ class TransferViewModel(
 
     private val _uiState = MutableStateFlow(TransferUiState(recipientId = initialRecipient))
     val uiState: StateFlow<TransferUiState> = _uiState.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            repository.getAccounts().collect { accounts ->
+                _uiState.update { state ->
+                    state.copy(
+                        availableAccounts = accounts,
+                        selectedSourceAccount = state.selectedSourceAccount ?: accounts.firstOrNull()
+                    )
+                }
+            }
+        }
+    }
+
+    fun selectSourceAccount(account: Account) {
+        _uiState.update { it.copy(selectedSourceAccount = account) }
+    }
 
     fun updateRecipientId(id: String) {
         _uiState.update { it.copy(recipientId = id, error = null) }
@@ -74,7 +92,8 @@ class TransferViewModel(
                 return@launch
             }
 
-            val result = repository.processTransfer(amount, recipientId)
+            val senderId = currentState.selectedSourceAccount?.id ?: ""
+            val result = repository.processTransfer(amount, recipientId, senderId)
             
             result.onSuccess {
                 _uiState.update { it.copy(isLoading = false, isSuccess = true) }

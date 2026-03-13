@@ -11,7 +11,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -38,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
 import com.hustle.bankapp.data.Transaction
 import com.hustle.bankapp.data.TransactionType
 import com.hustle.bankapp.theme.*
@@ -74,6 +74,9 @@ fun DashboardScreen(
     onNavigateToHistory: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
     onNavigateToQrScanner: () -> Unit = {},
+    onNavigateToAccounts: () -> Unit = {},
+    onNavigateToCards: () -> Unit = {},
+    onNavigateToFavorites: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState(initial = DashboardUiState.Loading)
@@ -133,405 +136,407 @@ fun DashboardScreen(
                     )
                 }
                 is DashboardUiState.Success -> {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(bottom = 100.dp)
+                    DashboardContent(
+                        state = state,
+                        visible = visible,
+                        isBalanceVisibleInit = isBalanceVisible,
+                        onBalanceToggle = { isBalanceVisible = it },
+                        onNavigateToProfile = onNavigateToProfile,
+                        onNavigateToQrScanner = onNavigateToQrScanner,
+                        onNavigateToDeposit = onNavigateToDeposit,
+                        onNavigateToTransfer = onNavigateToTransfer,
+                        onNavigateToHistory = onNavigateToHistory,
+                        onNavigateToWithdraw = onNavigateToWithdraw,
+                        onNavigateToCards = onNavigateToCards,
+                        onNavigateToAccounts = onNavigateToAccounts,
+                        onNavigateToFavorites = onNavigateToFavorites
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DashboardContent(
+    state: DashboardUiState.Success,
+    visible: Boolean,
+    isBalanceVisibleInit: Boolean,
+    onBalanceToggle: (Boolean) -> Unit,
+    onNavigateToProfile: () -> Unit,
+    onNavigateToQrScanner: () -> Unit,
+    onNavigateToDeposit: () -> Unit,
+    onNavigateToTransfer: () -> Unit,
+    onNavigateToHistory: () -> Unit,
+    onNavigateToWithdraw: () -> Unit,
+    onNavigateToCards: () -> Unit = {},
+    onNavigateToAccounts: () -> Unit = {},
+    onNavigateToFavorites: () -> Unit = {}
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(bottom = 100.dp)
+    ) {
+
+        // 1. HEADER (Top Bar)
+        item {
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(tween(500)) + slideInVertically(tween(500)) { -20 }
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Profile + Greeting
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { onNavigateToProfile() }
                     ) {
-
-                        // 1. HEADER (Top Bar)
-                        item {
-                            AnimatedVisibility(
-                                visible = visible,
-                                enter = fadeIn(tween(500)) + slideInVertically(tween(500)) { -20 }
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 20.dp, vertical = 16.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    // Profile + Greeting
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier.clickable { onNavigateToProfile() }
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(48.dp)
-                                                .clip(CircleShape)
-                                                .background(SurfaceDark),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Icon(Icons.Filled.Person, "Profile", tint = BinanceGreen, modifier = Modifier.size(28.dp))
-                                        }
-                                        Spacer(modifier = Modifier.width(12.dp))
-                                        Column {
-                                            Text("Good afternoon!", color = TextSecondary, fontSize = 13.sp)
-                                            Text(
-                                                text = state.userName.ifEmpty { "User" },
-                                                color = TextPrimary,
-                                                fontSize = 17.sp,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        }
-                                    }
-
-                                    // Utility Icons: Message, Notification, QR Code
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        // Message icon
-                                        Box(
-                                            modifier = Modifier
-                                                .size(40.dp)
-                                                .glassmorphism(cornerRadius = 20.dp),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Icon(Icons.Filled.MailOutline, "Messages", tint = TextPrimary, modifier = Modifier.size(20.dp))
-                                        }
-                                        // Notification icon with badge
-                                        Box(
-                                            modifier = Modifier
-                                                .size(40.dp)
-                                                .glassmorphism(cornerRadius = 20.dp),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Icon(Icons.Filled.NotificationsNone, "Alerts", tint = TextPrimary, modifier = Modifier.size(20.dp))
-                                            Box(
-                                                modifier = Modifier
-                                                    .size(8.dp)
-                                                    .clip(CircleShape)
-                                                    .background(ErrorRed)
-                                                    .align(Alignment.TopEnd)
-                                                    .offset(x = (-6).dp, y = 6.dp)
-                                            )
-                                        }
-                                        // QR Code icon
-                                        Box(
-                                            modifier = Modifier
-                                                .size(40.dp)
-                                                .glassmorphism(cornerRadius = 20.dp)
-                                                .clickable { onNavigateToQrScanner() },
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Icon(Icons.Filled.QrCodeScanner, "QR Code", tint = TextPrimary, modifier = Modifier.size(20.dp))
-                                        }
-                                    }
-                                }
-                            }
+                        Box(
+                            modifier = Modifier
+                                .size(46.dp)
+                                .clip(CircleShape)
+                                .background(SurfaceDark),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Filled.Person, "Profile", tint = BinanceGreen, modifier = Modifier.size(26.dp))
                         }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Text("Good afternoon!", color = TextSecondary, fontSize = 12.sp)
+                            Text(
+                                text = state.userName.ifEmpty { "User" },
+                                color = TextPrimary,
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
 
-                        // 2. PRIMARY BALANCE CARD (Hero)
-                        item {
-                            AnimatedVisibility(
-                                visible = visible,
-                                enter = fadeIn(tween(600, delayMillis = 100)) + slideInVertically(tween(600, delayMillis = 100)) { 20 }
-                            ) {
+                    // Utility Icons
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Filled.MailOutline, "Messages", tint = TextPrimary, modifier = Modifier.size(22.dp))
+                        Box {
+                            Icon(Icons.Filled.NotificationsNone, "Alerts", tint = TextPrimary, modifier = Modifier.size(22.dp))
+                            Box(
+                                modifier = Modifier
+                                    .size(7.dp)
+                                    .clip(CircleShape)
+                                    .background(ErrorRed)
+                                    .align(Alignment.TopEnd)
+                                    .offset(x = 1.dp, y = (-1).dp)
+                            )
+                        }
+                        Icon(
+                            Icons.Filled.QrCodeScanner,
+                            "QR Code",
+                            tint = TextPrimary,
+                            modifier = Modifier.size(22.dp).clickable { onNavigateToQrScanner() }
+                        )
+                    }
+                }
+            }
+        }
+
+        // 2. PRIMARY BALANCE CARD (Hero)
+        item {
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(tween(600, delayMillis = 100)) + slideInVertically(tween(600, delayMillis = 100)) { 20 }
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 8.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(
+                                    BinanceGreen.copy(alpha = 0.35f),
+                                    SurfaceDark.copy(alpha = 0.95f)
+                                )
+                            )
+                        )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(20.dp)
+                    ) {
+                        // Top Row: USD label + eye toggle
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = "USD",
+                                    color = TextSecondary,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                // "Default" badge
                                 Box(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 20.dp, vertical = 8.dp)
-                                        .clip(RoundedCornerShape(24.dp))
-                                        .background(
-                                            brush = Brush.horizontalGradient(
-                                                colors = listOf(
-                                                    BinanceGreen.copy(alpha = 0.25f),
-                                                    SurfaceDark.copy(alpha = 0.9f)
-                                                )
-                                            )
-                                        )
-                                        .background(
-                                            brush = Brush.verticalGradient(
-                                                colors = listOf(
-                                                    Color.Transparent,
-                                                    SurfaceDark.copy(alpha = 0.5f)
-                                                )
-                                            )
-                                        )
-                                ) {
-                                    Column(
-                                        modifier = Modifier.padding(20.dp)
-                                    ) {
-                                        // Top Row: USD label + eye toggle
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                                Text(
-                                                    text = "USD",
-                                                    color = TextSecondary,
-                                                    fontSize = 14.sp,
-                                                    fontWeight = FontWeight.Medium
-                                                )
-                                                Spacer(modifier = Modifier.width(8.dp))
-                                                // "Default" badge
-                                                Box(
-                                                    modifier = Modifier
-                                                        .clip(RoundedCornerShape(8.dp))
-                                                        .background(BinanceGreen.copy(alpha = 0.15f))
-                                                        .padding(horizontal = 8.dp, vertical = 2.dp)
-                                                ) {
-                                                    Text(
-                                                        text = "Default",
-                                                        color = BinanceGreen,
-                                                        fontSize = 11.sp,
-                                                        fontWeight = FontWeight.SemiBold
-                                                    )
-                                                }
-                                            }
-                                            IconButton(
-                                                onClick = { isBalanceVisible = !isBalanceVisible },
-                                                modifier = Modifier.size(32.dp)
-                                            ) {
-                                                Icon(
-                                                    imageVector = if (isBalanceVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                                                    contentDescription = "Toggle Balance",
-                                                    tint = TextSecondary,
-                                                    modifier = Modifier.size(20.dp)
-                                                )
-                                            }
-                                        }
-
-                                        Spacer(modifier = Modifier.height(8.dp))
-
-                                        // Balance + Mascot row
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            AnimatedContent(
-                                                targetState = isBalanceVisible,
-                                                transitionSpec = {
-                                                    (fadeIn(tween(300)) + slideInVertically(tween(300)) { it / 2 })
-                                                        .togetherWith(fadeOut(tween(200)) + slideOutVertically(tween(200)) { -it / 2 })
-                                                },
-                                                label = "balance_toggle"
-                                            ) { balanceVisible ->
-                                                Text(
-                                                    text = if (balanceVisible) state.balance.formatAsCurrency() else "*** ***",
-                                                    color = TextPrimary,
-                                                    fontSize = 36.sp,
-                                                    fontWeight = FontWeight.Black,
-                                                    fontFamily = RobotoMono,
-                                                    letterSpacing = (-1).sp,
-                                                    modifier = if (balanceVisible) Modifier else Modifier.blur(12.dp)
-                                                )
-                                            }
-                                            // Mascot placeholder
-                                            Icon(
-                                                imageVector = Icons.Filled.AccountBalance,
-                                                contentDescription = "Bank",
-                                                tint = BinanceGreen.copy(alpha = 0.4f),
-                                                modifier = Modifier.size(56.dp)
-                                            )
-                                        }
-
-                                        Spacer(modifier = Modifier.height(20.dp))
-
-                                        // Action Buttons: Receive, Send, Analytics
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceEvenly
-                                        ) {
-                                            HeroActionButton(
-                                                icon = Icons.Filled.ArrowDownward,
-                                                label = "Receive",
-                                                onClick = onNavigateToDeposit
-                                            )
-                                            HeroActionButton(
-                                                icon = Icons.Filled.ArrowUpward,
-                                                label = "Send",
-                                                onClick = onNavigateToTransfer
-                                            )
-                                            HeroActionButton(
-                                                icon = Icons.Filled.BarChart,
-                                                label = "Analytics",
-                                                onClick = onNavigateToHistory
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        // 3. QUICK SERVICES GRID (2 columns x 3 rows)
-                        item {
-                            AnimatedVisibility(
-                                visible = visible,
-                                enter = fadeIn(tween(700, delayMillis = 200)) + slideInVertically(tween(700, delayMillis = 200)) { 40 }
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 20.dp, vertical = 16.dp),
-                                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(BinanceGreen.copy(alpha = 0.2f))
+                                        .padding(horizontal = 10.dp, vertical = 4.dp)
                                 ) {
                                     Text(
-                                        text = "Quick Services",
-                                        color = TextPrimary,
-                                        fontSize = 18.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        modifier = Modifier.padding(bottom = 4.dp)
+                                        text = "Default",
+                                        color = BinanceGreen,
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold
                                     )
-
-                                    val services = listOf(
-                                        ServiceItem("Cards", Icons.Filled.CreditCard, Color(0xFFE74C6F)),
-                                        ServiceItem("Accounts", Icons.Filled.AccountBalanceWallet, Color(0xFFF5A623)),
-                                        ServiceItem("Payments", Icons.Filled.Payment, Color(0xFFF5A623)),
-                                        ServiceItem("Pay", Icons.Filled.QrCodeScanner, Color(0xFFE74C6F)),
-                                        ServiceItem("Favorites", Icons.Filled.Star, Color(0xFFF5A623)),
-                                        ServiceItem("Transfers", Icons.Filled.SwapHoriz, Color(0xFFFF7043))
-                                    )
-
-                                    // 2 rows of 3 columns
-                                    for (rowIndex in 0 until 2) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                                        ) {
-                                            for (colIndex in 0 until 3) {
-                                                val itemIndex = rowIndex * 3 + colIndex
-                                                val service = services[itemIndex]
-                                                ServiceGridCard(
-                                                    service = service,
-                                                    modifier = Modifier.weight(1f),
-                                                    onClick = when (service.label) {
-                                                        "Cards" -> ({})
-                                                        "Accounts" -> onNavigateToProfile
-                                                        "Payments" -> onNavigateToWithdraw
-                                                        "Pay" -> onNavigateToQrScanner
-                                                        "Favorites" -> ({})
-                                                        "Transfers" -> onNavigateToTransfer
-                                                        else -> ({})
-                                                    }
-                                                )
-                                            }
-                                        }
-                                    }
                                 }
+                            }
+                            IconButton(
+                                onClick = { onBalanceToggle(!isBalanceVisibleInit) },
+                                modifier = Modifier.size(32.dp)
+                            ) {
+                                Icon(
+                                    imageVector = if (isBalanceVisibleInit) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                                    contentDescription = "Toggle Balance",
+                                    tint = TextSecondary,
+                                    modifier = Modifier.size(22.dp)
+                                )
                             }
                         }
 
-                        // 4. NAVIGATION CHIPS
-                        item {
-                            AnimatedVisibility(
-                                visible = visible,
-                                enter = fadeIn(tween(800, delayMillis = 300))
-                            ) {
-                                val chips = listOf("Mini Apps", "ABA Merchant", "Rewards", "Promotions", "Lifestyle", "Insurance")
-                                LazyRow(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 8.dp),
-                                    contentPadding = PaddingValues(horizontal = 20.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    items(chips) { chip ->
-                                        Box(
-                                            modifier = Modifier
-                                                .clip(RoundedCornerShape(20.dp))
-                                                .background(SurfaceDark.copy(alpha = 0.6f))
-                                                .clickable { }
-                                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                                        ) {
-                                            Text(
-                                                text = chip,
-                                                color = TextSecondary,
-                                                fontSize = 13.sp,
-                                                fontWeight = FontWeight.Medium
-                                            )
-                                        }
-                                    }
-                                }
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        // Balance + Mascot row
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            AnimatedContent(
+                                targetState = isBalanceVisibleInit,
+                                transitionSpec = {
+                                    (fadeIn(tween(300)) + slideInVertically(tween(300)) { it / 2 })
+                                        .togetherWith(fadeOut(tween(200)) + slideOutVertically(tween(200)) { -it / 2 })
+                                },
+                                label = "balance_toggle"
+                            ) { balanceVisible ->
+                                Text(
+                                    text = if (balanceVisible) state.balance.formatAsCurrency() else "•••• ••••",
+                                    color = TextPrimary,
+                                    fontSize = 38.sp,
+                                    fontWeight = FontWeight.Black,
+                                    fontFamily = RobotoMono,
+                                    letterSpacing = (-1).sp,
+                                    modifier = if (balanceVisible) Modifier else Modifier.blur(14.dp)
+                                )
                             }
+                            // Mascot placeholder
+                            Icon(
+                                imageVector = Icons.Filled.AccountBalance,
+                                contentDescription = "Bank",
+                                tint = BinanceGreen.copy(alpha = 0.5f),
+                                modifier = Modifier.size(60.dp)
+                            )
                         }
 
-                        // 5. NEWS & PROMOTIONS BANNER
-                        item {
-                            AnimatedVisibility(
-                                visible = visible,
-                                enter = fadeIn(tween(800, delayMillis = 400))
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        // Action Buttons row
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            HeroActionButton(
+                                icon = Icons.Filled.ArrowDownward,
+                                label = "Receive",
+                                onClick = onNavigateToDeposit,
+                                modifier = Modifier.weight(1f)
+                            )
+                            HeroActionButton(
+                                icon = Icons.Filled.ArrowUpward,
+                                label = "Send",
+                                onClick = onNavigateToTransfer,
+                                modifier = Modifier.weight(1f)
+                            )
+                            HeroActionButton(
+                                icon = Icons.Filled.BarChart,
+                                label = "Analytics",
+                                onClick = onNavigateToHistory,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // 3. QUICK SERVICES GRID (3 columns x 2 rows)
+        item {
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(tween(700, delayMillis = 200)) + slideInVertically(tween(700, delayMillis = 200)) { 40 }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    val services = listOf(
+                        ServiceItem("Cards", Icons.Filled.CreditCard, Color(0xFFE74C6F)),
+                        ServiceItem("Accounts", Icons.Filled.AccountBalanceWallet, Color(0xFFF5A623)),
+                        ServiceItem("Payments", Icons.Filled.Payment, Color(0xFFF5A623)),
+                        ServiceItem("Pay", Icons.Filled.QrCodeScanner, Color(0xFFE74C6F)),
+                        ServiceItem("Favorites", Icons.Filled.Star, Color(0xFFF5A623)),
+                        ServiceItem("Transfers", Icons.Filled.SwapHoriz, Color(0xFFFF7043))
+                    )
+
+                    // 2 rows of 3
+                    for (rowIndex in 0 until 2) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(14.dp)
+                        ) {
+                            for (colIndex in 0 until 3) {
+                                val itemIndex = rowIndex * 3 + colIndex
+                                val service = services[itemIndex]
+                                ServiceGridCard(
+                                    service = service,
+                                    modifier = Modifier.weight(1f),
+                                    onClick = when (service.label) {
+                                        "Cards" -> onNavigateToCards
+                                        "Accounts" -> onNavigateToAccounts
+                                        "Payments" -> onNavigateToWithdraw
+                                        "Pay" -> onNavigateToQrScanner
+                                        "Favorites" -> onNavigateToFavorites
+                                        "Transfers" -> onNavigateToTransfer
+                                        else -> ({})
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 4. NAVIGATION CHIPS
+        item {
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(tween(800, delayMillis = 300))
+            ) {
+                val chips = listOf("Mini Apps", "Transfer", "Rewards", "Promotions", "Lifestyle", "Insurance")
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    contentPadding = PaddingValues(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(chips) { chip ->
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(SurfaceDark.copy(alpha = 0.6f))
+                                .clickable { }
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            Text(
+                                text = chip,
+                                color = TextSecondary,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // 5. NEWS & PROMOTIONS BANNER
+        item {
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(tween(800, delayMillis = 400))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 16.dp)
+                ) {
+                    Text(
+                        text = "News & Promotions",
+                        color = TextPrimary,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+
+                    // Promo banner card
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(160.dp)
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(
+                                brush = Brush.horizontalGradient(
+                                    colors = listOf(
+                                        BinanceGreen.copy(alpha = 0.3f),
+                                        Color(0xFF1A3A2A)
+                                    )
+                                )
+                            )
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(20.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column(
+                                modifier = Modifier.weight(1f)
                             ) {
-                                Column(
+                                Text(
+                                    text = "Home Loan",
+                                    color = TextPrimary,
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Special rate from 6.5% p.a.",
+                                    color = TextSecondary,
+                                    fontSize = 14.sp
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+                                Box(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 20.dp, vertical = 16.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(BinanceGreen)
+                                        .padding(horizontal = 16.dp, vertical = 8.dp)
                                 ) {
                                     Text(
-                                        text = "News & Promotions",
-                                        color = TextPrimary,
-                                        fontSize = 18.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        modifier = Modifier.padding(bottom = 12.dp)
+                                        text = "Learn More",
+                                        color = BackgroundBlack,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Bold
                                     )
-
-                                    // Promo banner card
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(160.dp)
-                                            .clip(RoundedCornerShape(20.dp))
-                                            .background(
-                                                brush = Brush.horizontalGradient(
-                                                    colors = listOf(
-                                                        BinanceGreen.copy(alpha = 0.3f),
-                                                        Color(0xFF1A3A2A)
-                                                    )
-                                                )
-                                            )
-                                    ) {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .padding(20.dp),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.SpaceBetween
-                                        ) {
-                                            Column(
-                                                modifier = Modifier.weight(1f)
-                                            ) {
-                                                Text(
-                                                    text = "Home Loan",
-                                                    color = TextPrimary,
-                                                    fontSize = 22.sp,
-                                                    fontWeight = FontWeight.Bold
-                                                )
-                                                Spacer(modifier = Modifier.height(4.dp))
-                                                Text(
-                                                    text = "Special rate from 6.5% p.a.",
-                                                    color = TextSecondary,
-                                                    fontSize = 14.sp
-                                                )
-                                                Spacer(modifier = Modifier.height(12.dp))
-                                                Box(
-                                                    modifier = Modifier
-                                                        .clip(RoundedCornerShape(12.dp))
-                                                        .background(BinanceGreen)
-                                                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                                                ) {
-                                                    Text(
-                                                        text = "Learn More",
-                                                        color = BackgroundBlack,
-                                                        fontSize = 13.sp,
-                                                        fontWeight = FontWeight.Bold
-                                                    )
-                                                }
-                                            }
-                                            Icon(
-                                                imageVector = Icons.Filled.Home,
-                                                contentDescription = "Home Loan",
-                                                tint = BinanceGreen.copy(alpha = 0.5f),
-                                                modifier = Modifier.size(72.dp)
-                                            )
-                                        }
-                                    }
                                 }
                             }
+                            Icon(
+                                imageVector = Icons.Filled.Home,
+                                contentDescription = "Home Loan",
+                                tint = BinanceGreen.copy(alpha = 0.5f),
+                                modifier = Modifier.size(72.dp)
+                            )
                         }
                     }
                 }
@@ -546,28 +551,34 @@ fun DashboardScreen(
 private fun HeroActionButton(
     icon: ImageVector,
     label: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clickable(onClick = onClick)
+        modifier = modifier.clickable(onClick = onClick)
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(42.dp)
                 .clip(CircleShape)
-                .background(Color.White.copy(alpha = 0.1f)),
+                .background(Color.White.copy(alpha = 0.12f)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = label,
-                tint = TextPrimary,
-                modifier = Modifier.size(18.dp)
+                tint = Color.White,
+                modifier = Modifier.size(20.dp)
             )
         }
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(text = label, color = TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Medium)
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = label,
+            color = TextPrimary.copy(alpha = 0.9f),
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Medium
+        )
     }
 }
 
@@ -585,20 +596,20 @@ private fun ServiceGridCard(
 ) {
     Box(
         modifier = modifier
-            .glassmorphism(cornerRadius = 14.dp, alpha = 0.4f)
+            .aspectRatio(1f) // Make it square-ish
+            .glassmorphism(cornerRadius = 18.dp, alpha = 0.45f)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 14.dp, horizontal = 8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(8.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(36.dp)
-                    .clip(RoundedCornerShape(10.dp))
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(12.dp))
                     .background(service.color.copy(alpha = 0.15f)),
                 contentAlignment = Alignment.Center
             ) {
@@ -606,15 +617,15 @@ private fun ServiceGridCard(
                     imageVector = service.icon,
                     contentDescription = service.label,
                     tint = service.color,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(22.dp)
                 )
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = service.label,
                 color = TextPrimary,
                 fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center
             )
         }
@@ -718,6 +729,43 @@ fun TransactionItem(transaction: Transaction) {
                 fontFamily = RobotoMono,
                 fontWeight = FontWeight.Bold
             )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF0B0E11)
+@Composable
+fun DashboardPreview() {
+    val mockState = DashboardUiState.Success(
+        balance = 12500.75,
+        recentTransactions = listOf(
+            Transaction("1", TransactionType.WITHDRAW, 50.0, "2024-03-13T10:00:00.000000Z"),
+            Transaction("2", TransactionType.DEPOSIT, 1200.0, "2024-03-12T15:30:00.000000Z")
+        ),
+        chartData = listOf(11000f, 11500f, 12000f, 11800f, 12500f, 12200f, 12500f),
+        userName = "Thorninvithyea"
+    )
+
+    MaterialTheme {
+        Scaffold(
+            containerColor = BackgroundBlack
+        ) { padding ->
+            Box(modifier = Modifier.padding(padding)) {
+                DashboardContent(
+                    state = mockState,
+                    visible = true,
+                    isBalanceVisibleInit = true,
+                    onBalanceToggle = {},
+                    onNavigateToProfile = {},
+                    onNavigateToQrScanner = {},
+                    onNavigateToDeposit = {},
+                    onNavigateToTransfer = {},
+                    onNavigateToHistory = {},
+                    onNavigateToWithdraw = {},
+                    onNavigateToAccounts = {},
+                    onNavigateToFavorites = {}
+                )
+            }
         }
     }
 }

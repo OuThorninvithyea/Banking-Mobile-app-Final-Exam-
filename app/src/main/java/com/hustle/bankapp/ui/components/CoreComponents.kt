@@ -57,12 +57,13 @@ fun Modifier.shimmerEffect(): Modifier = composed {
 @Composable
 fun GlassCard(
     modifier: Modifier = Modifier,
+    cornerRadius: androidx.compose.ui.unit.Dp = 24.dp,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .glassmorphism()
+            .glassmorphism(cornerRadius = cornerRadius)
             .padding(16.dp),
         content = content
     )

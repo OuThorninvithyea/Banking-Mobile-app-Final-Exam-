@@ -111,7 +111,7 @@ class MockBankRepositoryImpl : BankRepository {
 
     // ── Transfer ───────────────────────────────────────────────────────
 
-    override suspend fun processTransfer(amount: Double, recipientId: String): Result<Unit> {
+    override suspend fun processTransfer(amount: Double, recipientId: String, senderAccountId: String): Result<Unit> {
         val user = _userFlow.value ?: return Result.failure(Exception("No active user."))
         if (amount <= 0) return Result.failure(Exception("Transfer amount must be greater than 0."))
         if (user.balance < amount) return Result.failure(
@@ -215,5 +215,70 @@ class MockBankRepositoryImpl : BankRepository {
         return updated.find { it.id == cardId }
             ?.let { Result.success(it) }
             ?: Result.failure(Exception("Card not found"))
+    }
+
+    // ── Accounts ───────────────────────────────────────────────────────
+
+    private val _accountsFlow = MutableStateFlow<List<Account>>(
+        listOf(
+            Account(
+                id = "acc_1",
+                accountNumber = "001-234-5678",
+                accountName = "Main Account",
+                balance = 5000.0,
+                type = AccountType.CURRENT
+            ),
+            Account(
+                id = "acc_2",
+                accountNumber = "001-987-6543",
+                accountName = "Savings",
+                balance = 12500.75,
+                type = AccountType.SAVINGS
+            )
+        )
+    )
+
+    override fun getAccounts(): Flow<List<Account>> = _accountsFlow.asStateFlow()
+
+    override suspend fun createAccount(name: String, type: AccountType): Result<Account> {
+        val raw = (1000000000L..9999999999L).random().toString()
+        val accountNumber = "${raw.substring(0,3)}-${raw.substring(3,6)}-${raw.substring(6)}"
+        
+        val newAccount = Account(
+            id = UUID.randomUUID().toString(),
+            accountNumber = accountNumber,
+            accountName = name,
+            balance = 0.0,
+            type = type
+        )
+        _accountsFlow.value = _accountsFlow.value + newAccount
+        return Result.success(newAccount)
+    }
+
+    // ── Favorites ──────────────────────────────────────────────────────
+
+    private val _favoritesFlow = MutableStateFlow<List<Contact>>(
+        listOf(
+            Contact(UUID.randomUUID().toString(), "Mom", "001-999-8888"),
+            Contact(UUID.randomUUID().toString(), "Dad", "001-777-6666"),
+            Contact(UUID.randomUUID().toString(), "Brother", "001-555-4444")
+        )
+    )
+
+    override fun getFavorites(): Flow<List<Contact>> = _favoritesFlow.asStateFlow()
+
+    override suspend fun addFavorite(name: String, accountNumber: String): Result<Contact> {
+        val newContact = Contact(
+            id = UUID.randomUUID().toString(),
+            name = name,
+            accountNumber = accountNumber
+        )
+        _favoritesFlow.value = _favoritesFlow.value + newContact
+        return Result.success(newContact)
+    }
+
+    override suspend fun removeFavorite(contactId: String): Result<Unit> {
+        _favoritesFlow.value = _favoritesFlow.value.filter { it.id != contactId }
+        return Result.success(Unit)
     }
 }

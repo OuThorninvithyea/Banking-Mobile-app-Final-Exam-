@@ -1,12 +1,10 @@
 package com.hustle.bankapp
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -44,8 +42,14 @@ import com.hustle.bankapp.ui.transaction.DepositWithdrawViewModel
 import com.hustle.bankapp.ui.cards.CardsScreen
 import com.hustle.bankapp.ui.cards.CardsViewModel
 import com.hustle.bankapp.ui.transfer.QRScannerScreen
-import com.hustle.bankapp.ui.transfer.TransferScreen
+import com.hustle.bankapp.ui.transfer.TransferAmountScreen
+import com.hustle.bankapp.ui.transfer.TransferSelectionScreen
+import com.hustle.bankapp.ui.transfer.TransferSelectionViewModel
 import com.hustle.bankapp.ui.transfer.TransferViewModel
+import com.hustle.bankapp.ui.accounts.AccountsScreen
+import com.hustle.bankapp.ui.accounts.AccountsViewModel
+import com.hustle.bankapp.ui.favorites.FavoritesScreen
+import com.hustle.bankapp.ui.favorites.FavoritesViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -102,9 +106,10 @@ class MainActivity : FragmentActivity() {
                     bottomBar = { com.hustle.bankapp.ui.navigation.MainBottomNavBar(navController) },
                     containerColor = com.hustle.bankapp.theme.BackgroundBlack
                 ) { innerPadding ->
-                    // Floating nav bar: Box ignores innerPadding so the content scrolls underneath
                     androidx.compose.foundation.layout.Box(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
                     ) {
                         NavHost(
                             navController = navController,
@@ -165,12 +170,15 @@ class MainActivity : FragmentActivity() {
                             )
                             DashboardScreen(
                                 viewModel = vm,
-                                onNavigateToTransfer = { navController.navigate("transfer?recipient=") },
                                 onNavigateToDeposit = { navController.navigate("deposit") },
                                 onNavigateToWithdraw = { navController.navigate("withdraw") },
                                 onNavigateToHistory = { navController.navigate("history") },
                                 onNavigateToProfile = { navController.navigate("profile") },
-                                onNavigateToQrScanner = { navController.navigate("qr_scanner") }
+                                onNavigateToQrScanner = { navController.navigate("qr_scanner") },
+                                onNavigateToCards = { navController.navigate("cards") },
+                                onNavigateToAccounts = { navController.navigate("accounts") },
+                                onNavigateToFavorites = { navController.navigate("favorites") },
+                                onNavigateToTransfer = { navController.navigate("transfer_selection") }
                             )
                         }
 
@@ -189,9 +197,27 @@ class MainActivity : FragmentActivity() {
                             )
                         }
 
-                        // ── Transfer ───────────────────────────────────────────────
+                        // ── Transfer Selection ──────────────────────────────────────
+                        composable("transfer_selection") {
+                            val vm: TransferSelectionViewModel = viewModel(
+                                factory = object : ViewModelProvider.Factory {
+                                    @Suppress("UNCHECKED_CAST")
+                                    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                                        TransferSelectionViewModel(repository) as T
+                                }
+                            )
+                            TransferSelectionScreen(
+                                viewModel = vm,
+                                onNavigateBack = { navController.popBackStack() },
+                                onNavigateToTransfer = { recipient ->
+                                    navController.navigate("transfer_amount?recipient=$recipient")
+                                }
+                            )
+                        }
+
+                        // ── Transfer Amount ──────────────────────────────────────────
                         composable(
-                            route = "transfer?recipient={recipient}",
+                            route = "transfer_amount?recipient={recipient}",
                             arguments = listOf(navArgument("recipient") {
                                 type = NavType.StringType
                                 defaultValue = ""
@@ -207,7 +233,7 @@ class MainActivity : FragmentActivity() {
                                         TransferViewModel(repository, initialRecipient) as T
                                 }
                             )
-                            TransferScreen(
+                            TransferAmountScreen(
                                 viewModel = vm,
                                 onNavigateBack = { navController.popBackStack() }
                             )
@@ -218,7 +244,7 @@ class MainActivity : FragmentActivity() {
                             QRScannerScreen(
                                 onNavigateBack = { navController.popBackStack() },
                                 onQrCodeScanned = { scannedValue ->
-                                    navController.navigate("transfer?recipient=$scannedValue") {
+                                    navController.navigate("transfer_amount?recipient=$scannedValue") {
                                         popUpTo("qr_scanner") { inclusive = true }
                                     }
                                 }
@@ -272,6 +298,39 @@ class MainActivity : FragmentActivity() {
                             )
                         }
 
+                        // ── Accounts ──────────────────────────────────────────────
+                        composable("accounts") {
+                            val vm: AccountsViewModel = viewModel(
+                                factory = object : ViewModelProvider.Factory {
+                                    @Suppress("UNCHECKED_CAST")
+                                    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                                        AccountsViewModel(repository) as T
+                                }
+                            )
+                            AccountsScreen(
+                                viewModel = vm,
+                                onNavigateBack = { navController.popBackStack() }
+                            )
+                        }
+
+                        // ── Favorites ──────────────────────────────────────────────
+                        composable("favorites") {
+                            val vm: FavoritesViewModel = viewModel(
+                                factory = object : ViewModelProvider.Factory {
+                                    @Suppress("UNCHECKED_CAST")
+                                    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                                        FavoritesViewModel(repository) as T
+                                }
+                            )
+                            FavoritesScreen(
+                                viewModel = vm,
+                                onNavigateBack = { navController.popBackStack() },
+                                onNavigateToTransfer = { recipient ->
+                                    navController.navigate("transfer_amount?recipient=$recipient")
+                                }
+                            )
+                        }
+
                         // ── Profile ────────────────────────────────────────────────
                         composable("profile") {
                             val vm: ProfileViewModel = viewModel(
@@ -290,11 +349,11 @@ class MainActivity : FragmentActivity() {
                                     }
                                 }
                             )
-                        }
-                        } // composable closing
-                    } // NavHost closing
-                } // Box closing
-            } // Scaffold closing
-        } // HustleBankTheme closing
-    } // setContent closing
-} // MainActivity closing
+                        } // profile closing
+                        } // NavHost closing
+                    } // Box closing
+                } // Scaffold closing
+            } // HustleBankTheme closing
+        } // setContent closing
+    } // MainActivity closing
+}

@@ -26,7 +26,8 @@ data class LoginRequest(
 
 data class TransferRequest(
     val amount: Double,
-    @SerializedName("recipient_id") val recipientId: String
+    @SerializedName("recipient_id") val recipientId: String,
+    @SerializedName("sender_account_id") val senderAccountId: String = ""
 )
 
 data class DepositRequest(val amount: Double)
@@ -41,6 +42,16 @@ data class UpdateProfileRequest(
     val name: String,
     val email: String,
     val contact: String
+)
+
+data class CreateAccountRequest(
+    val name: String,
+    val type: String
+)
+
+data class AddFavoriteRequest(
+    val name: String,
+    @SerializedName("account_number") val accountNumber: String
 )
 
 // ── Response DTOs ─────────────────────────────────────────────────────
@@ -111,4 +122,21 @@ interface BankApiService {
 
     @PUT("/api/cards/{id}/edit")
     suspend fun updateCardInfo(@Path("id") cardId: String, @Body request: EditCardRequest): Response<Card>
+
+    // Accounts
+    @GET("/api/accounts")
+    suspend fun getAccounts(): Response<List<com.hustle.bankapp.data.Account>>
+
+    @POST("/api/accounts")
+    suspend fun createAccount(@Body request: CreateAccountRequest): Response<com.hustle.bankapp.data.Account>
+
+    // Favorites
+    @GET("/api/favorites")
+    suspend fun getFavorites(): Response<List<com.hustle.bankapp.data.Contact>>
+
+    @POST("/api/favorites")
+    suspend fun addFavorite(@Body request: AddFavoriteRequest): Response<com.hustle.bankapp.data.Contact>
+
+    @retrofit2.http.DELETE("/api/favorites/{id}")
+    suspend fun removeFavorite(@Path("id") contactId: String): Response<MessageResponse>
 }
