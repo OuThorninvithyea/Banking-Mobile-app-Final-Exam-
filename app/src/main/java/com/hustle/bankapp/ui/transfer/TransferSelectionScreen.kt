@@ -61,9 +61,9 @@ fun TransferSelectionScreen(
     ) { padding ->
         LazyColumn(
             modifier = Modifier
-                .padding(padding)
-                .fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 24.dp)
+                .padding(padding),
+            contentPadding = PaddingValues(bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             // Favorites Section
             item {
@@ -93,7 +93,7 @@ private fun SectionHeader(title: String) {
         color = TextPrimary,
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 4.dp)
     )
 }
 
@@ -176,37 +176,45 @@ private fun FavoriteCircleItem(contact: Contact, onClick: () -> Unit) {
 
 @Composable
 private fun LocalTransfersGrid(onSelect: (String) -> Unit) {
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Row(
+            modifier = Modifier.height(IntrinsicSize.Max),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             TransferServiceCard(
                 title = "Own Account",
                 subtitle = "Make transfer to your own accounts",
                 icon = Icons.Filled.AccountBalanceWallet,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).fillMaxHeight(),
                 onClick = { onSelect("") }
             )
             TransferServiceCard(
                 title = "HustleBank Account",
                 subtitle = "Transfer money to other HustleBank customers",
                 icon = Icons.Filled.Person,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).fillMaxHeight(),
                 onClick = { onSelect("") }
             )
         }
-        Spacer(modifier = Modifier.height(12.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(
+            modifier = Modifier.height(IntrinsicSize.Max),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             TransferServiceCard(
                 title = "Local Banks",
                 subtitle = "Make transfer to banks or wallets in Cambodia",
                 icon = Icons.Filled.AccountBalance,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).fillMaxHeight(),
                 onClick = { onSelect("") }
             )
             TransferServiceCard(
                 title = "Cash-by-Code",
                 subtitle = "Send cash with code to withdraw from any ATM",
                 icon = Icons.Filled.QrCode,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).fillMaxHeight(),
                 onClick = { onSelect("") }
             )
         }

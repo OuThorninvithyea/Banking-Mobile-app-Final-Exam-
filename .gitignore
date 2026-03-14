@@ -8,3 +8,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Cursor / agent (not needed for codebase handover)
+.cursor
+.agent

@@ -160,12 +160,11 @@ fun TransferAmountScreen(
                 }
             }
 
-            // Transfer type toggle
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .glassmorphism(cornerRadius = 16.dp, alpha = 0.3f)
-                    .padding(4.dp),
+                    .glassmorphism(cornerRadius = 20.dp, alpha = 0.3f)
+                    .padding(6.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 listOf(false to "To User", true to "Own Accounts").forEach { (isOwn, label) ->
@@ -274,7 +273,7 @@ fun TransferAmountScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .glassmorphism(cornerRadius = 24.dp, alpha = 0.3f)
+                        .glassmorphism(cornerRadius = 20.dp, alpha = 0.3f)
                         .padding(16.dp)
                 ) {
                     OutlinedInputField(
@@ -285,7 +284,7 @@ fun TransferAmountScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Box(
                 modifier = Modifier
@@ -303,7 +302,7 @@ fun TransferAmountScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             CustomNumberPad(
                 onNumberClick = { viewModel.updateAmount(it.toString()) },
